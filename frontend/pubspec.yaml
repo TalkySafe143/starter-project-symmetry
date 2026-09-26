@@ -55,13 +55,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  # retrofit_generator is omitted: its analyzer requirement conflicts with
-  # floor_generator 1.5.0. The generated news_api_service.g.dart is kept in
-  # source control and updated manually. To regenerate, run build_runner with
-  # only floor_generator active (see README).
-  # floor_generator is omitted: generated files (app_database.g.dart) are kept
-  # in source control. To regenerate, temporarily add floor_generator ^1.5.0
-  # and run build_runner (note: incompatible with bloc_test due to test_api).
   injectable_generator: ^2.6.1
   build_runner: ^2.4.13
   flutter_launcher_icons: ^0.14.3
