@@ -59,10 +59,14 @@ dev_dependencies:
   # floor_generator 1.5.0. The generated news_api_service.g.dart is kept in
   # source control and updated manually. To regenerate, run build_runner with
   # only floor_generator active (see README).
-  floor_generator: ^1.5.0
+  # floor_generator is omitted: generated files (app_database.g.dart) are kept
+  # in source control. To regenerate, temporarily add floor_generator ^1.5.0
+  # and run build_runner (note: incompatible with bloc_test due to test_api).
   injectable_generator: ^2.6.1
   build_runner: ^2.4.13
   flutter_launcher_icons: ^0.14.3
+  mockito: ^5.4.4
+  bloc_test: ^10.0.0
 
 
 

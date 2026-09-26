@@ -127,7 +127,7 @@ class ArticleWidget extends StatelessWidget {
                 const Icon(Icons.timeline_outlined, size: 16),
                 const SizedBox(width: 4),
                 Text(
-                  article!.publishedAt!,
+                  article?.publishedAt ?? '',
                   style: const TextStyle(fontSize: 12),
                 ),
               ],
@@ -139,7 +139,7 @@ class ArticleWidget extends StatelessWidget {
   }
 
   Widget _buildRemovableArea() {
-    if (isRemovable!) {
+    if (isRemovable == true) {
       return GestureDetector(
         onTap: _onRemove,
         child: const Padding(
