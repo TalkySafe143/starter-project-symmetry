@@ -15,17 +15,18 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<RemoteArticlesBloc>(
       create: (context) => sl()..add(const GetArticles()),
       child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: theme(),
-          onGenerateRoute: AppRoutes.onGenerateRoutes,
-          home: const DailyNews()),
+        debugShowCheckedModeBanner: false,
+        theme: theme(),
+        onGenerateRoute: AppRoutes.onGenerateRoutes,
+        home: const DailyNews(),
+      ),
     );
   }
 }

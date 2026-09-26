@@ -10,7 +10,7 @@ import '../../bloc/article/local/local_article_event.dart';
 class ArticleDetailsView extends HookWidget {
   final ArticleEntity? article;
 
-  const ArticleDetailsView({Key? key, this.article}) : super(key: key);
+  const ArticleDetailsView({super.key, this.article});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class ArticleDetailsView extends HookWidget {
         builder: (context) => GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () => _onBackButtonTapped(context),
-          child: const Icon(Ionicons.chevron_back, color: Colors.black),
+          child: const Icon(Ionicons.chevronBack, color: Colors.black),
         ),
       ),
     );
@@ -54,20 +54,18 @@ class ArticleDetailsView extends HookWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title
           Text(
             article!.title!,
             style: const TextStyle(
-                fontFamily: 'Butler',
-                fontSize: 20,
-                fontWeight: FontWeight.w900),
+              fontFamily: 'Butler',
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+            ),
           ),
-
           const SizedBox(height: 14),
-          // DateTime
           Row(
             children: [
-              const Icon(Ionicons.time_outline, size: 16),
+              const Icon(Ionicons.timeOutline, size: 16),
               const SizedBox(width: 4),
               Text(
                 article!.publishedAt!,

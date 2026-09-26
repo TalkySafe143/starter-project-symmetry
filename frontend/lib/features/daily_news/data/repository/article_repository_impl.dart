@@ -13,32 +13,33 @@ import '../data_sources/remote/news_api_service.dart';
 class ArticleRepositoryImpl implements ArticleRepository {
   final NewsApiService _newsApiService;
   final AppDatabase _appDatabase;
-  ArticleRepositoryImpl(this._newsApiService,this._appDatabase);
-  
+
+  ArticleRepositoryImpl(this._newsApiService, this._appDatabase);
+
   @override
   Future<DataState<List<ArticleModel>>> getNewsArticles() async {
-   try {
-    final httpResponse = await _newsApiService.getNewsArticles(
-      apiKey:newsAPIKey,
-      country:countryQuery,
-      category:categoryQuery,
-    );
-
-    if (httpResponse.response.statusCode == HttpStatus.ok) {
-      return DataSuccess(httpResponse.data);
-    } else {
-      return DataFailed(
-        DioError(
-          error: httpResponse.response.statusMessage,
-          response: httpResponse.response,
-          type: DioErrorType.response,
-          requestOptions: httpResponse.response.requestOptions
-        )
+    try {
+      final httpResponse = await _newsApiService.getNewsArticles(
+        apiKey: newsAPIKey,
+        country: countryQuery,
+        category: categoryQuery,
       );
+
+      if (httpResponse.response.statusCode == HttpStatus.ok) {
+        return DataSuccess(httpResponse.data);
+      } else {
+        return DataFailed(
+          DioException(
+            error: httpResponse.response.statusMessage,
+            response: httpResponse.response,
+            type: DioExceptionType.badResponse,
+            requestOptions: httpResponse.response.requestOptions,
+          ),
+        );
+      }
+    } on DioException catch (e) {
+      return DataFailed(e);
     }
-   } on DioError catch(e){
-    return DataFailed(e);
-   }
   }
 
   @override
@@ -55,5 +56,4 @@ class ArticleRepositoryImpl implements ArticleRepository {
   Future<void> saveArticle(ArticleEntity article) {
     return _appDatabase.articleDAO.insertArticle(ArticleModel.fromEntity(article));
   }
-  
 }

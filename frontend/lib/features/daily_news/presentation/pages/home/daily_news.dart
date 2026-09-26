@@ -8,14 +8,14 @@ import '../../../domain/entities/article.dart';
 import '../../widgets/article_tile.dart';
 
 class DailyNews extends StatelessWidget {
-  const DailyNews({Key? key}) : super(key: key);
+  const DailyNews({super.key});
 
   @override
   Widget build(BuildContext context) {
     return _buildPage();
   }
 
-  _buildAppbar(BuildContext context) {
+  PreferredSizeWidget _buildAppbar(BuildContext context) {
     return AppBar(
       title: const Text(
         'Daily News',
@@ -33,18 +33,20 @@ class DailyNews extends StatelessWidget {
     );
   }
 
-  _buildPage() {
+  Widget _buildPage() {
     return BlocBuilder<RemoteArticlesBloc, RemoteArticlesState>(
       builder: (context, state) {
         if (state is RemoteArticlesLoading) {
           return Scaffold(
-              appBar: _buildAppbar(context),
-              body: const Center(child: CupertinoActivityIndicator()));
+            appBar: _buildAppbar(context),
+            body: const Center(child: CupertinoActivityIndicator()),
+          );
         }
         if (state is RemoteArticlesError) {
           return Scaffold(
-              appBar: _buildAppbar(context),
-              body: const Center(child: Icon(Icons.refresh)));
+            appBar: _buildAppbar(context),
+            body: const Center(child: Icon(Icons.refresh)),
+          );
         }
         if (state is RemoteArticlesDone) {
           return _buildArticlesPage(context, state.articles!);
@@ -56,19 +58,16 @@ class DailyNews extends StatelessWidget {
 
   Widget _buildArticlesPage(
       BuildContext context, List<ArticleEntity> articles) {
-    List<Widget> articleWidgets = [];
-    for (var article in articles) {
-      articleWidgets.add(ArticleWidget(
-        article: article,
-        onArticlePressed: (article) => _onArticlePressed(context, article),
-      ));
-    }
+    final articleWidgets = articles
+        .map((article) => ArticleWidget(
+              article: article,
+              onArticlePressed: (article) => _onArticlePressed(context, article),
+            ))
+        .toList();
 
     return Scaffold(
       appBar: _buildAppbar(context),
-      body: ListView(
-        children: articleWidgets,
-      ),
+      body: ListView(children: articleWidgets),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO: REPLACE ROUTE WITH YOUR "ADD ARTICLE" PAGE

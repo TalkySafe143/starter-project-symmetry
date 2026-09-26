@@ -11,7 +11,7 @@ import '../../bloc/article/local/local_article_state.dart';
 import '../../widgets/article_tile.dart';
 
 class SavedArticles extends HookWidget {
-  const SavedArticles({Key ? key}) : super(key: key);
+  const SavedArticles({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class SavedArticles extends HookWidget {
         builder: (context) => GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () => _onBackButtonTapped(context),
-          child: const Icon(Ionicons.chevron_back, color: Colors.black),
+          child: const Icon(Ionicons.chevronBack, color: Colors.black),
         ),
       ),
       title: const Text('Saved Articles', style: TextStyle(color: Colors.black)),
@@ -43,20 +43,21 @@ class SavedArticles extends HookWidget {
         if (state is LocalArticlesLoading) {
           return const Center(child: CupertinoActivityIndicator());
         } else if (state is LocalArticlesDone) {
-          return _buildArticlesList(state.articles!);
+          return _buildArticlesList(context, state.articles!);
         }
-        return Container();
+        return const SizedBox();
       },
     );
   }
 
-  Widget _buildArticlesList(List<ArticleEntity> articles) {
+  Widget _buildArticlesList(BuildContext context, List<ArticleEntity> articles) {
     if (articles.isEmpty) {
       return const Center(
-          child: Text(
-        'NO SAVED ARTICLES',
-        style: TextStyle(color: Colors.black),
-      ));
+        child: Text(
+          'NO SAVED ARTICLES',
+          style: TextStyle(color: Colors.black),
+        ),
+      );
     }
 
     return ListView.builder(
