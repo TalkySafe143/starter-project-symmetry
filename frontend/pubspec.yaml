@@ -25,6 +25,7 @@ dependencies:
 
   # service locator
   get_it: ^9.3.0
+  injectable: ^2.3.2
 
   # dateFormat
   intl: ^0.20.3
@@ -59,6 +60,7 @@ dev_dependencies:
   # source control and updated manually. To regenerate, run build_runner with
   # only floor_generator active (see README).
   floor_generator: ^1.5.0
+  injectable_generator: ^2.6.1
   build_runner: ^2.4.13
   flutter_launcher_icons: ^0.14.3
 
