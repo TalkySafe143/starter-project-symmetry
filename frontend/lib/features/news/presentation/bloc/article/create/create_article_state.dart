@@ -1,7 +1,10 @@
 part of 'create_article_bloc.dart';
 
-abstract class CreateArticleState {
+abstract class CreateArticleState extends Equatable {
   const CreateArticleState();
+
+  @override
+  List<Object?> get props => [];
 }
 
 class CreateArticleIdle extends CreateArticleState {
@@ -19,4 +22,7 @@ class CreateArticleSuccess extends CreateArticleState {
 class CreateArticleError extends CreateArticleState {
   final String message;
   const CreateArticleError(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }

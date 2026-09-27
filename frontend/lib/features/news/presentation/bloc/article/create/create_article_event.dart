@@ -1,7 +1,10 @@
 part of 'create_article_bloc.dart';
 
-abstract class CreateArticleEvent {
+abstract class CreateArticleEvent extends Equatable {
   const CreateArticleEvent();
+
+  @override
+  List<Object?> get props => [];
 }
 
 class PublishArticle extends CreateArticleEvent {
@@ -14,6 +17,9 @@ class PublishArticle extends CreateArticleEvent {
     required this.content,
     this.imageFile,
   });
+
+  @override
+  List<Object?> get props => [title, content, imageFile];
 }
 
 class ResetCreateArticle extends CreateArticleEvent {

@@ -163,5 +163,53 @@ void main() {
         expect(model1, isNot(equals(model2)));
       });
     });
+    group('toJson', () {
+      test('should serialize ArticleModel into a Map with author key mapped', () {
+        const model = ArticleModel(
+          id: '1',
+          authorDisplayName: 'John Doe',
+          title: 'Test Title',
+          urlToImage: 'https://example.com/image.jpg',
+          publishedAt: '2024-01-01T00:00:00Z',
+          content: 'Test Content',
+          authorId: 'author-123',
+        );
+
+        final json = model.toJson();
+
+        expect(json['id'], '1');
+        expect(json['author'], 'John Doe');
+        expect(json['title'], 'Test Title');
+        expect(json['urlToImage'], 'https://example.com/image.jpg');
+        expect(json['publishedAt'], '2024-01-01T00:00:00Z');
+        expect(json['content'], 'Test Content');
+        expect(json['authorId'], 'author-123');
+      });
+    });
+
+    group('copyWith', () {
+      test('should return a new ArticleModel with updated fields', () {
+        const model = ArticleModel(
+          id: '1',
+          authorDisplayName: 'John Doe',
+          title: 'Test Title',
+          urlToImage: 'https://example.com/image.jpg',
+          publishedAt: '2024-01-01T00:00:00Z',
+          content: 'Test Content',
+        );
+
+        final updated = model.copyWith(
+          urlToImage: 'https://example.com/updated.jpg',
+          title: 'Updated Title',
+        );
+
+        expect(updated.id, '1');
+        expect(updated.title, 'Updated Title');
+        expect(updated.urlToImage, 'https://example.com/updated.jpg');
+        expect(updated.authorDisplayName, 'John Doe');
+        expect(updated.publishedAt, '2024-01-01T00:00:00Z');
+        expect(updated.content, 'Test Content');
+      });
+    });
   });
 }

@@ -160,7 +160,7 @@ void main() {
       final captured =
           verify(mockArticleDao.insertArticle(captureAny)).captured.single
               as ArticlesTableCompanion;
-      expect(captured.id, const Value(1));
+      expect(captured.id, const Value('1'));
       expect(captured.title, const Value('Test Title'));
     });
   });
