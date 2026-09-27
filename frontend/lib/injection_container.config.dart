@@ -14,25 +14,25 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:news_app_clean_architecture/core/di/app_module.dart' as _i904;
-import 'package:news_app_clean_architecture/features/daily_news/data/data_sources/local/app_database.dart'
+import 'package:news_app_clean_architecture/features/news/data/data_sources/local/app_database.dart'
     as _i832;
-import 'package:news_app_clean_architecture/features/daily_news/data/data_sources/remote/news_api_service.dart'
+import 'package:news_app_clean_architecture/features/news/data/data_sources/remote/news_api_service.dart'
     as _i552;
-import 'package:news_app_clean_architecture/features/daily_news/data/repository/article_repository_impl.dart'
+import 'package:news_app_clean_architecture/features/news/data/repository/article_repository_impl.dart'
     as _i1071;
-import 'package:news_app_clean_architecture/features/daily_news/domain/repository/article_repository.dart'
+import 'package:news_app_clean_architecture/features/news/domain/repository/article_repository.dart'
     as _i458;
-import 'package:news_app_clean_architecture/features/daily_news/domain/usecases/get_article.dart'
+import 'package:news_app_clean_architecture/features/news/domain/usecases/get_article.dart'
     as _i579;
-import 'package:news_app_clean_architecture/features/daily_news/domain/usecases/get_saved_article.dart'
+import 'package:news_app_clean_architecture/features/news/domain/usecases/get_saved_article.dart'
     as _i587;
-import 'package:news_app_clean_architecture/features/daily_news/domain/usecases/remove_article.dart'
+import 'package:news_app_clean_architecture/features/news/domain/usecases/remove_article.dart'
     as _i521;
-import 'package:news_app_clean_architecture/features/daily_news/domain/usecases/save_article.dart'
+import 'package:news_app_clean_architecture/features/news/domain/usecases/save_article.dart'
     as _i701;
-import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/local/local_article_bloc.dart'
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_bloc.dart'
     as _i1053;
-import 'package:news_app_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_bloc.dart'
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_bloc.dart'
     as _i498;
 
 extension GetItInjectableX on _i174.GetIt {

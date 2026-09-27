@@ -24,7 +24,7 @@ dependencies:
   flutter_bloc: ^9.1.1
 
   # comparing dart objects
-  equatable: ^3.0.0
+  equatable: ^2.1.0
 
   # service locator
   get_it: ^9.3.0
@@ -53,11 +53,13 @@ dependencies:
 
   # cached image
   cached_network_image: ^4.0.2
+  firebase_auth: ^6.7.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  firebase_auth_mocks: ^0.15.2
   injectable_generator: ^2.6.1
   build_runner: ^2.4.13
   flutter_launcher_icons: ^0.14.3
