@@ -1,6 +1,9 @@
+import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_bloc.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_state.dart';
 
@@ -8,7 +11,12 @@ import '../../../domain/entities/article.entity.dart';
 import '../../widgets/article_tile.dart';
 
 class DailyNews extends StatelessWidget {
-  const DailyNews({super.key});
+  final VoidCallback? onMenuPressed;
+
+  const DailyNews({
+    super.key,
+    this.onMenuPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +25,16 @@ class DailyNews extends StatelessWidget {
 
   PreferredSizeWidget _buildAppbar(BuildContext context) {
     return AppBar(
+      leading: IconButton(
+        icon: const Icon(Ionicons.menuOutline, color: Colors.black, size: 26),
+        onPressed: () {
+          if (onMenuPressed != null) {
+            onMenuPressed!();
+          } else {
+            AwesomeDrawerBar.of(context)?.toggle();
+          }
+        },
+      ),
       title: const Text(
         'Daily News',
         style: TextStyle(color: Colors.black),
@@ -25,11 +43,75 @@ class DailyNews extends StatelessWidget {
         GestureDetector(
           onTap: () => _onShowSavedArticlesViewTapped(context),
           child: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 14),
+            padding: EdgeInsets.symmetric(horizontal: 10),
             child: Icon(Icons.bookmark, color: Colors.black),
           ),
         ),
+        _buildAuthIndicator(context),
       ],
+    );
+  }
+
+  Widget _buildAuthIndicator(BuildContext context) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        final isLoggedIn = state is Authenticated;
+        final user = isLoggedIn ? state.user : null;
+
+        return GestureDetector(
+          onTap: () {
+            if (isLoggedIn) {
+              if (onMenuPressed != null) {
+                onMenuPressed!();
+              } else {
+                AwesomeDrawerBar.of(context)?.toggle();
+              }
+            } else {
+              Navigator.pushNamed(context, '/Login');
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(right: 14, left: 4),
+            child: Center(
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 15,
+                    backgroundColor: isLoggedIn ? Colors.black87 : Colors.black12,
+                    child: Text(
+                      isLoggedIn
+                          ? (user!.displayName?.isNotEmpty == true
+                              ? user.displayName![0].toUpperCase()
+                              : user.email.isNotEmpty
+                                  ? user.email[0].toUpperCase()
+                                  : 'U')
+                          : '?',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: isLoggedIn ? Colors.white : Colors.black54,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      width: 9,
+                      height: 9,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isLoggedIn ? Colors.green : Colors.grey,
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 

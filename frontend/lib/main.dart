@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 import 'package:news_app_clean_architecture/config/routes/routes.dart';
+import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:news_app_clean_architecture/features/home/presentation/pages/main_layout.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_event.dart';
-import 'package:news_app_clean_architecture/features/news/presentation/pages/home/daily_news.dart';
 import 'config/theme/app_themes.dart';
 import 'features/news/presentation/bloc/article/remote/remote_article_bloc.dart';
 import 'injection_container.dart';
@@ -40,19 +41,6 @@ Future<void> main() async {
     await FirebaseStorage.instance.useStorageEmulator(emulatorHost, 9199);
   }
 
-  // Sign in anonymously so Storage rules (require auth) are satisfied.
-  // In a real app this would be replaced by proper auth.
-  if (FirebaseAuth.instance.currentUser == null) {
-    try {
-      await FirebaseAuth.instance.signInAnonymously();
-      _log.info('Signed in anonymously: '
-          '${FirebaseAuth.instance.currentUser?.uid}');
-    } catch (e) {
-      _log.severe('Anonymous sign-in failed', e);
-      return;
-    }
-  }
-
   runApp(const MyApp());
 }
 
@@ -61,13 +49,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<RemoteArticlesBloc>(
-      create: (context) => sl()..add(const GetArticles()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => sl<AuthBloc>()..add(const CheckAuthStatus()),
+        ),
+        BlocProvider<RemoteArticlesBloc>(
+          create: (context) => sl()..add(const GetArticles()),
+        ),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: theme(),
         onGenerateRoute: AppRoutes.onGenerateRoutes,
-        home: const DailyNews(),
+        home: const MainLayout(),
       ),
     );
   }

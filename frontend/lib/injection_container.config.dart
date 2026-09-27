@@ -14,6 +14,22 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:news_app_clean_architecture/core/di/app_module.dart' as _i904;
+import 'package:news_app_clean_architecture/features/auth/data/data_sources/remote/auth_firebase_service.dart'
+    as _i123;
+import 'package:news_app_clean_architecture/features/auth/data/repository/auth_repository_impl.dart'
+    as _i884;
+import 'package:news_app_clean_architecture/features/auth/domain/repository/auth_repository.dart'
+    as _i544;
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/get_current_user_usecase.dart'
+    as _i119;
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/login_usecase.dart'
+    as _i616;
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/logout_usecase.dart'
+    as _i537;
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/register_usecase.dart'
+    as _i836;
+import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth/auth_bloc.dart'
+    as _i730;
 import 'package:news_app_clean_architecture/features/news/data/data_sources/local/app_database.dart'
     as _i924;
 import 'package:news_app_clean_architecture/features/news/data/data_sources/remote/news_api_service.dart'
@@ -57,22 +73,31 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     final appModule = _$AppModule();
+    gh.factory<_i123.AuthFirebaseService>(() => _i123.AuthFirebaseService());
     gh.factory<_i1.UserArticlesFirebaseService>(
         () => _i1.UserArticlesFirebaseService());
     gh.singleton<_i361.Dio>(() => appModule.dio);
     gh.singleton<_i924.AppDatabase>(() => appModule.appDatabase);
+    gh.lazySingleton<_i544.AuthRepository>(
+        () => _i884.AuthRepositoryImpl(gh<_i123.AuthFirebaseService>()));
     gh.singleton<_i893.NewsApiService>(
         () => appModule.newsApiService(gh<_i361.Dio>()));
     gh.lazySingleton<_i37.UserArticleRepository>(() =>
         _i401.UserArticleRepositoryImpl(gh<_i1.UserArticlesFirebaseService>()));
+    gh.lazySingleton<_i119.GetCurrentUserUseCase>(
+        () => _i119.GetCurrentUserUseCase(gh<_i544.AuthRepository>()));
+    gh.lazySingleton<_i616.LoginUseCase>(
+        () => _i616.LoginUseCase(gh<_i544.AuthRepository>()));
+    gh.lazySingleton<_i537.LogoutUseCase>(
+        () => _i537.LogoutUseCase(gh<_i544.AuthRepository>()));
+    gh.lazySingleton<_i836.RegisterUseCase>(
+        () => _i836.RegisterUseCase(gh<_i544.AuthRepository>()));
     gh.lazySingleton<_i508.CreateUserArticle>(
         () => _i508.CreateUserArticle(gh<_i37.UserArticleRepository>()));
     gh.lazySingleton<_i862.ArticleRepository>(() => _i865.ArticleRepositoryImpl(
           gh<_i893.NewsApiService>(),
           gh<_i924.AppDatabase>(),
         ));
-    gh.factory<_i505.CreateArticleBloc>(
-        () => _i505.CreateArticleBloc(gh<_i508.CreateUserArticle>()));
     gh.lazySingleton<_i838.GetArticleUseCase>(
         () => _i838.GetArticleUseCase(gh<_i862.ArticleRepository>()));
     gh.lazySingleton<_i572.GetSavedArticleUseCase>(
@@ -81,6 +106,16 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i1042.RemoveArticleUseCase(gh<_i862.ArticleRepository>()));
     gh.lazySingleton<_i150.SaveArticleUseCase>(
         () => _i150.SaveArticleUseCase(gh<_i862.ArticleRepository>()));
+    gh.factory<_i730.AuthBloc>(() => _i730.AuthBloc(
+          loginUseCase: gh<_i616.LoginUseCase>(),
+          registerUseCase: gh<_i836.RegisterUseCase>(),
+          logoutUseCase: gh<_i537.LogoutUseCase>(),
+          getCurrentUserUseCase: gh<_i119.GetCurrentUserUseCase>(),
+        ));
+    gh.factory<_i505.CreateArticleBloc>(() => _i505.CreateArticleBloc(
+          gh<_i508.CreateUserArticle>(),
+          gh<_i119.GetCurrentUserUseCase>(),
+        ));
     gh.factory<_i8.LocalArticleBloc>(() => _i8.LocalArticleBloc(
           gh<_i572.GetSavedArticleUseCase>(),
           gh<_i150.SaveArticleUseCase>(),

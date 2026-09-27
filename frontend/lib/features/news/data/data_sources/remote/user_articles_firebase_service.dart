@@ -49,7 +49,7 @@ class UserArticlesFirebaseService {
     await _firestoreDb
         .collection(_articlesCollection)
         .doc(ref.id)
-        .set({"id": ref.id});
+        .update({"id": ref.id});
 
     _log.info('createUserArticle → saved with id=${ref.id}');
     return ref;

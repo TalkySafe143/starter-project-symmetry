@@ -9,6 +9,10 @@ import 'dart:async' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:news_app_clean_architecture/core/resources/data_state.dart'
     as _i2;
+import 'package:news_app_clean_architecture/features/auth/domain/entities/user.entity.dart'
+    as _i6;
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/get_current_user_usecase.dart'
+    as _i5;
 import 'package:news_app_clean_architecture/features/news/domain/usecases/create_user_article.dart'
     as _i3;
 
@@ -63,4 +67,33 @@ class MockCreateUserArticle extends _i1.Mock implements _i3.CreateUserArticle {
           ),
         )),
       ) as _i4.Future<_i2.DataState<void>>);
+}
+
+/// A class which mocks [GetCurrentUserUseCase].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGetCurrentUserUseCase extends _i1.Mock
+    implements _i5.GetCurrentUserUseCase {
+  MockGetCurrentUserUseCase() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i4.Future<_i2.DataState<_i6.UserEntity?>> call({dynamic params}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #call,
+          [],
+          {#params: params},
+        ),
+        returnValue: _i4.Future<_i2.DataState<_i6.UserEntity?>>.value(
+            _FakeDataState_0<_i6.UserEntity?>(
+          this,
+          Invocation.method(
+            #call,
+            [],
+            {#params: params},
+          ),
+        )),
+      ) as _i4.Future<_i2.DataState<_i6.UserEntity?>>);
 }

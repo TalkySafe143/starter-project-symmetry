@@ -6,6 +6,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dio/dio.dart';
 import 'package:news_app_clean_architecture/core/resources/data_state.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:news_app_clean_architecture/features/news/domain/usecases/create_user_article.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/create/create_article_bloc.dart';
 
@@ -15,16 +16,22 @@ class _UnknownDataFailed extends DataState<void> {
   const _UnknownDataFailed();
 }
 
-@GenerateMocks([CreateUserArticle])
+@GenerateMocks([CreateUserArticle, GetCurrentUserUseCase])
 void main() {
   late MockCreateUserArticle mockCreateUserArticle;
+  late MockGetCurrentUserUseCase mockGetCurrentUserUseCase;
 
   setUp(() {
     mockCreateUserArticle = MockCreateUserArticle();
+    mockGetCurrentUserUseCase = MockGetCurrentUserUseCase();
+
+    when(mockGetCurrentUserUseCase.call())
+        .thenAnswer((_) async => DataSuccess(null));
   });
 
   test('initial state is CreateArticleIdle', () {
-    final bloc = CreateArticleBloc(mockCreateUserArticle);
+    final bloc =
+        CreateArticleBloc(mockCreateUserArticle, mockGetCurrentUserUseCase);
     expect(bloc.state, isA<CreateArticleIdle>());
     bloc.close();
   });
@@ -32,7 +39,8 @@ void main() {
   group('PublishArticle', () {
     blocTest<CreateArticleBloc, CreateArticleState>(
       'emits [CreateArticleError] when title is empty',
-      build: () => CreateArticleBloc(mockCreateUserArticle),
+      build: () =>
+          CreateArticleBloc(mockCreateUserArticle, mockGetCurrentUserUseCase),
       act: (bloc) => bloc.add(const PublishArticle(
         title: '',
         content: 'Some content',
@@ -47,7 +55,8 @@ void main() {
 
     blocTest<CreateArticleBloc, CreateArticleState>(
       'emits [CreateArticleError] when title contains only whitespace',
-      build: () => CreateArticleBloc(mockCreateUserArticle),
+      build: () =>
+          CreateArticleBloc(mockCreateUserArticle, mockGetCurrentUserUseCase),
       act: (bloc) => bloc.add(const PublishArticle(
         title: '   \n  \t ',
         content: 'Some content',
@@ -62,7 +71,8 @@ void main() {
 
     blocTest<CreateArticleBloc, CreateArticleState>(
       'emits [CreateArticleError] when content is empty',
-      build: () => CreateArticleBloc(mockCreateUserArticle),
+      build: () =>
+          CreateArticleBloc(mockCreateUserArticle, mockGetCurrentUserUseCase),
       act: (bloc) => bloc.add(const PublishArticle(
         title: 'Valid Title',
         content: '',
@@ -77,7 +87,8 @@ void main() {
 
     blocTest<CreateArticleBloc, CreateArticleState>(
       'emits [CreateArticleError] when content contains only whitespace',
-      build: () => CreateArticleBloc(mockCreateUserArticle),
+      build: () =>
+          CreateArticleBloc(mockCreateUserArticle, mockGetCurrentUserUseCase),
       act: (bloc) => bloc.add(const PublishArticle(
         title: 'Valid Title',
         content: '   \n\t  ',
@@ -95,7 +106,8 @@ void main() {
       build: () {
         when(mockCreateUserArticle(params: anyNamed('params')))
             .thenAnswer((_) async => const DataSuccess(null));
-        return CreateArticleBloc(mockCreateUserArticle);
+        return CreateArticleBloc(
+            mockCreateUserArticle, mockGetCurrentUserUseCase);
       },
       act: (bloc) => bloc.add(PublishArticle(
         title: '  My New Article  ',
@@ -122,9 +134,10 @@ void main() {
     blocTest<CreateArticleBloc, CreateArticleState>(
       'emits [CreateArticleLoading, CreateArticleError] when usecase returns DataGenericFailed',
       build: () {
-        when(mockCreateUserArticle(params: anyNamed('params')))
-            .thenAnswer((_) async => const DataGenericFailed('Network error occurred'));
-        return CreateArticleBloc(mockCreateUserArticle);
+        when(mockCreateUserArticle(params: anyNamed('params'))).thenAnswer(
+            (_) async => const DataGenericFailed('Network error occurred'));
+        return CreateArticleBloc(
+            mockCreateUserArticle, mockGetCurrentUserUseCase);
       },
       act: (bloc) => bloc.add(const PublishArticle(
         title: 'My Title',
@@ -145,7 +158,8 @@ void main() {
             error: 'Connection timeout',
           )),
         );
-        return CreateArticleBloc(mockCreateUserArticle);
+        return CreateArticleBloc(
+            mockCreateUserArticle, mockGetCurrentUserUseCase);
       },
       act: (bloc) => bloc.add(const PublishArticle(
         title: 'My Title',
@@ -166,7 +180,8 @@ void main() {
       build: () {
         when(mockCreateUserArticle(params: anyNamed('params')))
             .thenAnswer((_) async => const _UnknownDataFailed());
-        return CreateArticleBloc(mockCreateUserArticle);
+        return CreateArticleBloc(
+            mockCreateUserArticle, mockGetCurrentUserUseCase);
       },
       act: (bloc) => bloc.add(const PublishArticle(
         title: 'My Title',
@@ -182,7 +197,8 @@ void main() {
   group('ResetCreateArticle', () {
     blocTest<CreateArticleBloc, CreateArticleState>(
       'emits [CreateArticleIdle] when ResetCreateArticle is added',
-      build: () => CreateArticleBloc(mockCreateUserArticle),
+      build: () =>
+          CreateArticleBloc(mockCreateUserArticle, mockGetCurrentUserUseCase),
       seed: () => const CreateArticleError('Some previous error'),
       act: (bloc) => bloc.add(const ResetCreateArticle()),
       expect: () => [
