@@ -3,6 +3,7 @@ import 'package:news_app_clean_architecture/core/usecase/usecase.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/entities/user.entity.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/repository/auth_repository.dart';
 
+/// Credentials required by [LoginUseCase].
 class LoginParams {
   final String email;
   final String password;
@@ -13,6 +14,7 @@ class LoginParams {
   });
 }
 
+/// Single operation: signs in with email and password.
 class LoginUseCase implements UseCase<DataState<UserEntity>, LoginParams> {
   final AuthRepository _authRepository;
 

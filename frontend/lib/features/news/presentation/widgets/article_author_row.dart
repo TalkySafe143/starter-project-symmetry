@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../bloc/article/avatar/author_avatar_cubit.dart';
-import 'author_avatar.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/avatar/author_avatar_cubit.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/widgets/author_avatar.dart';
 
 /// Shared article author row: live avatar plus display name.
 ///
 /// Deduplicates the identical row previously inlined in both the article
 /// tile and the article detail view. Pure presentation: all data arrives
 /// via constructor (3.4.2), no business logic, no service location.
+/// Reusable author row with avatar, name, and date for article views.
 class ArticleAuthorRow extends StatelessWidget {
   final String? authorId;
   final String? authorDisplayName;

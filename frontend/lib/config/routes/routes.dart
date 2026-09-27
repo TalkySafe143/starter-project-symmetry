@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
-import '../../features/auth/presentation/pages/edit_profile/edit_profile_page.dart';
-import '../../features/auth/presentation/pages/login/login_page.dart';
-import '../../features/auth/presentation/pages/register/register_page.dart';
-import '../../features/home/presentation/pages/main_layout.dart';
-import '../../features/news/domain/entities/article.entity.dart';
-import '../../features/news/presentation/pages/article_detail/article_detail.dart';
-import '../../features/news/presentation/pages/create_article/create_article_page.dart';
-import '../../features/news/presentation/pages/edit_article/edit_article_page.dart';
-import '../../features/news/presentation/pages/my_articles/my_articles_page.dart';
-import '../../features/news/presentation/pages/saved_article/saved_article.dart';
+import 'package:news_app_clean_architecture/features/auth/presentation/pages/edit_profile/edit_profile_page.dart';
+import 'package:news_app_clean_architecture/features/auth/presentation/pages/login/login_page.dart';
+import 'package:news_app_clean_architecture/features/auth/presentation/pages/register/register_page.dart';
+import 'package:news_app_clean_architecture/features/home/presentation/pages/main_layout.dart';
+import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/pages/article_detail/article_detail.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/pages/create_article/create_article_page.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/pages/edit_article/edit_article_page.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/pages/my_articles/my_articles_page.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/pages/saved_article/saved_article.dart';
 
+/// Central route table: maps route names to pages.
 class AppRoutes {
+  /// Returns the page for [settings.name], falling back to [MainLayout].
   static Route onGenerateRoutes(RouteSettings settings) {
     switch (settings.name) {
       case '/':
@@ -50,6 +52,7 @@ class AppRoutes {
     }
   }
 
+  /// Wraps [view] in a [MaterialPageRoute].
   static Route<dynamic> _materialRoute(Widget view) {
     return MaterialPageRoute(builder: (_) => view);
   }

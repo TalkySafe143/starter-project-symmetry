@@ -6,6 +6,7 @@ import 'package:news_app_clean_architecture/features/auth/domain/entities/user_p
 import 'package:news_app_clean_architecture/features/auth/domain/repository/auth_repository.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/repository/user_profile_repository.dart';
 
+/// Registration input required by [RegisterUseCase].
 class RegisterParams {
   final String email;
   final String password;
@@ -18,6 +19,7 @@ class RegisterParams {
   });
 }
 
+/// Single operation: registers a user then creates their public profile.
 class RegisterUseCase
     implements UseCase<DataState<UserEntity>, RegisterParams> {
   static final _log = Logger('RegisterUseCase');

@@ -1,5 +1,6 @@
 part of 'auth_bloc.dart';
 
+/// Events consumed by [AuthBloc].
 abstract class AuthEvent extends Equatable {
   const AuthEvent();
 

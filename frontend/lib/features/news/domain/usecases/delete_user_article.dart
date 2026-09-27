@@ -2,12 +2,14 @@ import 'package:news_app_clean_architecture/core/resources/data_state.dart';
 import 'package:news_app_clean_architecture/core/usecase/usecase.dart';
 import 'package:news_app_clean_architecture/features/news/domain/repository/user_article_repository.dart';
 
+/// Input required by [DeleteUserArticle]: the article id.
 class DeleteUserArticleParams {
   final String articleId;
 
   const DeleteUserArticleParams({required this.articleId});
 }
 
+/// Single operation: deletes a user article by id.
 class DeleteUserArticle
     implements UseCase<DataState<void>, DeleteUserArticleParams> {
   final UserArticleRepository _userArticleRepository;

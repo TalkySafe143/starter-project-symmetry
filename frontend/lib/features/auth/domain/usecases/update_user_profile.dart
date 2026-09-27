@@ -6,6 +6,7 @@ import 'package:news_app_clean_architecture/features/auth/domain/entities/user_p
 import 'package:news_app_clean_architecture/features/auth/domain/repository/auth_repository.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/repository/user_profile_repository.dart';
 
+/// Profile-update input required by [UpdateUserProfile].
 class UpdateUserProfileParams {
   final String userId;
   final String displayName;
@@ -18,6 +19,7 @@ class UpdateUserProfileParams {
   });
 }
 
+/// Single operation: updates avatar, profile doc, and auth profile.
 class UpdateUserProfile
     implements UseCase<DataState<UserProfileEntity>, UpdateUserProfileParams> {
   final AuthRepository _authRepository;

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:news_app_clean_architecture/core/constants/constants.dart';
 import 'package:news_app_clean_architecture/features/news/data/data_sources/local/app_database.dart';
+import 'package:news_app_clean_architecture/features/news/data/data_sources/local/article_local_mapper.dart';
 import 'package:news_app_clean_architecture/features/news/data/models/article.dart';
 import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
 
@@ -53,7 +54,7 @@ void main() {
       });
     });
 
-    group('fromArticle (Drift row)', () {
+    group('ArticleLocalMapper.fromRow (Drift row)', () {
       test('should map a Drift Article row to an ArticleModel', () {
         final row = ArticlesTableData(
           id: "1",
@@ -65,7 +66,7 @@ void main() {
           authorId: null,
         );
 
-        final result = ArticleModel.fromArticle(row);
+        final result = ArticleLocalMapper.fromRow(row);
 
         expect(result.id, row.id);
         expect(result.authorDisplayName, row.authorDisplayName);
@@ -86,7 +87,7 @@ void main() {
           authorId: null,
         );
 
-        final result = ArticleModel.fromArticle(row);
+        final result = ArticleLocalMapper.fromRow(row);
 
         expect(result.urlToImage, kDefaultImage);
       });

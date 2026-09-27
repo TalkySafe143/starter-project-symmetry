@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:news_app_clean_architecture/features/news/data/data_sources/local/app_database.dart';
+import 'package:news_app_clean_architecture/features/news/data/data_sources/local/article_local_mapper.dart';
 import 'package:news_app_clean_architecture/features/news/data/models/article.dart';
 import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
@@ -67,14 +68,14 @@ void main() {
         authorId: 'Te6Hkez6BJgnuZVCRIZhIAsMHXmM',
       );
 
-      await db.articleDao
-          .insertArticle(ArticleModel.fromEntity(entity).toCompanion());
+      await db.articleDao.insertArticle(ArticleLocalMapper.toCompanion(
+          ArticleModel.fromEntity(entity)));
       final rows = await db.articleDao.getArticles();
 
       expect(rows.length, 1);
       expect(rows.first.id, 'hzGzJqMzH05QZqIEDNla');
       expect(
-        ArticleModel.fromArticle(rows.first).toEntity(),
+        ArticleLocalMapper.fromRow(rows.first).toEntity(),
         entity,
       );
       await db.close();
@@ -97,8 +98,10 @@ void main() {
         publishedAt: '2024-01-02T00:00:00Z',
         content: 'Other Content',
       );
-      await db.articleDao.insertArticle(nullId.toCompanion());
-      await db.articleDao.insertArticle(withId.toCompanion());
+      await db.articleDao
+          .insertArticle(ArticleLocalMapper.toCompanion(nullId));
+      await db.articleDao
+          .insertArticle(ArticleLocalMapper.toCompanion(withId));
 
       final rows = await db.articleDao.getArticles();
       final target = rows.firstWhere((r) => r.title == 'Daily Null');

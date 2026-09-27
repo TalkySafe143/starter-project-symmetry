@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+/// Authenticated user as known by Firebase Auth (uid, email, profile bits).
 class UserEntity extends Equatable {
   final String id;
   final String email;

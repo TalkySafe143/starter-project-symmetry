@@ -1,11 +1,9 @@
-import 'package:drift/drift.dart' show Value;
 import 'package:json_annotation/json_annotation.dart';
-import 'package:news_app_clean_architecture/features/news/data/data_sources/local/app_database.dart';
 import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
-import '../../../../core/constants/constants.dart';
 
 part 'article.g.dart';
 
+/// Data-layer view of [ArticleEntity] with NewsAPI mapping.
 @JsonSerializable()
 class ArticleModel extends ArticleEntity {
   @override
@@ -22,37 +20,13 @@ class ArticleModel extends ArticleEntity {
     super.authorId,
   }) : super(authorDisplayName: authorDisplayName);
 
+  /// Builds a model from a NewsAPI JSON map.
   factory ArticleModel.fromJson(Map<String, dynamic> json) =>
       _$ArticleModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ArticleModelToJson(this);
 
-  /// Convert a Drift-generated [ArticlesTableData] row into an [ArticleModel].
-  factory ArticleModel.fromArticle(ArticlesTableData article) {
-    return ArticleModel(
-      id: article.id,
-      authorDisplayName: article.authorDisplayName,
-      title: article.title,
-      urlToImage: article.urlToImage ?? kDefaultImage,
-      publishedAt: article.publishedAt,
-      content: article.content,
-      authorId: article.authorId,
-    );
-  }
-
-  /// Convert to a Drift [ArticlesTableCompanion] for insert/update operations.
-  ArticlesTableCompanion toCompanion() {
-    return ArticlesTableCompanion(
-      id: id != null ? Value(id!) : const Value.absent(),
-      authorDisplayName: Value(authorDisplayName),
-      title: Value(title),
-      urlToImage: Value(urlToImage),
-      publishedAt: Value(publishedAt),
-      content: Value(content),
-      authorId: Value(authorId),
-    );
-  }
-
+  /// Builds a model from a domain [entity].
   factory ArticleModel.fromEntity(ArticleEntity entity) {
     return ArticleModel(
       id: entity.id,
@@ -65,9 +39,11 @@ class ArticleModel extends ArticleEntity {
     );
   }
 
+  /// Builds a model from external raw data.
   factory ArticleModel.fromRawData(Map<String, dynamic> raw) =>
       ArticleModel.fromJson(raw);
 
+  /// Converts this model to its domain [ArticleEntity].
   ArticleEntity toEntity() {
     return ArticleEntity(
       id: id,

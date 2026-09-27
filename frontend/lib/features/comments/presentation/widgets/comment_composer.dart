@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 /// Markdown composer for comments. Mirrors the article editor's content
 /// field: raw markdown in, stored untouched, rendered by `GptMarkdown`
 /// in [CommentTile].
+/// Reusable input row for posting a comment.
 class CommentComposer extends StatelessWidget {
   final TextEditingController controller;
   final bool isPosting;

@@ -9,6 +9,7 @@ import 'package:news_app_clean_architecture/features/auth/presentation/widgets/u
 import 'community_feed_tab.dart';
 import 'daily_news_tab.dart';
 
+/// Home screen with daily-news and community tabs plus create shortcut.
 class NewsHomePage extends StatelessWidget {
   final VoidCallback? onMenuPressed;
 

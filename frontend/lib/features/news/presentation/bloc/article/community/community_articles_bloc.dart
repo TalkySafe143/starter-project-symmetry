@@ -8,6 +8,7 @@ import 'package:news_app_clean_architecture/features/news/domain/usecases/get_al
 part 'community_articles_event.dart';
 part 'community_articles_state.dart';
 
+/// UI state machine for the community feed of user articles.
 @injectable
 class CommunityArticlesBloc
     extends Bloc<CommunityArticlesEvent, CommunityArticlesState> {

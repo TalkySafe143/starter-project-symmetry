@@ -6,14 +6,15 @@ import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:news_app_clean_architecture/core/constants/constants.dart';
 import 'package:news_app_clean_architecture/features/news/data/data_sources/local/app_database.dart';
+import 'package:news_app_clean_architecture/features/news/data/data_sources/local/article_local_mapper.dart';
+import 'package:news_app_clean_architecture/features/news/data/data_sources/remote/news_api_service.dart';
 import 'package:news_app_clean_architecture/features/news/data/models/article.dart';
 import 'package:news_app_clean_architecture/core/resources/data_state.dart';
 import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
 import 'package:news_app_clean_architecture/features/news/domain/repository/article_repository.dart';
 
-import '../data_sources/remote/news_api_service.dart';
-
 @LazySingleton(as: ArticleRepository)
+/// [ArticleRepository] implementation over [NewsApiService] and [AppDatabase].
 class ArticleRepositoryImpl implements ArticleRepository {
   static final _log = Logger('ArticleRepositoryImpl');
 
@@ -23,6 +24,7 @@ class ArticleRepositoryImpl implements ArticleRepository {
   ArticleRepositoryImpl(this._newsApiService, this._appDatabase);
 
   @override
+  /// Fetches remote headlines and maps models to entities.
   Future<DataState<List<ArticleEntity>>> getNewsArticles() async {
     _log.info('getNewsArticles → calling API '
         '[key=${newsAPIKey.substring(0, 6)}… country=$countryQuery category=$categoryQuery]');
@@ -79,16 +81,18 @@ class ArticleRepositoryImpl implements ArticleRepository {
       'local-${DateTime.now().microsecondsSinceEpoch}-$index-${Random().nextInt(1 << 32)}';
 
   @override
+  /// Returns locally saved articles mapped to entities.
   Future<List<ArticleEntity>> getSavedArticles() async {
     _log.fine('getSavedArticles → querying local DB');
     final rows = await _appDatabase.articleDao.getArticles();
     _log.fine('getSavedArticles → ${rows.length} rows returned');
     return rows
-        .map((row) => ArticleModel.fromArticle(row).toEntity())
+        .map((row) => ArticleLocalMapper.fromRow(row).toEntity())
         .toList();
   }
 
   @override
+  /// Removes [article] from local storage by identity match.
   Future<void> removeArticle(ArticleEntity article) async {
     _log.fine('removeArticle → id=${article.id} title="${article.title}"');
     final rows = await _appDatabase.articleDao.getArticles();
@@ -105,10 +109,11 @@ class ArticleRepositoryImpl implements ArticleRepository {
   /// legacy NULL-id rows and re-fetched API articles with fresh `local-`
   /// ids).
   bool _isSameArticle(ArticlesTableData row, ArticleEntity article) {
-    return ArticleModel.fromArticle(row).toEntity().isSameArticle(article);
+    return ArticleLocalMapper.fromRow(row).toEntity().isSameArticle(article);
   }
 
   @override
+  /// Saves [article] locally, skipping duplicates by identity.
   Future<void> saveArticle(ArticleEntity article) async {
     _log.fine('saveArticle → id=${article.id} title="${article.title}"');
     final rows = await _appDatabase.articleDao.getArticles();
@@ -116,7 +121,7 @@ class ArticleRepositoryImpl implements ArticleRepository {
       _log.fine('saveArticle → duplicate, skipping insert');
       return;
     }
-    return _appDatabase.articleDao
-        .insertArticle(ArticleModel.fromEntity(article).toCompanion());
+    return _appDatabase.articleDao.insertArticle(
+        ArticleLocalMapper.toCompanion(ArticleModel.fromEntity(article)));
   }
 }

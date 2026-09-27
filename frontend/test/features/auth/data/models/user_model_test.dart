@@ -64,5 +64,22 @@ void main() {
 
       expect(model1, equals(model2));
     });
+
+    test('fromAuth should map Firebase field values without provider types',
+        () {
+      final result = UserModel.fromAuth(
+        uid: 'uid-123',
+        email: 'test@example.com',
+        displayName: 'Test User',
+        photoUrl: 'https://example.com/avatar.jpg',
+        isAnonymous: false,
+      );
+
+      expect(result.id, 'uid-123');
+      expect(result.email, 'test@example.com');
+      expect(result.displayName, 'Test User');
+      expect(result.photoUrl, 'https://example.com/avatar.jpg');
+      expect(result.isAnonymous, false);
+    });
   });
 }

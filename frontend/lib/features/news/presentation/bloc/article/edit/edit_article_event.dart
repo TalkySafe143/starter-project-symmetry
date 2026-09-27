@@ -1,5 +1,6 @@
 part of 'edit_article_bloc.dart';
 
+/// Events consumed by [EditArticleBloc].
 abstract class EditArticleEvent extends Equatable {
   const EditArticleEvent();
 

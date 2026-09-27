@@ -3,6 +3,7 @@ import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:news_app_clean_architecture/features/comments/domain/entities/comment.entity.dart';
 
+/// Reusable row rendering one [CommentEntity] with delete affordance.
 class CommentTile extends StatelessWidget {
   final CommentEntity comment;
   final bool isOwn;

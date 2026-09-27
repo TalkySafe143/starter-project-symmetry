@@ -1,5 +1,6 @@
 part of 'user_articles_bloc.dart';
 
+/// UI states emitted by [UserArticlesBloc].
 abstract class UserArticlesState extends Equatable {
   const UserArticlesState();
 

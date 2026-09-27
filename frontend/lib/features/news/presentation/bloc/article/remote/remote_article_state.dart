@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
-import '../../../../domain/entities/article.entity.dart';
+import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
 
+/// UI states emitted by [RemoteArticlesBloc].
 abstract class RemoteArticlesState extends Equatable {
   final List<ArticleEntity>? articles;
   final String? errorMessage;

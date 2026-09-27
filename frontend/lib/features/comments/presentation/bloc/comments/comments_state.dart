@@ -1,5 +1,6 @@
 part of 'comments_bloc.dart';
 
+/// UI states emitted by [CommentsBloc].
 abstract class CommentsState extends Equatable {
   const CommentsState();
 

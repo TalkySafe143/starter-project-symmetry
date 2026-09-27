@@ -5,6 +5,7 @@ import 'package:logging/logging.dart';
 import 'package:news_app_clean_architecture/core/resources/data_state.dart';
 import 'package:news_app_clean_architecture/features/auth/data/data_sources/remote/user_profile_firebase_service.dart';
 import 'package:news_app_clean_architecture/features/auth/data/models/user_profile.model.dart';
+import 'package:news_app_clean_architecture/core/constants/constants.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/entities/user_profile.entity.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/repository/user_profile_repository.dart';
 
@@ -16,10 +17,11 @@ class _CachedProfile {
 }
 
 @LazySingleton(as: UserProfileRepository)
+/// [UserProfileRepository] implementation with a 10-minute in-memory cache.
 class UserProfileRepositoryImpl implements UserProfileRepository {
   static final _log = Logger('UserProfileRepositoryImpl');
 
-  static const Duration _cacheTtl = Duration(minutes: 10);
+  static const Duration _cacheTtl = kAuthorProfileCacheTtl;
 
   final UserProfileFirebaseService _service;
   final Map<String, _CachedProfile> _cache = {};

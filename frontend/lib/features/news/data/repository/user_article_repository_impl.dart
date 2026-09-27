@@ -9,6 +9,7 @@ import 'package:news_app_clean_architecture/features/news/domain/entities/articl
 import 'package:news_app_clean_architecture/features/news/domain/repository/user_article_repository.dart';
 
 @LazySingleton(as: UserArticleRepository)
+/// [UserArticleRepository] implementation over [UserArticlesFirebaseService].
 class UserArticleRepositoryImpl implements UserArticleRepository {
   static final _log = Logger('UserArticleRepositoryImpl');
 
@@ -77,6 +78,7 @@ class UserArticleRepositoryImpl implements UserArticleRepository {
   }
 
   @override
+  /// Returns all user articles mapped to entities.
   Future<DataState<List<ArticleEntity>>> getAllUserArticles() async {
     try {
       final articles = await _firebaseService.getAllUserArticles();
@@ -88,6 +90,7 @@ class UserArticleRepositoryImpl implements UserArticleRepository {
   }
 
   @override
+  /// Returns articles for [userId] mapped to entities.
   Future<DataState<List<ArticleEntity>>> getUserArticles(String userId) async {
     try {
       final articles = await _firebaseService.getUserArticles(userId);

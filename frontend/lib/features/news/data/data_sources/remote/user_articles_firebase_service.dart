@@ -4,8 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
+import 'package:news_app_clean_architecture/core/constants/constants.dart';
 import 'package:news_app_clean_architecture/features/news/data/models/article.dart';
 
+/// Firestore/Storage data source for user-created articles.
 @injectable
 class UserArticlesFirebaseService {
   static final _log = Logger('UserArticlesFirebaseService');
@@ -13,8 +15,8 @@ class UserArticlesFirebaseService {
   final FirebaseFirestore _firestoreDb = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  static const String _articlesCollection = 'articles';
-  static const String _thumbnailsFolder = 'media/articles';
+  static const String _articlesCollection = kArticlesCollection;
+  static const String _thumbnailsFolder = kArticleThumbnailsFolder;
 
   /// Uploads [imageFile] to Firebase Cloud Storage under [_thumbnailsFolder]
   /// and returns its download URL. Returns null if [imageFile] is null.

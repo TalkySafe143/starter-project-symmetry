@@ -1,16 +1,19 @@
 import 'package:drift/drift.dart';
 
-import '../app_database.dart';
+import 'package:news_app_clean_architecture/features/news/data/data_sources/local/app_database.dart';
 
 part 'article_dao.g.dart';
 
+/// DAO for cached articles in the local database.
 @DriftAccessor(tables: [ArticlesTable])
 class ArticleDao extends DatabaseAccessor<AppDatabase>
     with _$ArticleDaoMixin {
   ArticleDao(super.db);
 
+  /// Returns all locally stored article rows.
   Future<List<ArticlesTableData>> getArticles() => select(articlesTable).get();
 
+  /// Inserts or replaces [article] in local storage.
   Future<void> insertArticle(ArticlesTableCompanion article) =>
       into(articlesTable).insert(article, mode: InsertMode.insertOrReplace);
 

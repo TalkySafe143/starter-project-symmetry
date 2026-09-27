@@ -5,7 +5,9 @@ service cloud.firestore {
 
     match /articles/{articleId} {
       allow read: if true;
-      allow create: if isValidArticle(request.resource.data);
+      allow create: if request.auth != null
+        && request.resource.data.authorId == request.auth.uid
+        && isValidArticle(request.resource.data);
       allow update: if request.auth != null
         && request.auth.uid == resource.data.authorId
         && isValidArticle(request.resource.data);

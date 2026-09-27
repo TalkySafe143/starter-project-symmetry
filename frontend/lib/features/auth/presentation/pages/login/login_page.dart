@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
+/// Login screen delegating sign-in to [AuthBloc].
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 

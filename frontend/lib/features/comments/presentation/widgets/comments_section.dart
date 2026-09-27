@@ -5,6 +5,7 @@ import 'package:news_app_clean_architecture/features/comments/presentation/widge
 import 'package:news_app_clean_architecture/features/comments/presentation/widgets/comment_tile.dart';
 import 'package:news_app_clean_architecture/injection_container.dart';
 
+/// Reusable comments section for an article, owning its [CommentsBloc].
 class CommentsSection extends StatelessWidget {
   final String articleId;
 

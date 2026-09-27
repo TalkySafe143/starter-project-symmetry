@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+/// Business object for an article, shared by API, cache, and UI.
 class ArticleEntity extends Equatable {
   final String? id;
   final String? authorDisplayName;

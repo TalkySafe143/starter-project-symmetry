@@ -9,12 +9,14 @@ import 'package:news_app_clean_architecture/config/routes/routes.dart';
 import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:news_app_clean_architecture/features/home/presentation/pages/main_layout.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_event.dart';
-import 'config/theme/app_themes.dart';
-import 'features/news/presentation/bloc/article/remote/remote_article_bloc.dart';
-import 'injection_container.dart';
+import 'package:news_app_clean_architecture/config/theme/app_themes.dart';
+import 'package:news_app_clean_architecture/core/constants/constants.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_bloc.dart';
+import 'package:news_app_clean_architecture/injection_container.dart';
 
 final _log = Logger('main');
 
+/// Bootstraps DI, Firebase, emulators, logging, then runs [MyApp].
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -31,19 +33,26 @@ Future<void> main() async {
 
   await Firebase.initializeApp();
 
-  const bool USE_EMULATOR = true;
+  // Override at build time with `--dart-define=USE_EMULATOR=false` for
+  // production builds so release binaries never point at localhost.
+  const bool useEmulator = bool.fromEnvironment(
+    'USE_EMULATOR',
+    defaultValue: true,
+  );
 
-  if (USE_EMULATOR) {
-    const String emulatorHost = 'localhost';
-
-    await FirebaseAuth.instance.useAuthEmulator(emulatorHost, 9099);
-    FirebaseFirestore.instance.useFirestoreEmulator(emulatorHost, 8080);
-    await FirebaseStorage.instance.useStorageEmulator(emulatorHost, 9199);
+  if (useEmulator) {
+    await FirebaseAuth.instance
+        .useAuthEmulator(kEmulatorHost, kEmulatorAuthPort);
+    FirebaseFirestore.instance
+        .useFirestoreEmulator(kEmulatorHost, kEmulatorFirestorePort);
+    await FirebaseStorage.instance
+        .useStorageEmulator(kEmulatorHost, kEmulatorStoragePort);
   }
 
   runApp(const MyApp());
 }
 
+/// Application root: provides global blocs and the route table.
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

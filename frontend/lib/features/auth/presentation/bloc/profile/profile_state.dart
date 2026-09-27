@@ -1,5 +1,6 @@
 part of 'profile_bloc.dart';
 
+/// UI states emitted by [ProfileBloc].
 abstract class ProfileState extends Equatable {
   const ProfileState();
 

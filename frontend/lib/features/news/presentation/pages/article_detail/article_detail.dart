@@ -5,15 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:ionicons/ionicons.dart';
-import '../../../../../injection_container.dart';
-import '../../../domain/entities/article.entity.dart';
 import 'package:news_app_clean_architecture/features/comments/presentation/widgets/comments_section.dart';
-import '../../bloc/article/avatar/author_avatar_cubit.dart';
-import '../../bloc/article/local/local_article_bloc.dart';
-import '../../bloc/article/local/local_article_event.dart';
-import '../../bloc/article/local/local_article_state.dart';
-import '../../widgets/article_author_row.dart';
+import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/avatar/author_avatar_cubit.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_bloc.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_event.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_state.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/widgets/article_author_row.dart';
+import 'package:news_app_clean_architecture/injection_container.dart';
 
+/// Detail screen for one article, including its comments section.
 class ArticleDetailsView extends HookWidget {
   final ArticleEntity? article;
 

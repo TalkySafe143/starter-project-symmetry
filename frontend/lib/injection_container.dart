@@ -1,37 +1,38 @@
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
-import 'features/auth/domain/repository/auth_repository.dart';
-import 'features/auth/domain/repository/user_profile_repository.dart';
-import 'features/comments/data/data_sources/remote/comment_firebase_service.dart';
-import 'features/comments/data/repository/comment_repository_impl.dart';
-import 'features/comments/domain/repository/comment_repository.dart';
-import 'features/comments/domain/usecases/delete_comment.dart';
-import 'features/comments/domain/usecases/get_article_comments.dart';
-import 'features/comments/domain/usecases/post_comment.dart';
-import 'features/comments/presentation/bloc/comments/comments_bloc.dart';
-import 'features/auth/domain/usecases/get_author_profile.dart';
-import 'features/auth/domain/usecases/get_current_user_usecase.dart';
-import 'features/auth/domain/usecases/login_usecase.dart';
-import 'features/auth/domain/usecases/logout_usecase.dart';
-import 'features/auth/domain/usecases/register_usecase.dart';
-import 'features/auth/domain/usecases/update_user_profile.dart';
-import 'features/news/domain/repository/article_repository.dart';
-import 'features/news/domain/repository/user_article_repository.dart';
-import 'features/news/domain/usecases/create_user_article.dart';
-import 'features/news/domain/usecases/delete_user_article.dart';
-import 'features/news/domain/usecases/get_all_user_articles.dart';
-import 'features/news/domain/usecases/get_article.dart';
-import 'features/news/domain/usecases/get_saved_article.dart';
-import 'features/news/domain/usecases/get_user_articles.dart';
-import 'features/news/domain/usecases/remove_article.dart';
-import 'features/news/domain/usecases/save_article.dart';
-import 'features/news/domain/usecases/update_user_article.dart';
-import 'injection_container.config.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/repository/auth_repository.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/repository/user_profile_repository.dart';
+import 'package:news_app_clean_architecture/features/comments/data/data_sources/remote/comment_firebase_service.dart';
+import 'package:news_app_clean_architecture/features/comments/data/repository/comment_repository_impl.dart';
+import 'package:news_app_clean_architecture/features/comments/domain/repository/comment_repository.dart';
+import 'package:news_app_clean_architecture/features/comments/domain/usecases/delete_comment.dart';
+import 'package:news_app_clean_architecture/features/comments/domain/usecases/get_article_comments.dart';
+import 'package:news_app_clean_architecture/features/comments/domain/usecases/post_comment.dart';
+import 'package:news_app_clean_architecture/features/comments/presentation/bloc/comments/comments_bloc.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/get_author_profile.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/get_current_user_usecase.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/login_usecase.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/register_usecase.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/update_user_profile.dart';
+import 'package:news_app_clean_architecture/features/news/domain/repository/article_repository.dart';
+import 'package:news_app_clean_architecture/features/news/domain/repository/user_article_repository.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/create_user_article.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/delete_user_article.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/get_all_user_articles.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/get_article.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/get_saved_article.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/get_user_articles.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/remove_article.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/save_article.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/update_user_article.dart';
+import 'package:news_app_clean_architecture/injection_container.config.dart';
 
 final sl = GetIt.instance;
 
 @InjectableInit()
+/// Configures codegen DI, then registers domain use cases as fallback guards.
 Future<void> configureDependencies() async {
   await sl.init();
   _registerDomainUseCases();

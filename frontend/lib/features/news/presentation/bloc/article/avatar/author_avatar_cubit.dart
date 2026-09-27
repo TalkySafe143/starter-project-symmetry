@@ -19,6 +19,7 @@ class AuthorAvatarCubit extends Cubit<AuthorAvatarState> {
   AuthorAvatarCubit(this._getAuthorProfile)
       : super(const AuthorAvatarLoading());
 
+  /// Loads the avatar for [authorId], emitting done or missing states.
   Future<void> load(String authorId) async {
     if (authorId.trim().isEmpty) {
       emit(const AuthorAvatarMissing());

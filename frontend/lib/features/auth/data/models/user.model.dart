@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:news_app_clean_architecture/features/auth/domain/entities/user.entity.dart';
 
+/// Data-layer view of [UserEntity] with Firebase/JSON parsing.
 class UserModel extends UserEntity {
   const UserModel({
     required super.id,
@@ -10,16 +10,26 @@ class UserModel extends UserEntity {
     super.isAnonymous,
   });
 
-  factory UserModel.fromFirebase(fb.User user) {
+  /// Builds a model from Firebase Auth field values. The data source
+  /// extracts these from the `firebase_auth` user so this model never
+  /// imports provider packages (1.2.4).
+  factory UserModel.fromAuth({
+    required String uid,
+    String email = '',
+    String? displayName,
+    String? photoUrl,
+    bool isAnonymous = false,
+  }) {
     return UserModel(
-      id: user.uid,
-      email: user.email ?? '',
-      displayName: user.displayName,
-      photoUrl: user.photoURL,
-      isAnonymous: user.isAnonymous,
+      id: uid,
+      email: email,
+      displayName: displayName,
+      photoUrl: photoUrl,
+      isAnonymous: isAnonymous,
     );
   }
 
+  /// Builds a model from a JSON map.
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'] as String? ?? '',
@@ -40,6 +50,7 @@ class UserModel extends UserEntity {
     };
   }
 
+  /// Builds a model from a domain [entity].
   factory UserModel.fromEntity(UserEntity entity) {
     return UserModel(
       id: entity.id,
@@ -50,9 +61,11 @@ class UserModel extends UserEntity {
     );
   }
 
+  /// Builds a model from external raw data.
   factory UserModel.fromRawData(Map<String, dynamic> raw) =>
       UserModel.fromJson(raw);
 
+  /// Converts this model to its domain [UserEntity].
   UserEntity toEntity() {
     return UserEntity(
       id: id,

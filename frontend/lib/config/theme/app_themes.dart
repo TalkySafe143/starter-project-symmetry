@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Builds the app-wide [ThemeData] (white scaffold, Muli font, shared app bar).
 ThemeData theme() {
   return ThemeData(
     scaffoldBackgroundColor: Colors.white,
@@ -8,6 +9,7 @@ ThemeData theme() {
   );
 }
 
+/// Builds the shared [AppBarTheme] used by [theme].
 AppBarTheme appBarTheme() {
   return const AppBarTheme(
     backgroundColor: Colors.white,

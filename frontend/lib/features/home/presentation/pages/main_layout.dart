@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:news_app_clean_architecture/features/home/presentation/widgets/sidebar_menu.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/pages/news_home/news_home_page.dart';
 
+/// Shell page hosting the drawer navigation and the news home.
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
 

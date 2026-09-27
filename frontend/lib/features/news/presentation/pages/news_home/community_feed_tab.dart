@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app_clean_architecture/injection_container.dart';
 
-import '../../bloc/article/avatar/author_avatar_cubit.dart';
-import '../../bloc/article/community/community_articles_bloc.dart';
-import '../../widgets/article_tile.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/avatar/author_avatar_cubit.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/community/community_articles_bloc.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/widgets/article_tile.dart';
 
+/// Tab showing user-created articles from Firestore.
 class CommunityFeedTab extends StatelessWidget {
   const CommunityFeedTab({super.key});
 

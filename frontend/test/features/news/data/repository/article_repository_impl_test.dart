@@ -9,6 +9,7 @@ import 'package:news_app_clean_architecture/core/constants/constants.dart';
 import 'package:news_app_clean_architecture/core/resources/data_state.dart';
 import 'package:news_app_clean_architecture/features/news/data/data_sources/local/DAO/article_dao.dart';
 import 'package:news_app_clean_architecture/features/news/data/data_sources/local/app_database.dart';
+import 'package:news_app_clean_architecture/features/news/data/data_sources/local/article_local_mapper.dart';
 import 'package:news_app_clean_architecture/features/news/data/data_sources/remote/news_api_service.dart';
 import 'package:news_app_clean_architecture/features/news/data/models/article.dart';
 import 'package:news_app_clean_architecture/features/news/data/models/news_api_response.dart';
@@ -38,7 +39,7 @@ void main() {
   final tArticleRows = [tArticleRow];
 
   // ArticleModel equivalent (what the repository returns after mapping)
-  final tArticleModel = ArticleModel.fromArticle(tArticleRow);
+  final tArticleModel = ArticleLocalMapper.fromRow(tArticleRow);
   final tArticleModelList = [tArticleModel];
 
   const tArticleEntity = ArticleEntity(

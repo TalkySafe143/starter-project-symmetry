@@ -6,6 +6,7 @@ import 'package:news_app_clean_architecture/features/news/domain/usecases/get_ar
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_event.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_state.dart';
 
+/// UI state machine for remote top headlines.
 @injectable
 class RemoteArticlesBloc
     extends Bloc<RemoteArticlesEvent, RemoteArticlesState> {

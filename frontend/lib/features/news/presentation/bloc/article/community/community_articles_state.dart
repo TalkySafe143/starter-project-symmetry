@@ -1,5 +1,6 @@
 part of 'community_articles_bloc.dart';
 
+/// UI states emitted by [CommunityArticlesBloc].
 abstract class CommunityArticlesState extends Equatable {
   const CommunityArticlesState();
 

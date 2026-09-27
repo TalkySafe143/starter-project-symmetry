@@ -1,6 +1,7 @@
 import 'package:news_app_clean_architecture/core/resources/data_state.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/entities/user.entity.dart';
 
+/// Auth contract used by use cases; implemented in the data layer.
 abstract interface class AuthRepository {
   Future<DataState<UserEntity>> login({
     required String email,

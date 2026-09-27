@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+/// Business object for a comment on an article, with content rules.
 class CommentEntity extends Equatable {
   final String? id;
   final String articleId;

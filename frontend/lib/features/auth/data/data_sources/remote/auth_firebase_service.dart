@@ -3,22 +3,38 @@ import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:news_app_clean_architecture/features/auth/data/models/user.model.dart';
 
+/// Firebase Auth data source: sole place touching Firebase Auth for auth.
 @injectable
 class AuthFirebaseService {
   static final _log = Logger('AuthFirebaseService');
 
   final fb.FirebaseAuth _firebaseAuth = fb.FirebaseAuth.instance;
 
+  /// Watches Firebase Auth state, mapping users to models.
   Stream<UserModel?> get authStateChanges => _firebaseAuth
       .authStateChanges()
-      .map((user) => user != null ? UserModel.fromFirebase(user) : null);
+      .map((user) => user != null ? _toModel(user) : null);
 
+  /// Returns the currently signed-in user as a model, if any.
   UserModel? get currentUser {
     final user = _firebaseAuth.currentUser;
     if (user == null) return null;
-    return UserModel.fromFirebase(user);
+    return _toModel(user);
   }
 
+  /// Maps a `firebase_auth` user to a [UserModel] without leaking the
+  /// provider type into the model layer (1.2.4).
+  UserModel _toModel(fb.User user) {
+    return UserModel.fromAuth(
+      uid: user.uid,
+      email: user.email ?? '',
+      displayName: user.displayName,
+      photoUrl: user.photoURL,
+      isAnonymous: user.isAnonymous,
+    );
+  }
+
+  /// Signs in with [email]/[password]; throws a message on Firebase failure.
   Future<UserModel> signInWithEmailAndPassword({
     required String email,
     required String password,
@@ -33,7 +49,7 @@ class AuthFirebaseService {
       if (user == null) {
         throw Exception('User is null after sign in.');
       }
-      return UserModel.fromFirebase(user);
+      return _toModel(user);
     } on fb.FirebaseAuthException catch (e) {
       _log.warning(
           'signInWithEmailAndPassword → FirebaseAuthException: ${e.code}', e);
@@ -41,6 +57,7 @@ class AuthFirebaseService {
     }
   }
 
+  /// Creates an account for [email]/[password], setting [displayName] when given.
   Future<UserModel> createUserWithEmailAndPassword({
     required String email,
     required String password,
@@ -63,7 +80,7 @@ class AuthFirebaseService {
       }
 
       final updatedUser = _firebaseAuth.currentUser ?? user;
-      return UserModel.fromFirebase(updatedUser);
+      return _toModel(updatedUser);
     } on fb.FirebaseAuthException catch (e) {
       _log.warning(
           'createUserWithEmailAndPassword → FirebaseAuthException: ${e.code}',
@@ -72,6 +89,7 @@ class AuthFirebaseService {
     }
   }
 
+  /// Signs out the current Firebase user.
   Future<void> signOut() async {
     _log.info('signOut');
     await _firebaseAuth.signOut();
@@ -80,6 +98,7 @@ class AuthFirebaseService {
   /// Updates the Firebase Auth display name and photo URL of the current
   /// user so the auth state mirrors the public profile. Returns the fresh
   /// user, or null when nobody is signed in.
+  /// Updates display name/photo of the current user; returns the fresh user.
   Future<UserModel?> updateAuthProfile({
     String? displayName,
     String? photoUrl,
@@ -96,7 +115,7 @@ class AuthFirebaseService {
     }
     await user.reload();
     final updated = _firebaseAuth.currentUser ?? user;
-    return UserModel.fromFirebase(updated);
+    return _toModel(updated);
   }
 
   /// Deletes the currently signed-in user, or does nothing when signed out.

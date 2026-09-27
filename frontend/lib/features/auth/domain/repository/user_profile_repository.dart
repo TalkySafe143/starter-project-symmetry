@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:news_app_clean_architecture/core/resources/data_state.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/entities/user_profile.entity.dart';
 
+/// Profile contract for public `users/{uid}` documents; data layer implements.
 abstract interface class UserProfileRepository {
   Future<DataState<void>> createUserProfile(UserProfileEntity profile);
 

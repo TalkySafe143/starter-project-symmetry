@@ -1,5 +1,6 @@
 part of 'create_article_bloc.dart';
 
+/// UI states emitted by [CreateArticleBloc].
 abstract class CreateArticleState extends Equatable {
   const CreateArticleState();
 

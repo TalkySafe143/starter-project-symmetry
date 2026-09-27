@@ -7,10 +7,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:news_app_clean_architecture/injection_container.dart';
 
-import '../../bloc/article/create/create_article_bloc.dart';
-import '../../../domain/entities/article.entity.dart';
-import '../article_detail/article_detail.dart';
+import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/create/create_article_bloc.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/pages/article_detail/article_detail.dart';
 
+/// Page hosting the create-article form and its [CreateArticleBloc].
 class CreateArticlePage extends StatelessWidget {
   const CreateArticlePage({super.key});
 

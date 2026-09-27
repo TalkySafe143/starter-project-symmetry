@@ -101,4 +101,32 @@ void main() {
     expect(result, isA<DataSuccess<void>>());
     verifyZeroInteractions(mockRepository);
   });
+
+  test('should default a blank author name to Anonymous before saving',
+      () async {
+    const nameless = ArticleEntity(
+      id: '1',
+      authorDisplayName: '   ',
+      title: 'Test Title',
+      urlToImage: 'https://example.com/image.jpg',
+      publishedAt: '2026-09-27T00:00:00Z',
+      content: 'Test Content',
+    );
+    when(mockRepository.createUserArticle(
+      any,
+      imageFile: anyNamed('imageFile'),
+    )).thenAnswer((_) async => const DataSuccess(null));
+
+    final result = await usecase(
+      params: const CreateUserArticleParams(article: nameless),
+    );
+
+    expect(result, isA<DataSuccess<void>>());
+    final captured = verify(mockRepository.createUserArticle(
+      captureAny,
+      imageFile: null,
+    )).captured;
+    expect((captured.single as ArticleEntity).authorDisplayName, 'Anonymous');
+    verifyNoMoreInteractions(mockRepository);
+  });
 }

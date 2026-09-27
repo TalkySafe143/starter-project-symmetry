@@ -1,3 +1,4 @@
+/// Events consumed by [RemoteArticlesBloc].
 abstract class RemoteArticlesEvent {
   const RemoteArticlesEvent();
 }

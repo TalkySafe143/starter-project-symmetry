@@ -4,8 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
+import 'package:news_app_clean_architecture/core/constants/constants.dart';
 import 'package:news_app_clean_architecture/features/auth/data/models/user_profile.model.dart';
 
+/// Firestore/Storage data source for public user profiles at `users/{uid}`.
 @injectable
 class UserProfileFirebaseService {
   static final _log = Logger('UserProfileFirebaseService');
@@ -13,7 +15,7 @@ class UserProfileFirebaseService {
   final FirebaseFirestore _firestoreDb = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  static const String _usersCollection = 'users';
+  static const String _usersCollection = kUsersCollection;
 
   /// Creates the public profile document at `users/{uid}`.
   Future<void> createUserProfile(UserProfileModel profile) async {
@@ -45,7 +47,7 @@ class UserProfileFirebaseService {
 
     final fileName =
         '${DateTime.now().millisecondsSinceEpoch}_${imageFile.uri.pathSegments.last}';
-    final ref = _storage.ref().child('media/avatars/$userId/$fileName');
+    final ref = _storage.ref().child('$kAvatarsFolder/$userId/$fileName');
 
     _log.info('uploadAvatar → uploading avatar for user $userId');
     final task = await ref.putFile(imageFile);

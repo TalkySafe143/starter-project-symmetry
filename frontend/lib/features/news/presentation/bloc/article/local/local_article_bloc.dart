@@ -4,11 +4,12 @@ import 'package:logging/logging.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_event.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_state.dart';
 
-import '../../../../domain/usecases/get_saved_article.dart';
-import '../../../../domain/usecases/remove_article.dart';
-import '../../../../domain/usecases/save_article.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/get_saved_article.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/remove_article.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/save_article.dart';
 
 @injectable
+/// UI state machine for locally saved articles.
 class LocalArticleBloc extends Bloc<LocalArticlesEvent,LocalArticlesState> {
   static final _log = Logger('LocalArticleBloc');
 

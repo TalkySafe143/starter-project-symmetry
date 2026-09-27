@@ -8,9 +8,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:news_app_clean_architecture/injection_container.dart';
 
-import '../../bloc/article/edit/edit_article_bloc.dart';
-import '../../../domain/entities/article.entity.dart';
+import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/edit/edit_article_bloc.dart';
 
+/// Page hosting the edit-article form for one [ArticleEntity].
 class EditArticlePage extends StatelessWidget {
   final ArticleEntity article;
 

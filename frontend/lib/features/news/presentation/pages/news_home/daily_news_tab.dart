@@ -6,9 +6,10 @@ import 'package:news_app_clean_architecture/features/news/presentation/bloc/arti
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_state.dart';
 import 'package:news_app_clean_architecture/injection_container.dart';
 
-import '../../../domain/entities/article.entity.dart';
-import '../../widgets/article_tile.dart';
+import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/widgets/article_tile.dart';
 
+/// Tab showing remote top headlines with save support.
 class DailyNewsTab extends StatelessWidget {
   const DailyNewsTab({super.key});
 

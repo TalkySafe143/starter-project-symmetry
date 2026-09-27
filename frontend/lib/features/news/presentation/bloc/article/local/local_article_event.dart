@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../../domain/entities/article.entity.dart';
+import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
 
+/// Events consumed by [LocalArticleBloc].
 abstract class LocalArticlesEvent extends Equatable {
   final ArticleEntity ? article;
 

@@ -12,6 +12,7 @@ class CommentModel extends CommentEntity {
     required super.createdAt,
   }) : super();
 
+  /// Builds a model from a Firestore JSON map.
   factory CommentModel.fromJson(Map<String, dynamic> json) {
     return CommentModel(
       id: json['id'] as String?,
@@ -34,6 +35,7 @@ class CommentModel extends CommentEntity {
     };
   }
 
+  /// Builds a model from a domain [entity].
   factory CommentModel.fromEntity(CommentEntity entity) {
     return CommentModel(
       id: entity.id,
@@ -45,9 +47,11 @@ class CommentModel extends CommentEntity {
     );
   }
 
+  /// Builds a model from external raw data.
   factory CommentModel.fromRawData(Map<String, dynamic> raw) =>
       CommentModel.fromJson(raw);
 
+  /// Converts this model to its domain [CommentEntity].
   CommentEntity toEntity() {
     return CommentEntity(
       id: id,

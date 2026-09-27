@@ -1,5 +1,6 @@
 import 'package:news_app_clean_architecture/features/auth/domain/entities/user_profile.entity.dart';
 
+/// Data-layer view of [UserProfileEntity] with Firestore JSON parsing.
 class UserProfileModel extends UserProfileEntity {
   const UserProfileModel({
     required super.id,
@@ -7,6 +8,7 @@ class UserProfileModel extends UserProfileEntity {
     super.photoUrl,
   });
 
+  /// Builds a model from a Firestore JSON map.
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
     return UserProfileModel(
       id: json['id'] as String? ?? '',
@@ -23,6 +25,7 @@ class UserProfileModel extends UserProfileEntity {
     };
   }
 
+  /// Builds a model from a domain [entity].
   factory UserProfileModel.fromEntity(UserProfileEntity entity) {
     return UserProfileModel(
       id: entity.id,
@@ -31,9 +34,11 @@ class UserProfileModel extends UserProfileEntity {
     );
   }
 
+  /// Builds a model from external raw data.
   factory UserProfileModel.fromRawData(Map<String, dynamic> raw) =>
       UserProfileModel.fromJson(raw);
 
+  /// Converts this model to its domain [UserProfileEntity].
   UserProfileEntity toEntity() {
     return UserProfileEntity(
       id: id,

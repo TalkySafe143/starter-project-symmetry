@@ -22,6 +22,7 @@ class ArticlesTable extends Table {
 }
 
 @DriftDatabase(tables: [ArticlesTable], daos: [ArticleDao])
+/// Local Drift database for offline saved articles.
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 

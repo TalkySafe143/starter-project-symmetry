@@ -11,6 +11,7 @@ part 'profile_event.dart';
 part 'profile_state.dart';
 
 @injectable
+/// UI state machine for viewing/updating the current user's profile.
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GetCurrentUserUseCase _getCurrentUserUseCase;
   final UpdateUserProfile _updateUserProfile;

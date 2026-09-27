@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import 'article.entity.dart';
 
+/// Business object for a paged news-API response and its articles.
 class NewsApiResponseEntity extends Equatable {
   final String? status;
   final int? totalResults;

@@ -10,8 +10,9 @@ import 'package:news_app_clean_architecture/features/news/presentation/bloc/arti
 import 'package:news_app_clean_architecture/features/news/presentation/widgets/author_avatar.dart';
 import 'package:news_app_clean_architecture/injection_container.dart';
 
-import '../../bloc/profile/profile_bloc.dart';
+import 'package:news_app_clean_architecture/features/auth/presentation/bloc/profile/profile_bloc.dart';
 
+/// Screen for editing display name, avatar, and profile data.
 class EditProfilePage extends StatelessWidget {
   const EditProfilePage({super.key});
 

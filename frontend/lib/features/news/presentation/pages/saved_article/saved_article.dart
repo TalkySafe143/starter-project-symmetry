@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
-import '../../../../../injection_container.dart';
-import '../../../domain/entities/article.entity.dart';
-import '../../bloc/article/avatar/author_avatar_cubit.dart';
-import '../../bloc/article/local/local_article_bloc.dart';
-import '../../bloc/article/local/local_article_event.dart';
-import '../../bloc/article/local/local_article_state.dart';
-import '../../widgets/article_tile.dart';
+import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/avatar/author_avatar_cubit.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_bloc.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_event.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_state.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/widgets/article_tile.dart';
+import 'package:news_app_clean_architecture/injection_container.dart';
 
+/// Screen listing articles saved in the local database.
 class SavedArticles extends HookWidget {
   const SavedArticles({super.key});
 

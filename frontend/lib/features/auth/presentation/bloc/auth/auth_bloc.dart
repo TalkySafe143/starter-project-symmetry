@@ -12,6 +12,7 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 @injectable
+/// UI state machine for authentication; delegates work to auth use cases.
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUseCase _loginUseCase;
   final RegisterUseCase _registerUseCase;

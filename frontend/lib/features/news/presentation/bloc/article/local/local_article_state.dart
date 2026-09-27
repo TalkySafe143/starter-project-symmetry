@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../../domain/entities/article.entity.dart';
+import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
 
+/// UI states emitted by [LocalArticleBloc].
 abstract class LocalArticlesState extends Equatable {
   final List<ArticleEntity> ? articles;
 

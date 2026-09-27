@@ -1,5 +1,6 @@
 part of 'profile_bloc.dart';
 
+/// Events consumed by [ProfileBloc].
 abstract class ProfileEvent extends Equatable {
   const ProfileEvent();
 

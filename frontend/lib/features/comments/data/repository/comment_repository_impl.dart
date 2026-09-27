@@ -7,6 +7,7 @@ import 'package:news_app_clean_architecture/features/comments/domain/entities/co
 import 'package:news_app_clean_architecture/features/comments/domain/repository/comment_repository.dart';
 
 @LazySingleton(as: CommentRepository)
+/// [CommentRepository] implementation over [CommentFirebaseService].
 class CommentRepositoryImpl implements CommentRepository {
   static final _log = Logger('CommentRepositoryImpl');
 
@@ -15,6 +16,7 @@ class CommentRepositoryImpl implements CommentRepository {
   CommentRepositoryImpl(this._firebaseService);
 
   @override
+  /// Loads comments for [articleId] and maps models to entities.
   Future<DataState<List<CommentEntity>>> getArticleComments(
     String articleId,
   ) async {
@@ -28,6 +30,7 @@ class CommentRepositoryImpl implements CommentRepository {
   }
 
   @override
+  /// Persists [comment] to Firestore.
   Future<DataState<void>> postComment(CommentEntity comment) async {
     try {
       await _firebaseService.createComment(
@@ -41,6 +44,7 @@ class CommentRepositoryImpl implements CommentRepository {
   }
 
   @override
+  /// Deletes the comment with [commentId].
   Future<DataState<void>> deleteComment(String commentId) async {
     try {
       await _firebaseService.deleteComment(commentId);

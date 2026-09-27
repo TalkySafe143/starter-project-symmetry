@@ -13,6 +13,7 @@ part 'edit_article_event.dart';
 part 'edit_article_state.dart';
 
 @injectable
+/// UI state machine for editing or deleting a user article.
 class EditArticleBloc extends Bloc<EditArticleEvent, EditArticleState> {
   final UpdateUserArticle _updateUserArticle;
   final DeleteUserArticle _deleteUserArticle;

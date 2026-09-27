@@ -1,5 +1,6 @@
 part of 'author_avatar_cubit.dart';
 
+/// UI states emitted by [AuthorAvatarCubit].
 abstract class AuthorAvatarState extends Equatable {
   const AuthorAvatarState();
 

@@ -27,15 +27,19 @@ import 'package:news_app_clean_architecture/features/comments/domain/usecases/po
 import 'package:news_app_clean_architecture/features/news/domain/usecases/update_user_article.dart';
 
 @module
+/// Injectable module wiring third-party clients and domain use cases.
 abstract class AppModule {
   @singleton
+  /// Provides the shared HTTP client.
   Dio get dio => Dio();
 
   @singleton
+  /// Provides the news API client over [dio].
   NewsApiService newsApiService(Dio dio) => NewsApiService(dio);
 
   /// AppDatabase is synchronous in Drift — no async builder needed.
   @singleton
+  /// Provides the local Drift database.
   AppDatabase get appDatabase => AppDatabase();
 
   /// Domain stays annotation-free per 2.1.1, so its use-cases are exposed

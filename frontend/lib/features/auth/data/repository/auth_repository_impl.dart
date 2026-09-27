@@ -5,6 +5,7 @@ import 'package:news_app_clean_architecture/features/auth/data/data_sources/remo
 import 'package:news_app_clean_architecture/features/auth/domain/entities/user.entity.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/repository/auth_repository.dart';
 
+/// [AuthRepository] implementation delegating to [AuthFirebaseService].
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
   static final _log = Logger('AuthRepositoryImpl');
@@ -17,6 +18,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Stream<UserEntity?> get authStateChanges => _firebaseService.authStateChanges;
 
   @override
+  /// Signs in via Firebase and wraps the user in [DataState].
   Future<DataState<UserEntity>> login({
     required String email,
     required String password,

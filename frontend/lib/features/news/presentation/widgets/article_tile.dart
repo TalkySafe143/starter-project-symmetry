@@ -2,10 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import '../bloc/article/avatar/author_avatar_cubit.dart';
-import '../../domain/entities/article.entity.dart';
-import 'article_author_row.dart';
+import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/avatar/author_avatar_cubit.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/widgets/article_author_row.dart';
 
+/// Reusable article card used by feeds and saved lists.
 class ArticleWidget extends StatelessWidget {
   final ArticleEntity? article;
   final bool? isRemovable;

@@ -1,15 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
+import 'package:news_app_clean_architecture/core/constants/constants.dart';
 import 'package:news_app_clean_architecture/features/comments/data/models/comment.model.dart';
 
+/// Firestore data source for comments in the `comments` collection.
 @injectable
 class CommentFirebaseService {
   static final _log = Logger('CommentFirebaseService');
 
   final FirebaseFirestore _firestoreDb = FirebaseFirestore.instance;
 
-  static const String _commentsCollection = 'comments';
+  static const String _commentsCollection = kCommentsCollection;
 
   /// Returns every comment for [articleId], oldest first by `createdAt`.
   /// Reads are public, so no login is required to call this. Returns an

@@ -1,5 +1,6 @@
 part of 'create_article_bloc.dart';
 
+/// Events consumed by [CreateArticleBloc].
 abstract class CreateArticleEvent extends Equatable {
   const CreateArticleEvent();
 

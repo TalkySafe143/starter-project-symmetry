@@ -12,6 +12,7 @@ part 'comments_event.dart';
 part 'comments_state.dart';
 
 @injectable
+/// UI state machine for loading, posting, and deleting comments.
 class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
   final GetArticleComments _getArticleComments;
   final PostComment _postComment;

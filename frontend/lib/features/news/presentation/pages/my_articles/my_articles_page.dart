@@ -2,12 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
-import '../../../../../injection_container.dart';
-import '../../../domain/entities/article.entity.dart';
-import '../../bloc/article/avatar/author_avatar_cubit.dart';
-import '../../bloc/article/user/user_articles_bloc.dart';
-import '../../widgets/article_tile.dart';
+import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/avatar/author_avatar_cubit.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/user/user_articles_bloc.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/widgets/article_tile.dart';
+import 'package:news_app_clean_architecture/injection_container.dart';
 
+/// Page listing the current user's articles with edit entry points.
 class MyArticlesPage extends StatelessWidget {
   const MyArticlesPage({super.key});
 

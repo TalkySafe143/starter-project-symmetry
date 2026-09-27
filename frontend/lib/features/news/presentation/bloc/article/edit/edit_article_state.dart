@@ -1,5 +1,6 @@
 part of 'edit_article_bloc.dart';
 
+/// UI states emitted by [EditArticleBloc].
 abstract class EditArticleState extends Equatable {
   const EditArticleState();
 

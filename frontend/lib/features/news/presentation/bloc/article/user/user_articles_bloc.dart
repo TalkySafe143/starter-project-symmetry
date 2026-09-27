@@ -10,6 +10,7 @@ part 'user_articles_event.dart';
 part 'user_articles_state.dart';
 
 @injectable
+/// UI state machine for one author's articles.
 class UserArticlesBloc extends Bloc<UserArticlesEvent, UserArticlesState> {
   final GetUserArticles _getUserArticles;
   final GetCurrentUserUseCase _getCurrentUserUseCase;

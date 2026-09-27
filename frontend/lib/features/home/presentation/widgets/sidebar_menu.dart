@@ -6,6 +6,7 @@ import 'package:news_app_clean_architecture/features/auth/domain/entities/user.e
 import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:news_app_clean_architecture/features/auth/presentation/widgets/user_avatar.dart';
 
+/// Reusable drawer menu showing auth state and app destinations.
 class SidebarMenu extends StatelessWidget {
   final VoidCallback? onItemSelected;
 
