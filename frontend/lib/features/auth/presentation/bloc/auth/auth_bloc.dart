@@ -72,7 +72,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (result is DataSuccess && result.data != null) {
       emit(Authenticated(result.data!));
     } else {
-      emit(AuthError(result.errorMessage ?? 'Failed to sign in.'));
+      emit(AuthError('Failed to SigIn'));
     }
   }
 
@@ -102,7 +102,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (result is DataSuccess && result.data != null) {
       emit(Authenticated(result.data!));
     } else {
-      emit(AuthError(result.errorMessage ?? 'Failed to register.'));
+      emit(AuthError('Failed to register.'));
     }
   }
 
