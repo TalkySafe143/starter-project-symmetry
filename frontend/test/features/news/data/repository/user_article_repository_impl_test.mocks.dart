@@ -57,6 +57,19 @@ class MockUserArticlesFirebaseService extends _i1.Mock
       ) as _i4.Future<String?>);
 
   @override
+  _i4.Future<List<_i6.ArticleModel>> getUserArticles(String? userId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserArticles,
+          [userId],
+        ),
+        returnValue:
+            _i4.Future<List<_i6.ArticleModel>>.value(<_i6.ArticleModel>[]),
+        returnValueForMissingStub:
+            _i4.Future<List<_i6.ArticleModel>>.value(<_i6.ArticleModel>[]),
+      ) as _i4.Future<List<_i6.ArticleModel>>);
+
+  @override
   _i4.Future<_i2.DocumentReference<Map<String, dynamic>>> createUserArticle(
           _i6.ArticleModel? article) =>
       (super.noSuchMethod(

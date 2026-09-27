@@ -32,6 +32,24 @@ class UserArticlesFirebaseService {
     return url;
   }
 
+  /// Returns the articles created by [userId], newest first by `publishedAt`.
+  /// Returns an empty list when [userId] is blank instead of querying.
+  Future<List<ArticleModel>> getUserArticles(String userId) async {
+    if (userId.trim().isEmpty) return [];
+
+    _log.info('getUserArticles → querying articles for user $userId');
+    final snapshot = await _firestoreDb
+        .collection(_articlesCollection)
+        .where('authorId', isEqualTo: userId)
+        .orderBy('publishedAt', descending: true)
+        .get();
+
+    final articles =
+        snapshot.docs.map((doc) => ArticleModel.fromJson(doc.data())).toList();
+    _log.info('getUserArticles → found ${articles.length} articles');
+    return articles;
+  }
+
   /// Saves [article] to Firestore. The [article.urlToImage] should already
   /// contain the Storage download URL before calling this.
   Future<DocumentReference<Map<String, dynamic>>> createUserArticle(

@@ -42,8 +42,13 @@ class UserArticleRepositoryImpl implements UserArticleRepository {
   }
 
   @override
-  Future<DataState<ArticleEntity>> getUserArticles(String userId) {
-    // TODO: implement getUserArticles
-    throw UnimplementedError();
+  Future<DataState<List<ArticleEntity>>> getUserArticles(String userId) async {
+    try {
+      final articles = await _firebaseService.getUserArticles(userId);
+      return DataSuccess(articles);
+    } catch (e, st) {
+      _log.severe('getUserArticles → failed', e, st);
+      return DataGenericFailed(e.toString());
+    }
   }
 }

@@ -48,6 +48,15 @@ class SidebarMenu extends StatelessWidget {
               ),
               _buildMenuItem(
                 context,
+                icon: Ionicons.personOutline,
+                title: 'My Articles',
+                onTap: () {
+                  _closeDrawer(context);
+                  Navigator.pushNamed(context, '/MyArticles');
+                },
+              ),
+              _buildMenuItem(
+                context,
                 icon: Ionicons.createOutline,
                 title: 'Write Article',
                 onTap: () {

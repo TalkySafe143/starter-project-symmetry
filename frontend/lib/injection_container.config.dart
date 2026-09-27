@@ -50,6 +50,8 @@ import 'package:news_app_clean_architecture/features/news/domain/usecases/get_ar
     as _i838;
 import 'package:news_app_clean_architecture/features/news/domain/usecases/get_saved_article.dart'
     as _i572;
+import 'package:news_app_clean_architecture/features/news/domain/usecases/get_user_articles.dart'
+    as _i946;
 import 'package:news_app_clean_architecture/features/news/domain/usecases/remove_article.dart'
     as _i1042;
 import 'package:news_app_clean_architecture/features/news/domain/usecases/save_article.dart'
@@ -60,6 +62,8 @@ import 'package:news_app_clean_architecture/features/news/presentation/bloc/arti
     as _i8;
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_bloc.dart'
     as _i933;
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/user/user_articles_bloc.dart'
+    as _i413;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -94,9 +98,15 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i836.RegisterUseCase(gh<_i544.AuthRepository>()));
     gh.lazySingleton<_i508.CreateUserArticle>(
         () => _i508.CreateUserArticle(gh<_i37.UserArticleRepository>()));
+    gh.lazySingleton<_i946.GetUserArticles>(
+        () => _i946.GetUserArticles(gh<_i37.UserArticleRepository>()));
     gh.lazySingleton<_i862.ArticleRepository>(() => _i865.ArticleRepositoryImpl(
           gh<_i893.NewsApiService>(),
           gh<_i924.AppDatabase>(),
+        ));
+    gh.factory<_i413.UserArticlesBloc>(() => _i413.UserArticlesBloc(
+          gh<_i946.GetUserArticles>(),
+          gh<_i119.GetCurrentUserUseCase>(),
         ));
     gh.lazySingleton<_i838.GetArticleUseCase>(
         () => _i838.GetArticleUseCase(gh<_i862.ArticleRepository>()));

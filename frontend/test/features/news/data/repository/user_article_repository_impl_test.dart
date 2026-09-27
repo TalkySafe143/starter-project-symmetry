@@ -114,11 +114,47 @@ void main() {
   });
 
   group('getUserArticles', () {
-    test('should throw UnimplementedError', () {
-      expect(
-        () => repository.getUserArticles('user-123'),
-        throwsA(isA<UnimplementedError>()),
-      );
+    final tModels = [
+      const ArticleModel(
+        id: '2',
+        authorDisplayName: 'John Doe',
+        title: 'Newer',
+        urlToImage: 'https://example.com/newer.jpg',
+        publishedAt: '2026-09-27T10:00:00Z',
+        content: 'Newer content',
+        authorId: 'user-123',
+      ),
+      const ArticleModel(
+        id: '1',
+        authorDisplayName: 'John Doe',
+        title: 'Older',
+        urlToImage: 'https://example.com/older.jpg',
+        publishedAt: '2026-09-26T10:00:00Z',
+        content: 'Older content',
+        authorId: 'user-123',
+      ),
+    ];
+
+    test('should return articles from the firebase service', () async {
+      when(mockFirebaseService.getUserArticles('user-123'))
+          .thenAnswer((_) async => tModels);
+
+      final result = await repository.getUserArticles('user-123');
+
+      expect(result, isA<DataSuccess<List<ArticleEntity>>>());
+      expect(result.data, hasLength(2));
+      expect(result.data!.first.title, 'Newer');
+      verify(mockFirebaseService.getUserArticles('user-123')).called(1);
+    });
+
+    test('should return DataGenericFailed when the service throws', () async {
+      when(mockFirebaseService.getUserArticles('user-123'))
+          .thenThrow(Exception('Firestore read failed'));
+
+      final result = await repository.getUserArticles('user-123');
+
+      expect(result, isA<DataGenericFailed<List<ArticleEntity>>>());
+      expect(result.errorMessage, contains('Firestore read failed'));
     });
   });
 }

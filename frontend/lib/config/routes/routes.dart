@@ -7,6 +7,7 @@ import '../../features/news/domain/entities/article.entity.dart';
 import '../../features/news/presentation/pages/article_detail/article_detail.dart';
 import '../../features/news/presentation/pages/create_article/create_article_page.dart';
 import '../../features/news/presentation/pages/home/daily_news.dart';
+import '../../features/news/presentation/pages/my_articles/my_articles_page.dart';
 import '../../features/news/presentation/pages/saved_article/saved_article.dart';
 
 class AppRoutes {
@@ -20,6 +21,9 @@ class AppRoutes {
 
       case '/SavedArticles':
         return _materialRoute(const SavedArticles());
+
+      case '/MyArticles':
+        return _materialRoute(const MyArticlesPage());
 
       case '/CreateArticle':
         return _materialRoute(const CreateArticlePage());
