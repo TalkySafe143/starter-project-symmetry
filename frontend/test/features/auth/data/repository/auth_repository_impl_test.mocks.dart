@@ -140,4 +140,32 @@ class MockAuthFirebaseService extends _i1.Mock
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<_i2.UserModel?> updateAuthProfile({
+    String? displayName,
+    String? photoUrl,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateAuthProfile,
+          [],
+          {
+            #displayName: displayName,
+            #photoUrl: photoUrl,
+          },
+        ),
+        returnValue: _i4.Future<_i2.UserModel?>.value(),
+        returnValueForMissingStub: _i4.Future<_i2.UserModel?>.value(),
+      ) as _i4.Future<_i2.UserModel?>);
+
+  @override
+  _i4.Future<void> deleteCurrentUser() => (super.noSuchMethod(
+        Invocation.method(
+          #deleteCurrentUser,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }

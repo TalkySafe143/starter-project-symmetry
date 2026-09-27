@@ -4,18 +4,28 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /articles/{articleId} {
-      allow read: if true; 
+      allow read: if true;
       allow create, update: if isValidArticle(request.resource.data);
       allow delete: if request.auth != null
         && request.auth.uid == resource.data.authorId;
+    }
+
+    match /users/{userId} {
+      // Public profile: anyone can read names/avatars for article cards,
+      // but only the owner can create or modify their own document.
+      // NOTE: never store the email here — it stays in Firebase Auth.
+      allow read: if true;
+      allow create, update: if request.auth != null
+        && request.auth.uid == userId
+        && isValidUserProfile(request.resource.data);
+      allow delete: if false;
     }
   }
 
   function isValidArticle(data) {
     return data.keys().hasOnly([
         'id', 'author', 'title',
-        'urlToImage', 'publishedAt', 'content', 'authorId',
-        'authorPhotoUrl'
+        'urlToImage', 'publishedAt', 'content', 'authorId'
       ])
       && isValidStringOrNull(data, 'id')
       && isValidStringOrNull(data, 'author')
@@ -23,8 +33,14 @@ service cloud.firestore {
       && isValidStringOrNull(data, 'urlToImage')
       && isValidStringOrNull(data, 'publishedAt')
       && isValidStringOrNull(data, 'content')
-      && isValidStringOrNull(data, 'authorId')
-      && isValidStringOrNull(data, 'authorPhotoUrl');
+      && isValidStringOrNull(data, 'authorId');
+  }
+
+  function isValidUserProfile(data) {
+    return data.keys().hasOnly(['id', 'displayName', 'photoUrl'])
+      && isValidStringOrNull(data, 'id')
+      && isValidStringOrNull(data, 'displayName')
+      && isValidStringOrNull(data, 'photoUrl');
   }
 
   function isValidStringOrNull(data, field) {

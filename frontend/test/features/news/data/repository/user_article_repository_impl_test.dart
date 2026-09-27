@@ -203,35 +203,4 @@ void main() {
     });
   });
 
-  group('updateAuthorPhotoUrl', () {
-    test('should return how many articles the service refreshed', () async {
-      when(mockFirebaseService.updateAuthorPhotoUrl(
-        'user-123',
-        'https://example.com/new-avatar.jpg',
-      )).thenAnswer((_) async => 2);
-
-      final result = await repository.updateAuthorPhotoUrl(
-        'user-123',
-        'https://example.com/new-avatar.jpg',
-      );
-
-      expect(result, isA<DataSuccess<int>>());
-      expect(result.data, 2);
-      verify(mockFirebaseService.updateAuthorPhotoUrl(
-        'user-123',
-        'https://example.com/new-avatar.jpg',
-      )).called(1);
-    });
-
-    test('should return DataGenericFailed when the service throws', () async {
-      when(mockFirebaseService.updateAuthorPhotoUrl('user-123', null))
-          .thenThrow(Exception('Firestore write failed'));
-
-      final result =
-          await repository.updateAuthorPhotoUrl('user-123', null);
-
-      expect(result, isA<DataGenericFailed<int>>());
-      expect(result.errorMessage, contains('Firestore write failed'));
-    });
-  });
 }

@@ -154,7 +154,7 @@ class ArticleWidget extends StatelessWidget {
       child: Row(
         children: [
           AuthorAvatar(
-            photoUrl: article?.authorPhotoUrl,
+            authorId: article?.authorId,
             radius: 10,
           ),
           const SizedBox(width: 6),

@@ -1,4 +1,5 @@
 import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
@@ -84,19 +85,7 @@ class NewsHomePage extends StatelessWidget {
             child: Center(
               child: Stack(
                 children: [
-                  CircleAvatar(
-                    radius: 15,
-                    backgroundColor:
-                        isLoggedIn ? Colors.black87 : Colors.black12,
-                    child: Text(
-                      _avatarLetter(isLoggedIn, user),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: isLoggedIn ? Colors.white : Colors.black54,
-                      ),
-                    ),
-                  ),
+                  _buildAvatar(isLoggedIn, user),
                   Positioned(
                     bottom: 0,
                     right: 0,
@@ -116,6 +105,28 @@ class NewsHomePage extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildAvatar(bool isLoggedIn, UserEntity? user) {
+    if (isLoggedIn && user?.photoUrl?.isNotEmpty == true) {
+      return CircleAvatar(
+        radius: 15,
+        backgroundColor: Colors.black87,
+        backgroundImage: CachedNetworkImageProvider(user!.photoUrl!),
+      );
+    }
+    return CircleAvatar(
+      radius: 15,
+      backgroundColor: isLoggedIn ? Colors.black87 : Colors.black12,
+      child: Text(
+        _avatarLetter(isLoggedIn, user),
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: isLoggedIn ? Colors.white : Colors.black54,
+        ),
+      ),
     );
   }
 

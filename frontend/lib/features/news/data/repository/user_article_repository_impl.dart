@@ -53,19 +53,6 @@ class UserArticleRepositoryImpl implements UserArticleRepository {
   }
 
   @override
-  Future<DataState<int>> updateAuthorPhotoUrl(
-      String userId, String? photoUrl) async {
-    try {
-      final updated =
-          await _firebaseService.updateAuthorPhotoUrl(userId, photoUrl);
-      return DataSuccess(updated);
-    } catch (e, st) {
-      _log.severe('updateAuthorPhotoUrl → failed', e, st);
-      return DataGenericFailed(e.toString());
-    }
-  }
-
-  @override
   Future<DataState<List<ArticleEntity>>> getUserArticles(String userId) async {
     try {
       final articles = await _firebaseService.getUserArticles(userId);

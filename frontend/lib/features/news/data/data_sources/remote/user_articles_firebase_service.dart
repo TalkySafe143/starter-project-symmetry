@@ -66,30 +66,6 @@ class UserArticlesFirebaseService {
     return articles;
   }
 
-  /// Overwrites `authorPhotoUrl` on every article by [userId] with [photoUrl].
-  /// Call this after the user changes their profile photo so the snapshots
-  /// stored on their articles stop being stale. Returns the number of
-  /// articles updated, or 0 when [userId] is blank.
-  Future<int> updateAuthorPhotoUrl(String userId, String? photoUrl) async {
-    if (userId.trim().isEmpty) return 0;
-
-    _log.info('updateAuthorPhotoUrl → refreshing articles for user $userId');
-    final snapshot = await _firestoreDb
-        .collection(_articlesCollection)
-        .where('authorId', isEqualTo: userId)
-        .get();
-
-    final batch = _firestoreDb.batch();
-    for (final doc in snapshot.docs) {
-      batch.update(doc.reference, {'authorPhotoUrl': photoUrl});
-    }
-    await batch.commit();
-
-    _log.info(
-        'updateAuthorPhotoUrl → updated ${snapshot.docs.length} articles');
-    return snapshot.docs.length;
-  }
-
   /// Saves [article] to Firestore. The [article.urlToImage] should already
   /// contain the Storage download URL before calling this.
   Future<DocumentReference<Map<String, dynamic>>> createUserArticle(

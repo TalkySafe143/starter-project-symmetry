@@ -49,12 +49,6 @@ class $ArticlesTableTable extends ArticlesTable
   late final GeneratedColumn<String> authorId = GeneratedColumn<String>(
       'author_id', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _authorPhotoUrlMeta =
-      const VerificationMeta('authorPhotoUrl');
-  @override
-  late final GeneratedColumn<String> authorPhotoUrl = GeneratedColumn<String>(
-      'author_photo_url', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -63,8 +57,7 @@ class $ArticlesTableTable extends ArticlesTable
         urlToImage,
         publishedAt,
         content,
-        authorId,
-        authorPhotoUrl
+        authorId
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -109,12 +102,6 @@ class $ArticlesTableTable extends ArticlesTable
       context.handle(_authorIdMeta,
           authorId.isAcceptableOrUnknown(data['author_id']!, _authorIdMeta));
     }
-    if (data.containsKey('author_photo_url')) {
-      context.handle(
-          _authorPhotoUrlMeta,
-          authorPhotoUrl.isAcceptableOrUnknown(
-              data['author_photo_url']!, _authorPhotoUrlMeta));
-    }
     return context;
   }
 
@@ -138,8 +125,6 @@ class $ArticlesTableTable extends ArticlesTable
           .read(DriftSqlType.string, data['${effectivePrefix}content']),
       authorId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}author_id']),
-      authorPhotoUrl: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}author_photo_url']),
     );
   }
 
@@ -158,7 +143,6 @@ class ArticlesTableData extends DataClass
   final String? publishedAt;
   final String? content;
   final String? authorId;
-  final String? authorPhotoUrl;
   const ArticlesTableData(
       {this.id,
       this.authorDisplayName,
@@ -166,8 +150,7 @@ class ArticlesTableData extends DataClass
       this.urlToImage,
       this.publishedAt,
       this.content,
-      this.authorId,
-      this.authorPhotoUrl});
+      this.authorId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -192,9 +175,6 @@ class ArticlesTableData extends DataClass
     if (!nullToAbsent || authorId != null) {
       map['author_id'] = Variable<String>(authorId);
     }
-    if (!nullToAbsent || authorPhotoUrl != null) {
-      map['author_photo_url'] = Variable<String>(authorPhotoUrl);
-    }
     return map;
   }
 
@@ -218,9 +198,6 @@ class ArticlesTableData extends DataClass
       authorId: authorId == null && nullToAbsent
           ? const Value.absent()
           : Value(authorId),
-      authorPhotoUrl: authorPhotoUrl == null && nullToAbsent
-          ? const Value.absent()
-          : Value(authorPhotoUrl),
     );
   }
 
@@ -236,7 +213,6 @@ class ArticlesTableData extends DataClass
       publishedAt: serializer.fromJson<String?>(json['publishedAt']),
       content: serializer.fromJson<String?>(json['content']),
       authorId: serializer.fromJson<String?>(json['authorId']),
-      authorPhotoUrl: serializer.fromJson<String?>(json['authorPhotoUrl']),
     );
   }
   @override
@@ -250,7 +226,6 @@ class ArticlesTableData extends DataClass
       'publishedAt': serializer.toJson<String?>(publishedAt),
       'content': serializer.toJson<String?>(content),
       'authorId': serializer.toJson<String?>(authorId),
-      'authorPhotoUrl': serializer.toJson<String?>(authorPhotoUrl),
     };
   }
 
@@ -261,8 +236,7 @@ class ArticlesTableData extends DataClass
           Value<String?> urlToImage = const Value.absent(),
           Value<String?> publishedAt = const Value.absent(),
           Value<String?> content = const Value.absent(),
-          Value<String?> authorId = const Value.absent(),
-          Value<String?> authorPhotoUrl = const Value.absent()}) =>
+          Value<String?> authorId = const Value.absent()}) =>
       ArticlesTableData(
         id: id.present ? id.value : this.id,
         authorDisplayName: authorDisplayName.present
@@ -273,8 +247,6 @@ class ArticlesTableData extends DataClass
         publishedAt: publishedAt.present ? publishedAt.value : this.publishedAt,
         content: content.present ? content.value : this.content,
         authorId: authorId.present ? authorId.value : this.authorId,
-        authorPhotoUrl:
-            authorPhotoUrl.present ? authorPhotoUrl.value : this.authorPhotoUrl,
       );
   ArticlesTableData copyWithCompanion(ArticlesTableCompanion data) {
     return ArticlesTableData(
@@ -289,9 +261,6 @@ class ArticlesTableData extends DataClass
           data.publishedAt.present ? data.publishedAt.value : this.publishedAt,
       content: data.content.present ? data.content.value : this.content,
       authorId: data.authorId.present ? data.authorId.value : this.authorId,
-      authorPhotoUrl: data.authorPhotoUrl.present
-          ? data.authorPhotoUrl.value
-          : this.authorPhotoUrl,
     );
   }
 
@@ -304,15 +273,14 @@ class ArticlesTableData extends DataClass
           ..write('urlToImage: $urlToImage, ')
           ..write('publishedAt: $publishedAt, ')
           ..write('content: $content, ')
-          ..write('authorId: $authorId, ')
-          ..write('authorPhotoUrl: $authorPhotoUrl')
+          ..write('authorId: $authorId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, authorDisplayName, title, urlToImage,
-      publishedAt, content, authorId, authorPhotoUrl);
+  int get hashCode => Object.hash(
+      id, authorDisplayName, title, urlToImage, publishedAt, content, authorId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -323,8 +291,7 @@ class ArticlesTableData extends DataClass
           other.urlToImage == this.urlToImage &&
           other.publishedAt == this.publishedAt &&
           other.content == this.content &&
-          other.authorId == this.authorId &&
-          other.authorPhotoUrl == this.authorPhotoUrl);
+          other.authorId == this.authorId);
 }
 
 class ArticlesTableCompanion extends UpdateCompanion<ArticlesTableData> {
@@ -335,7 +302,6 @@ class ArticlesTableCompanion extends UpdateCompanion<ArticlesTableData> {
   final Value<String?> publishedAt;
   final Value<String?> content;
   final Value<String?> authorId;
-  final Value<String?> authorPhotoUrl;
   final Value<int> rowid;
   const ArticlesTableCompanion({
     this.id = const Value.absent(),
@@ -345,7 +311,6 @@ class ArticlesTableCompanion extends UpdateCompanion<ArticlesTableData> {
     this.publishedAt = const Value.absent(),
     this.content = const Value.absent(),
     this.authorId = const Value.absent(),
-    this.authorPhotoUrl = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ArticlesTableCompanion.insert({
@@ -356,7 +321,6 @@ class ArticlesTableCompanion extends UpdateCompanion<ArticlesTableData> {
     this.publishedAt = const Value.absent(),
     this.content = const Value.absent(),
     this.authorId = const Value.absent(),
-    this.authorPhotoUrl = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   static Insertable<ArticlesTableData> custom({
@@ -367,7 +331,6 @@ class ArticlesTableCompanion extends UpdateCompanion<ArticlesTableData> {
     Expression<String>? publishedAt,
     Expression<String>? content,
     Expression<String>? authorId,
-    Expression<String>? authorPhotoUrl,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -378,7 +341,6 @@ class ArticlesTableCompanion extends UpdateCompanion<ArticlesTableData> {
       if (publishedAt != null) 'published_at': publishedAt,
       if (content != null) 'content': content,
       if (authorId != null) 'author_id': authorId,
-      if (authorPhotoUrl != null) 'author_photo_url': authorPhotoUrl,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -391,7 +353,6 @@ class ArticlesTableCompanion extends UpdateCompanion<ArticlesTableData> {
       Value<String?>? publishedAt,
       Value<String?>? content,
       Value<String?>? authorId,
-      Value<String?>? authorPhotoUrl,
       Value<int>? rowid}) {
     return ArticlesTableCompanion(
       id: id ?? this.id,
@@ -401,7 +362,6 @@ class ArticlesTableCompanion extends UpdateCompanion<ArticlesTableData> {
       publishedAt: publishedAt ?? this.publishedAt,
       content: content ?? this.content,
       authorId: authorId ?? this.authorId,
-      authorPhotoUrl: authorPhotoUrl ?? this.authorPhotoUrl,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -430,9 +390,6 @@ class ArticlesTableCompanion extends UpdateCompanion<ArticlesTableData> {
     if (authorId.present) {
       map['author_id'] = Variable<String>(authorId.value);
     }
-    if (authorPhotoUrl.present) {
-      map['author_photo_url'] = Variable<String>(authorPhotoUrl.value);
-    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -449,7 +406,6 @@ class ArticlesTableCompanion extends UpdateCompanion<ArticlesTableData> {
           ..write('publishedAt: $publishedAt, ')
           ..write('content: $content, ')
           ..write('authorId: $authorId, ')
-          ..write('authorPhotoUrl: $authorPhotoUrl, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -477,7 +433,6 @@ typedef $$ArticlesTableTableCreateCompanionBuilder = ArticlesTableCompanion
   Value<String?> publishedAt,
   Value<String?> content,
   Value<String?> authorId,
-  Value<String?> authorPhotoUrl,
   Value<int> rowid,
 });
 typedef $$ArticlesTableTableUpdateCompanionBuilder = ArticlesTableCompanion
@@ -489,7 +444,6 @@ typedef $$ArticlesTableTableUpdateCompanionBuilder = ArticlesTableCompanion
   Value<String?> publishedAt,
   Value<String?> content,
   Value<String?> authorId,
-  Value<String?> authorPhotoUrl,
   Value<int> rowid,
 });
 
@@ -523,10 +477,6 @@ class $$ArticlesTableTableFilterComposer
 
   ColumnFilters<String> get authorId => $composableBuilder(
       column: $table.authorId, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get authorPhotoUrl => $composableBuilder(
-      column: $table.authorPhotoUrl,
-      builder: (column) => ColumnFilters(column));
 }
 
 class $$ArticlesTableTableOrderingComposer
@@ -559,10 +509,6 @@ class $$ArticlesTableTableOrderingComposer
 
   ColumnOrderings<String> get authorId => $composableBuilder(
       column: $table.authorId, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get authorPhotoUrl => $composableBuilder(
-      column: $table.authorPhotoUrl,
-      builder: (column) => ColumnOrderings(column));
 }
 
 class $$ArticlesTableTableAnnotationComposer
@@ -594,9 +540,6 @@ class $$ArticlesTableTableAnnotationComposer
 
   GeneratedColumn<String> get authorId =>
       $composableBuilder(column: $table.authorId, builder: (column) => column);
-
-  GeneratedColumn<String> get authorPhotoUrl => $composableBuilder(
-      column: $table.authorPhotoUrl, builder: (column) => column);
 }
 
 class $$ArticlesTableTableTableManager extends RootTableManager<
@@ -632,7 +575,6 @@ class $$ArticlesTableTableTableManager extends RootTableManager<
             Value<String?> publishedAt = const Value.absent(),
             Value<String?> content = const Value.absent(),
             Value<String?> authorId = const Value.absent(),
-            Value<String?> authorPhotoUrl = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               ArticlesTableCompanion(
@@ -643,7 +585,6 @@ class $$ArticlesTableTableTableManager extends RootTableManager<
             publishedAt: publishedAt,
             content: content,
             authorId: authorId,
-            authorPhotoUrl: authorPhotoUrl,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -654,7 +595,6 @@ class $$ArticlesTableTableTableManager extends RootTableManager<
             Value<String?> publishedAt = const Value.absent(),
             Value<String?> content = const Value.absent(),
             Value<String?> authorId = const Value.absent(),
-            Value<String?> authorPhotoUrl = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               ArticlesTableCompanion.insert(
@@ -665,7 +605,6 @@ class $$ArticlesTableTableTableManager extends RootTableManager<
             publishedAt: publishedAt,
             content: content,
             authorId: authorId,
-            authorPhotoUrl: authorPhotoUrl,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0

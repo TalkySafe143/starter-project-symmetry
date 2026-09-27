@@ -7,6 +7,9 @@ import 'package:news_app_clean_architecture/core/resources/data_state.dart';
 import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
 import 'package:news_app_clean_architecture/features/news/domain/usecases/get_all_user_articles.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/entities/user_profile.entity.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/get_author_profile.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/avatar/author_avatar_cubit.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/community/community_articles_bloc.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_bloc.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_state.dart';
@@ -49,6 +52,11 @@ void main() {
     mockGetAllUserArticles = MockGetAllUserArticles();
     sl.registerFactory<CommunityArticlesBloc>(
       () => CommunityArticlesBloc(mockGetAllUserArticles),
+    );
+    // Avatar resolution is not under test here: the stub answers "no
+    // photo" so every card falls back to the silhouette without Firestore.
+    sl.registerFactory<AuthorAvatarCubit>(
+      () => AuthorAvatarCubit(_StubGetAuthorProfile()),
     );
   });
 
@@ -109,4 +117,12 @@ void main() {
 
     expect(find.text('NO COMMUNITY ARTICLES YET'), findsOneWidget);
   });
+}
+
+class _StubGetAuthorProfile extends Fake implements GetAuthorProfile {
+  @override
+  Future<DataState<UserProfileEntity?>> call(
+      {GetAuthorProfileParams? params}) async {
+    return const DataSuccess(null);
+  }
 }

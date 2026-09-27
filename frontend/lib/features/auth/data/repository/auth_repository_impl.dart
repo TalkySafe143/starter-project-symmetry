@@ -66,6 +66,34 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<DataState<UserEntity?>> updateCurrentUserProfile({
+    String? displayName,
+    String? photoUrl,
+  }) async {
+    try {
+      final user = await _firebaseService.updateAuthProfile(
+        displayName: displayName,
+        photoUrl: photoUrl,
+      );
+      return DataSuccess(user);
+    } catch (e, st) {
+      _log.severe('updateCurrentUserProfile → failed', e, st);
+      return DataGenericFailed(e.toString());
+    }
+  }
+
+  @override
+  Future<DataState<void>> deleteCurrentUser() async {
+    try {
+      await _firebaseService.deleteCurrentUser();
+      return const DataSuccess(null);
+    } catch (e, st) {
+      _log.severe('deleteCurrentUser → failed', e, st);
+      return DataGenericFailed(e.toString());
+    }
+  }
+
+  @override
   Future<DataState<UserEntity?>> getCurrentUser() async {
     try {
       final user = _firebaseService.currentUser;

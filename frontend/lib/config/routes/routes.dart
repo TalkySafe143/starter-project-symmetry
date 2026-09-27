@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../features/auth/presentation/pages/edit_profile/edit_profile_page.dart';
 import '../../features/auth/presentation/pages/login/login_page.dart';
 import '../../features/auth/presentation/pages/register/register_page.dart';
 import '../../features/home/presentation/pages/main_layout.dart';
@@ -32,6 +33,9 @@ class AppRoutes {
 
       case '/Register':
         return _materialRoute(const RegisterPage());
+
+      case '/EditProfile':
+        return _materialRoute(const EditProfilePage());
 
       default:
         return _materialRoute(const MainLayout());

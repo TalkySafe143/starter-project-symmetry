@@ -77,6 +77,35 @@ class AuthFirebaseService {
     await _firebaseAuth.signOut();
   }
 
+  /// Updates the Firebase Auth display name and photo URL of the current
+  /// user so the auth state mirrors the public profile. Returns the fresh
+  /// user, or null when nobody is signed in.
+  Future<UserModel?> updateAuthProfile({
+    String? displayName,
+    String? photoUrl,
+  }) async {
+    final user = _firebaseAuth.currentUser;
+    if (user == null) return null;
+
+    _log.info('updateAuthProfile');
+    if (displayName != null) {
+      await user.updateDisplayName(displayName.trim());
+    }
+    if (photoUrl != null) {
+      await user.updatePhotoURL(photoUrl);
+    }
+    await user.reload();
+    final updated = _firebaseAuth.currentUser ?? user;
+    return UserModel.fromFirebase(updated);
+  }
+
+  /// Deletes the currently signed-in user, or does nothing when signed out.
+  /// Deleting also signs the user out on this device.
+  Future<void> deleteCurrentUser() async {
+    _log.info('deleteCurrentUser');
+    await _firebaseAuth.currentUser?.delete();
+  }
+
   String _handleFirebaseAuthException(fb.FirebaseAuthException e) {
     switch (e.code) {
       case 'user-not-found':

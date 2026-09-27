@@ -1,7 +1,9 @@
 import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/entities/user.entity.dart';
 import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth/auth_bloc.dart';
 
 class SidebarMenu extends StatelessWidget {
@@ -75,37 +77,28 @@ class SidebarMenu extends StatelessWidget {
     );
   }
 
+  void _onHeaderTapped(BuildContext context, bool isLoggedIn) {
+    _closeDrawer(context);
+    Navigator.pushNamed(context, isLoggedIn ? '/EditProfile' : '/Login');
+  }
+
   Widget _buildHeader(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         final isLoggedIn = state is Authenticated;
         final user = isLoggedIn ? state.user : null;
 
-        return Column(
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => _onHeaderTapped(context, isLoggedIn),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Stack(
                   children: [
-                    CircleAvatar(
-                      radius: 26,
-                      backgroundColor: Colors.white12,
-                      child: Text(
-                        isLoggedIn
-                            ? (user!.displayName?.isNotEmpty == true
-                                ? user.displayName![0].toUpperCase()
-                                : user.email.isNotEmpty
-                                    ? user.email[0].toUpperCase()
-                                    : 'U')
-                            : 'G',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                    _buildAvatar(isLoggedIn, user),
                     Positioned(
                       bottom: 0,
                       right: 0,
@@ -195,9 +188,41 @@ class SidebarMenu extends StatelessWidget {
               ),
             ),
           ],
+          ),
         );
       },
     );
+  }
+
+  Widget _buildAvatar(bool isLoggedIn, UserEntity? user) {
+    if (isLoggedIn && user?.photoUrl?.isNotEmpty == true) {
+      return CircleAvatar(
+        radius: 26,
+        backgroundColor: Colors.white12,
+        backgroundImage: CachedNetworkImageProvider(user!.photoUrl!),
+      );
+    }
+    return CircleAvatar(
+      radius: 26,
+      backgroundColor: Colors.white12,
+      child: Text(
+        _avatarLetter(isLoggedIn, user),
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  String _avatarLetter(bool isLoggedIn, UserEntity? user) {
+    if (!isLoggedIn || user == null) return 'G';
+    if (user.displayName?.isNotEmpty == true) {
+      return user.displayName![0].toUpperCase();
+    }
+    if (user.email.isNotEmpty) return user.email[0].toUpperCase();
+    return 'U';
   }
 
   Widget _buildMenuItem(

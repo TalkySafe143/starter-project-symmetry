@@ -88,7 +88,7 @@ class ArticleDetailsView extends HookWidget {
       child: Row(
         children: [
           AuthorAvatar(
-            photoUrl: article?.authorPhotoUrl,
+            authorId: article?.authorId,
             radius: 16,
           ),
           const SizedBox(width: 10),

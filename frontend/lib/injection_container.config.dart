@@ -16,10 +16,18 @@ import 'package:injectable/injectable.dart' as _i526;
 import 'package:news_app_clean_architecture/core/di/app_module.dart' as _i904;
 import 'package:news_app_clean_architecture/features/auth/data/data_sources/remote/auth_firebase_service.dart'
     as _i123;
+import 'package:news_app_clean_architecture/features/auth/data/data_sources/remote/user_profile_firebase_service.dart'
+    as _i1017;
 import 'package:news_app_clean_architecture/features/auth/data/repository/auth_repository_impl.dart'
     as _i884;
+import 'package:news_app_clean_architecture/features/auth/data/repository/user_profile_repository_impl.dart'
+    as _i679;
 import 'package:news_app_clean_architecture/features/auth/domain/repository/auth_repository.dart'
     as _i544;
+import 'package:news_app_clean_architecture/features/auth/domain/repository/user_profile_repository.dart'
+    as _i706;
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/get_author_profile.dart'
+    as _i557;
 import 'package:news_app_clean_architecture/features/auth/domain/usecases/get_current_user_usecase.dart'
     as _i119;
 import 'package:news_app_clean_architecture/features/auth/domain/usecases/login_usecase.dart'
@@ -28,8 +36,12 @@ import 'package:news_app_clean_architecture/features/auth/domain/usecases/logout
     as _i537;
 import 'package:news_app_clean_architecture/features/auth/domain/usecases/register_usecase.dart'
     as _i836;
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/update_user_profile.dart'
+    as _i269;
 import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth/auth_bloc.dart'
     as _i730;
+import 'package:news_app_clean_architecture/features/auth/presentation/bloc/profile/profile_bloc.dart'
+    as _i298;
 import 'package:news_app_clean_architecture/features/news/data/data_sources/local/app_database.dart'
     as _i924;
 import 'package:news_app_clean_architecture/features/news/data/data_sources/remote/news_api_service.dart'
@@ -58,8 +70,8 @@ import 'package:news_app_clean_architecture/features/news/domain/usecases/remove
     as _i1042;
 import 'package:news_app_clean_architecture/features/news/domain/usecases/save_article.dart'
     as _i150;
-import 'package:news_app_clean_architecture/features/news/domain/usecases/update_author_photo_url.dart'
-    as _i454;
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/avatar/author_avatar_cubit.dart'
+    as _i7;
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/community/community_articles_bloc.dart'
     as _i785;
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/create/create_article_bloc.dart'
@@ -84,6 +96,8 @@ extension GetItInjectableX on _i174.GetIt {
     );
     final appModule = _$AppModule();
     gh.factory<_i123.AuthFirebaseService>(() => _i123.AuthFirebaseService());
+    gh.factory<_i1017.UserProfileFirebaseService>(
+        () => _i1017.UserProfileFirebaseService());
     gh.factory<_i1.UserArticlesFirebaseService>(
         () => _i1.UserArticlesFirebaseService());
     gh.singleton<_i361.Dio>(() => appModule.dio);
@@ -92,24 +106,35 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i884.AuthRepositoryImpl(gh<_i123.AuthFirebaseService>()));
     gh.singleton<_i893.NewsApiService>(
         () => appModule.newsApiService(gh<_i361.Dio>()));
+    gh.lazySingleton<_i706.UserProfileRepository>(() =>
+        _i679.UserProfileRepositoryImpl(
+            gh<_i1017.UserProfileFirebaseService>()));
     gh.lazySingleton<_i37.UserArticleRepository>(() =>
         _i401.UserArticleRepositoryImpl(gh<_i1.UserArticlesFirebaseService>()));
+    gh.lazySingleton<_i557.GetAuthorProfile>(
+        () => _i557.GetAuthorProfile(gh<_i706.UserProfileRepository>()));
     gh.lazySingleton<_i119.GetCurrentUserUseCase>(
         () => _i119.GetCurrentUserUseCase(gh<_i544.AuthRepository>()));
     gh.lazySingleton<_i616.LoginUseCase>(
         () => _i616.LoginUseCase(gh<_i544.AuthRepository>()));
     gh.lazySingleton<_i537.LogoutUseCase>(
         () => _i537.LogoutUseCase(gh<_i544.AuthRepository>()));
-    gh.lazySingleton<_i836.RegisterUseCase>(
-        () => _i836.RegisterUseCase(gh<_i544.AuthRepository>()));
+    gh.factory<_i7.AuthorAvatarCubit>(
+        () => _i7.AuthorAvatarCubit(gh<_i557.GetAuthorProfile>()));
     gh.lazySingleton<_i508.CreateUserArticle>(
         () => _i508.CreateUserArticle(gh<_i37.UserArticleRepository>()));
     gh.lazySingleton<_i629.GetAllUserArticles>(
         () => _i629.GetAllUserArticles(gh<_i37.UserArticleRepository>()));
     gh.lazySingleton<_i946.GetUserArticles>(
         () => _i946.GetUserArticles(gh<_i37.UserArticleRepository>()));
-    gh.lazySingleton<_i454.UpdateAuthorPhotoUrl>(
-        () => _i454.UpdateAuthorPhotoUrl(gh<_i37.UserArticleRepository>()));
+    gh.lazySingleton<_i836.RegisterUseCase>(() => _i836.RegisterUseCase(
+          gh<_i544.AuthRepository>(),
+          gh<_i706.UserProfileRepository>(),
+        ));
+    gh.lazySingleton<_i269.UpdateUserProfile>(() => _i269.UpdateUserProfile(
+          gh<_i544.AuthRepository>(),
+          gh<_i706.UserProfileRepository>(),
+        ));
     gh.lazySingleton<_i862.ArticleRepository>(() => _i865.ArticleRepositoryImpl(
           gh<_i893.NewsApiService>(),
           gh<_i924.AppDatabase>(),
@@ -145,6 +170,10 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.factory<_i933.RemoteArticlesBloc>(
         () => _i933.RemoteArticlesBloc(gh<_i838.GetArticleUseCase>()));
+    gh.factory<_i298.ProfileBloc>(() => _i298.ProfileBloc(
+          gh<_i119.GetCurrentUserUseCase>(),
+          gh<_i269.UpdateUserProfile>(),
+        ));
     return this;
   }
 }

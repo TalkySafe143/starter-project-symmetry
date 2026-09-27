@@ -122,4 +122,39 @@ void main() {
       expect(result.data, tUserModel);
     });
   });
+
+  group('updateCurrentUserProfile', () {
+    test('should mirror name and photo onto the auth user', () async {
+      when(mockFirebaseService.updateAuthProfile(
+        displayName: 'Jane',
+        photoUrl: 'https://example.com/new.jpg',
+      )).thenAnswer((_) async => tUserModel);
+
+      final result = await repository.updateCurrentUserProfile(
+        displayName: 'Jane',
+        photoUrl: 'https://example.com/new.jpg',
+      );
+
+      expect(result, isA<DataSuccess<UserEntity?>>());
+      expect(result.data, tUserModel);
+      verify(mockFirebaseService.updateAuthProfile(
+        displayName: 'Jane',
+        photoUrl: 'https://example.com/new.jpg',
+      )).called(1);
+    });
+
+    test('should return DataGenericFailed when the service throws', () async {
+      when(mockFirebaseService.updateAuthProfile(
+        displayName: anyNamed('displayName'),
+        photoUrl: anyNamed('photoUrl'),
+      )).thenThrow(Exception('Auth update failed'));
+
+      final result = await repository.updateCurrentUserProfile(
+        displayName: 'Jane',
+      );
+
+      expect(result, isA<DataGenericFailed<UserEntity?>>());
+      expect(result.errorMessage, contains('Auth update failed'));
+    });
+  });
 }

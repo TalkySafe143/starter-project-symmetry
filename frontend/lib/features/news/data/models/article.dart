@@ -20,7 +20,6 @@ class ArticleModel extends ArticleEntity {
     super.publishedAt,
     super.content,
     super.authorId,
-    super.authorPhotoUrl,
   }) : super(authorDisplayName: authorDisplayName);
 
   factory ArticleModel.fromJson(Map<String, dynamic> json) =>
@@ -38,7 +37,6 @@ class ArticleModel extends ArticleEntity {
       publishedAt: article.publishedAt,
       content: article.content,
       authorId: article.authorId,
-      authorPhotoUrl: article.authorPhotoUrl,
     );
   }
 
@@ -52,7 +50,6 @@ class ArticleModel extends ArticleEntity {
       publishedAt: Value(publishedAt),
       content: Value(content),
       authorId: Value(authorId),
-      authorPhotoUrl: Value(authorPhotoUrl),
     );
   }
 
@@ -65,7 +62,6 @@ class ArticleModel extends ArticleEntity {
       publishedAt: entity.publishedAt,
       content: entity.content,
       authorId: entity.authorId,
-      authorPhotoUrl: entity.authorPhotoUrl,
     );
   }
 
@@ -79,7 +75,6 @@ class ArticleModel extends ArticleEntity {
     String? publishedAt,
     String? content,
     String? authorId,
-    String? authorPhotoUrl,
   }) {
     return ArticleModel(
       id: id ?? this.id,
@@ -89,7 +84,6 @@ class ArticleModel extends ArticleEntity {
       publishedAt: publishedAt ?? this.publishedAt,
       content: content ?? this.content,
       authorId: authorId ?? this.authorId,
-      authorPhotoUrl: authorPhotoUrl ?? this.authorPhotoUrl,
     );
   }
 }
