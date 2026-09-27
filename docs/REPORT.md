@@ -143,3 +143,23 @@ flowchart LR
   B --> G[Saved articles offline]
   B --> H[Edit profile + avatar]
 ```
+
+### 7.4 Working notes (from `docs/notes.md`)
+
+Build fixes that made Flutter work at all:
+
+- **Java OOM** — `gradle.properties` had `-Xmx1536M`, too low for Jetifier. Fixed by raising to `-Xmx4096M` and setting `enableJetifier=false`.
+- **APK not found** — `build.gradle` had migrated from deprecated `rootProject.buildDir = '../build'` to `rootProject.layout.buildDirectory`, but the root project's directory was never set, so the subprojects redirect pointed at `android/build/app/` instead of `frontend/build/app/`. Fixed by explicitly setting `rootProject.layout.buildDirectory.set(new File(rootProject.projectDir, "../build"))` before the subprojects redirect.
+
+Test-suite bugs found and fixed in production code:
+
+- `RemoteArticlesState.props` force-unwrapped `articles!` and `error!`, crashing whenever either was null (e.g. `RemoteArticlesLoading` has both as null); same for `LocalArticlesState.props` (`articles!`) and `LocalArticlesEvent.props` (`article!`, crashing on `GetSavedArticles` which carries no article).
+- Root cause was subtle: after each test, `bloc_test` prints a diagnostic that calls `toString()` on the state, which `Equatable` implements by iterating `props` — so the crash happened during the diagnostic print, not the assertion (e.g. `RemoteArticlesDone` leaves `error` null and `error!` threw `Null check operator used on a null value`).
+
+DI annotation cheat-sheet used in this project:
+
+- `@singleton` → shared, created immediately.
+- `@lazySingleton` → shared, created on first use.
+- `@injectable` → new instance every time (factory).
+- `@module` → for things you don't own (third-party).
+- `@preResolve` → for async constructors.
