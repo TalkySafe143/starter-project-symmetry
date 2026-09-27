@@ -11,10 +11,7 @@ abstract class AppModule {
   @singleton
   NewsApiService newsApiService(Dio dio) => NewsApiService(dio);
 
-  /// AppDatabase requires an async builder, so we mark it @preResolve.
-  /// injectable will await this before registering anything that depends on it.
-  @preResolve
+  /// AppDatabase is synchronous in Drift — no async builder needed.
   @singleton
-  Future<AppDatabase> get appDatabase =>
-      $FloorAppDatabase.databaseBuilder('app_database.db').build();
+  AppDatabase get appDatabase => AppDatabase();
 }

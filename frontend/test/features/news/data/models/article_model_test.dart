@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:news_app_clean_architecture/core/constants/constants.dart';
+import 'package:news_app_clean_architecture/features/news/data/data_sources/local/app_database.dart';
 import 'package:news_app_clean_architecture/features/news/data/models/article.dart';
 import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
 
@@ -20,7 +21,7 @@ void main() {
 
         final result = ArticleModel.fromJson(json);
 
-        expect(result.author, 'John Doe');
+        expect(result.authorDisplayName, 'John Doe');
         expect(result.title, 'Test Title');
         expect(result.description, 'Test Description');
         expect(result.url, 'https://example.com');
@@ -29,49 +30,75 @@ void main() {
         expect(result.content, 'Test Content');
       });
 
-      test('should use kDefaultImage when urlToImage is null', () {
+      test('should return null urlToImage when urlToImage is absent from JSON',
+          () {
         final json = {
           'author': 'John Doe',
           'title': 'Test Title',
-          'description': 'Test Description',
-          'url': 'https://example.com',
-          'urlToImage': null,
-          'publishedAt': '2024-01-01T00:00:00Z',
-          'content': 'Test Content',
         };
 
         final result = ArticleModel.fromJson(json);
 
-        expect(result.urlToImage, kDefaultImage);
+        // json_serializable maps missing keys to null (nullable fields)
+        expect(result.urlToImage, isNull);
       });
 
-      test('should use kDefaultImage when urlToImage is empty string', () {
-        final json = {
-          'author': 'John Doe',
-          'title': 'Test Title',
-          'description': 'Test Description',
-          'url': 'https://example.com',
-          'urlToImage': '',
-          'publishedAt': '2024-01-01T00:00:00Z',
-          'content': 'Test Content',
-        };
-
-        final result = ArticleModel.fromJson(json);
-
-        expect(result.urlToImage, kDefaultImage);
-      });
-
-      test('should fall back to empty string for null text fields', () {
+      test('should return null for missing nullable fields', () {
         final json = <String, dynamic>{};
 
         final result = ArticleModel.fromJson(json);
 
-        expect(result.author, '');
-        expect(result.title, '');
-        expect(result.description, '');
-        expect(result.url, '');
-        expect(result.publishedAt, '');
-        expect(result.content, '');
+        expect(result.authorDisplayName, isNull);
+        expect(result.title, isNull);
+        expect(result.description, isNull);
+        expect(result.url, isNull);
+        expect(result.publishedAt, isNull);
+        expect(result.content, isNull);
+        expect(result.urlToImage, isNull);
+      });
+    });
+
+    group('fromArticle (Drift row)', () {
+      test('should map a Drift Article row to an ArticleModel', () {
+        final row = ArticlesTableData(
+          id: 1,
+          authorDisplayName: 'John Doe',
+          title: 'Test Title',
+          description: 'Test Description',
+          url: 'https://example.com',
+          urlToImage: 'https://example.com/image.jpg',
+          publishedAt: '2024-01-01T00:00:00Z',
+          content: 'Test Content',
+          authorId: null,
+        );
+
+        final result = ArticleModel.fromArticle(row);
+
+        expect(result.id, row.id);
+        expect(result.authorDisplayName, row.authorDisplayName);
+        expect(result.title, row.title);
+        expect(result.description, row.description);
+        expect(result.url, row.url);
+        expect(result.urlToImage, row.urlToImage);
+        expect(result.publishedAt, row.publishedAt);
+        expect(result.content, row.content);
+      });
+
+      test('should use kDefaultImage when urlToImage is null in the row', () {
+        final row = ArticlesTableData(
+          id: 1,
+          authorDisplayName: null,
+          title: null,
+          description: null,
+          url: null,
+          urlToImage: null,
+          publishedAt: null,
+          content: null,
+          authorId: null,
+        );
+
+        final result = ArticleModel.fromArticle(row);
+
         expect(result.urlToImage, kDefaultImage);
       });
     });
@@ -80,10 +107,11 @@ void main() {
       test('should copy all fields from an ArticleEntity', () {
         const entity = ArticleEntity(
           id: 1,
-          author: 'John Doe',
+          authorDisplayName: 'John Doe',
           title: 'Test Title',
           description: 'Test Description',
-          url: 'https://example.com', urlToImage: 'https://example.com/image.jpg',
+          url: 'https://example.com',
+          urlToImage: 'https://example.com/image.jpg',
           publishedAt: '2024-01-01T00:00:00Z',
           content: 'Test Content',
         );
@@ -91,7 +119,7 @@ void main() {
         final result = ArticleModel.fromEntity(entity);
 
         expect(result.id, entity.id);
-        expect(result.author, entity.author);
+        expect(result.authorDisplayName, entity.authorDisplayName);
         expect(result.title, entity.title);
         expect(result.description, entity.description);
         expect(result.url, entity.url);
@@ -106,7 +134,7 @@ void main() {
         final result = ArticleModel.fromEntity(entity);
 
         expect(result.id, isNull);
-        expect(result.author, isNull);
+        expect(result.authorDisplayName, isNull);
         expect(result.title, isNull);
         expect(result.urlToImage, isNull);
       });
@@ -116,7 +144,7 @@ void main() {
       test('two models with identical fields should be equal', () {
         const model1 = ArticleModel(
           id: 1,
-          author: 'John Doe',
+          authorDisplayName: 'John Doe',
           title: 'Test Title',
           description: 'Test Description',
           url: 'https://example.com',
@@ -126,7 +154,7 @@ void main() {
         );
         const model2 = ArticleModel(
           id: 1,
-          author: 'John Doe',
+          authorDisplayName: 'John Doe',
           title: 'Test Title',
           description: 'Test Description',
           url: 'https://example.com',

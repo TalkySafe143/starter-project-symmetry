@@ -1,15 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import '../../domain/entities/article.entity.dart';
 
 class ArticleWidget extends StatelessWidget {
   final ArticleEntity? article;
   final bool? isRemovable;
+  final Logger log = Logger("ArticleWidget");
   final void Function(ArticleEntity article)? onRemove;
   final void Function(ArticleEntity article)? onArticlePressed;
 
-  const ArticleWidget({
+  ArticleWidget({
     super.key,
     this.article,
     this.onArticlePressed,
@@ -40,11 +42,13 @@ class ArticleWidget extends StatelessWidget {
   Widget _buildImage(BuildContext context) {
     final double imageWidth = MediaQuery.of(context).size.width / 3;
     // Soft grey background used in all image placeholder states.
-    final Color placeholderColor =
-        Colors.black.withValues(alpha: 0.08);
+    final Color placeholderColor = Colors.black.withValues(alpha: 0.08);
+
+    final String urlImage = article?.urlToImage ??
+        "https://img.magnific.com/free-vector/news-grunge-text_460848-9369.jpg?semt=ais_hybrid&w=740&q=80";
 
     return CachedNetworkImage(
-      imageUrl: article!.urlToImage!,
+      imageUrl: urlImage,
       imageBuilder: (context, imageProvider) => Padding(
         padding: const EdgeInsetsDirectional.only(end: 14),
         child: ClipRRect(

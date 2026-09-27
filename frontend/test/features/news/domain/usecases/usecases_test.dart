@@ -17,7 +17,7 @@ void main() {
 
   const tArticle = ArticleEntity(
     id: 1,
-    author: 'John Doe',
+    authorDisplayName: 'John Doe',
     title: 'Test Title',
     description: 'Test Description',
     url: 'https://example.com',

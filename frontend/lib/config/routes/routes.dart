@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../features/news/domain/entities/article.entity.dart';
 import '../../features/news/presentation/pages/article_detail/article_detail.dart';
-import '../../features/news/presentation/pages/home/news.dart';
+import '../../features/news/presentation/pages/home/daily_news.dart';
 import '../../features/news/presentation/pages/saved_article/saved_article.dart';
 
 

@@ -1,15 +1,19 @@
-import 'package:floor/floor.dart';
-import 'package:news_app_clean_architecture/features/news/data/models/article.dart';
+import 'package:drift/drift.dart';
 
-@dao
-abstract class ArticleDao {
-  
-  @Insert()
-  Future<void> insertArticle(ArticleModel article);
-  
-  @delete
-  Future<void> deleteArticle(ArticleModel articleModel);
-  
-  @Query('SELECT * FROM article')
-  Future<List<ArticleModel>> getArticles();
+import '../app_database.dart';
+
+part 'article_dao.g.dart';
+
+@DriftAccessor(tables: [ArticlesTable])
+class ArticleDao extends DatabaseAccessor<AppDatabase>
+    with _$ArticleDaoMixin {
+  ArticleDao(super.db);
+
+  Future<List<ArticlesTableData>> getArticles() => select(articlesTable).get();
+
+  Future<void> insertArticle(ArticlesTableCompanion article) =>
+      into(articlesTable).insert(article, mode: InsertMode.insertOrReplace);
+
+  Future<void> deleteArticle(ArticlesTableData article) =>
+      (delete(articlesTable)..where((t) => t.id.equals(article.id!))).go();
 }
