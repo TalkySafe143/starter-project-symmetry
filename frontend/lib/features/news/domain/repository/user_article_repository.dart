@@ -12,4 +12,11 @@ abstract interface class UserArticleRepository {
     ArticleEntity article, {
     File? imageFile,
   });
+
+  Future<DataState<void>> updateUserArticle(
+    ArticleEntity article, {
+    File? imageFile,
+  });
+
+  Future<DataState<void>> deleteUserArticle(String articleId);
 }
