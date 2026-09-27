@@ -16,9 +16,11 @@ import 'package:news_app_clean_architecture/features/news/domain/usecases/create
 import 'package:news_app_clean_architecture/features/news/domain/usecases/get_all_user_articles.dart';
 import 'package:news_app_clean_architecture/features/news/domain/usecases/get_article.dart';
 import 'package:news_app_clean_architecture/features/news/domain/usecases/get_saved_article.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/delete_user_article.dart';
 import 'package:news_app_clean_architecture/features/news/domain/usecases/get_user_articles.dart';
 import 'package:news_app_clean_architecture/features/news/domain/usecases/remove_article.dart';
 import 'package:news_app_clean_architecture/features/news/domain/usecases/save_article.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/update_user_article.dart';
 
 @module
 abstract class AppModule {
@@ -90,4 +92,12 @@ abstract class AppModule {
   @lazySingleton
   CreateUserArticle createUserArticle(UserArticleRepository repo) =>
       CreateUserArticle(repo);
+
+  @lazySingleton
+  UpdateUserArticle updateUserArticle(UserArticleRepository repo) =>
+      UpdateUserArticle(repo);
+
+  @lazySingleton
+  DeleteUserArticle deleteUserArticle(UserArticleRepository repo) =>
+      DeleteUserArticle(repo);
 }

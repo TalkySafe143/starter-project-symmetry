@@ -13,6 +13,7 @@ class ArticleWidget extends StatelessWidget {
   final void Function(ArticleEntity article)? onRemove;
   final void Function(ArticleEntity article)? onArticlePressed;
   final AuthorAvatarCubit Function()? avatarCubitFactory;
+  final Widget? trailing;
 
   const ArticleWidget({
     super.key,
@@ -21,6 +22,7 @@ class ArticleWidget extends StatelessWidget {
     this.isRemovable = false,
     this.onRemove,
     this.avatarCubitFactory,
+    this.trailing,
   });
 
   @override
@@ -37,6 +39,7 @@ class ArticleWidget extends StatelessWidget {
             _buildImage(context),
             _buildTitleAndDescription(),
             _buildRemovableArea(),
+            _buildTrailing(),
           ],
         ),
       ),
@@ -140,9 +143,16 @@ class ArticleWidget extends StatelessWidget {
               children: [
                 const Icon(Icons.timeline_outlined, size: 16),
                 const SizedBox(width: 4),
-                Text(
-                  article?.publishedAt ?? '',
-                  style: const TextStyle(fontSize: 12),
+                // User-created articles store full ISO-8601 timestamps,
+                // which overflowed this row on narrow screens — constrain
+                // and ellipsize instead.
+                Expanded(
+                  child: Text(
+                    article?.publishedAt ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 12),
+                  ),
                 ),
               ],
             ),
@@ -174,6 +184,10 @@ class ArticleWidget extends StatelessWidget {
       );
     }
     return const SizedBox.shrink();
+  }
+
+  Widget _buildTrailing() {
+    return trailing ?? const SizedBox.shrink();
   }
 
   void _onTap() {

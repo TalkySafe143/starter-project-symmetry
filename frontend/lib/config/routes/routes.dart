@@ -7,6 +7,7 @@ import '../../features/home/presentation/pages/main_layout.dart';
 import '../../features/news/domain/entities/article.entity.dart';
 import '../../features/news/presentation/pages/article_detail/article_detail.dart';
 import '../../features/news/presentation/pages/create_article/create_article_page.dart';
+import '../../features/news/presentation/pages/edit_article/edit_article_page.dart';
 import '../../features/news/presentation/pages/my_articles/my_articles_page.dart';
 import '../../features/news/presentation/pages/saved_article/saved_article.dart';
 
@@ -27,6 +28,13 @@ class AppRoutes {
 
       case '/CreateArticle':
         return _materialRoute(const CreateArticlePage());
+
+      case '/EditArticle':
+        final article = settings.arguments;
+        if (article is ArticleEntity) {
+          return _materialRoute(EditArticlePage(article: article));
+        }
+        return _materialRoute(const MyArticlesPage());
 
       case '/Login':
         return _materialRoute(const LoginPage());

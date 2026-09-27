@@ -58,6 +58,8 @@ import 'package:news_app_clean_architecture/features/news/domain/repository/user
     as _i37;
 import 'package:news_app_clean_architecture/features/news/domain/usecases/create_user_article.dart'
     as _i508;
+import 'package:news_app_clean_architecture/features/news/domain/usecases/delete_user_article.dart'
+    as _i173;
 import 'package:news_app_clean_architecture/features/news/domain/usecases/get_all_user_articles.dart'
     as _i629;
 import 'package:news_app_clean_architecture/features/news/domain/usecases/get_article.dart'
@@ -70,12 +72,16 @@ import 'package:news_app_clean_architecture/features/news/domain/usecases/remove
     as _i1042;
 import 'package:news_app_clean_architecture/features/news/domain/usecases/save_article.dart'
     as _i150;
+import 'package:news_app_clean_architecture/features/news/domain/usecases/update_user_article.dart'
+    as _i442;
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/avatar/author_avatar_cubit.dart'
     as _i7;
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/community/community_articles_bloc.dart'
     as _i785;
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/create/create_article_bloc.dart'
     as _i505;
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/edit/edit_article_bloc.dart'
+    as _i229;
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_bloc.dart'
     as _i8;
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_bloc.dart'
@@ -137,12 +143,21 @@ extension GetItInjectableX on _i174.GetIt {
         () => appModule.getUserArticles(gh<_i37.UserArticleRepository>()));
     gh.lazySingleton<_i508.CreateUserArticle>(
         () => appModule.createUserArticle(gh<_i37.UserArticleRepository>()));
+    gh.lazySingleton<_i442.UpdateUserArticle>(
+        () => appModule.updateUserArticle(gh<_i37.UserArticleRepository>()));
+    gh.lazySingleton<_i173.DeleteUserArticle>(
+        () => appModule.deleteUserArticle(gh<_i37.UserArticleRepository>()));
     gh.factory<_i413.UserArticlesBloc>(() => _i413.UserArticlesBloc(
           gh<_i946.GetUserArticles>(),
           gh<_i119.GetCurrentUserUseCase>(),
         ));
     gh.factory<_i785.CommunityArticlesBloc>(
         () => _i785.CommunityArticlesBloc(gh<_i629.GetAllUserArticles>()));
+    gh.factory<_i229.EditArticleBloc>(() => _i229.EditArticleBloc(
+          gh<_i442.UpdateUserArticle>(),
+          gh<_i173.DeleteUserArticle>(),
+          gh<_i119.GetCurrentUserUseCase>(),
+        ));
     gh.factory<_i730.AuthBloc>(() => _i730.AuthBloc(
           loginUseCase: gh<_i616.LoginUseCase>(),
           registerUseCase: gh<_i836.RegisterUseCase>(),

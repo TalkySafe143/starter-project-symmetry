@@ -12,12 +12,14 @@ import 'features/auth/domain/usecases/update_user_profile.dart';
 import 'features/news/domain/repository/article_repository.dart';
 import 'features/news/domain/repository/user_article_repository.dart';
 import 'features/news/domain/usecases/create_user_article.dart';
+import 'features/news/domain/usecases/delete_user_article.dart';
 import 'features/news/domain/usecases/get_all_user_articles.dart';
 import 'features/news/domain/usecases/get_article.dart';
 import 'features/news/domain/usecases/get_saved_article.dart';
 import 'features/news/domain/usecases/get_user_articles.dart';
 import 'features/news/domain/usecases/remove_article.dart';
 import 'features/news/domain/usecases/save_article.dart';
+import 'features/news/domain/usecases/update_user_article.dart';
 import 'injection_container.config.dart';
 
 final sl = GetIt.instance;
@@ -66,6 +68,16 @@ void _registerDomainUseCases() {
   if (!sl.isRegistered<CreateUserArticle>()) {
     sl.registerLazySingleton(
       () => CreateUserArticle(sl<UserArticleRepository>()),
+    );
+  }
+  if (!sl.isRegistered<UpdateUserArticle>()) {
+    sl.registerLazySingleton(
+      () => UpdateUserArticle(sl<UserArticleRepository>()),
+    );
+  }
+  if (!sl.isRegistered<DeleteUserArticle>()) {
+    sl.registerLazySingleton(
+      () => DeleteUserArticle(sl<UserArticleRepository>()),
     );
   }
   if (!sl.isRegistered<LoginUseCase>()) {
