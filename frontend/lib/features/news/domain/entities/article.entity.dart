@@ -5,7 +5,6 @@ class ArticleEntity extends Equatable{
   final String ? authorDisplayName;
   final String ? title;
   final String ? description;
-  final String ? url;
   final String ? urlToImage;
   final String ? publishedAt;
   final String ? content;
@@ -16,7 +15,6 @@ class ArticleEntity extends Equatable{
     this.authorDisplayName,
     this.title,
     this.description,
-    this.url,
     this.urlToImage,
     this.publishedAt,
     this.content,
@@ -30,7 +28,6 @@ class ArticleEntity extends Equatable{
       authorDisplayName,
       title,
       description,
-      url,
       urlToImage,
       publishedAt,
       content,

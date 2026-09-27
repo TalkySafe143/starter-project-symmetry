@@ -24,7 +24,6 @@ void main() {
         expect(result.authorDisplayName, 'John Doe');
         expect(result.title, 'Test Title');
         expect(result.description, 'Test Description');
-        expect(result.url, 'https://example.com');
         expect(result.urlToImage, 'https://example.com/image.jpg');
         expect(result.publishedAt, '2024-01-01T00:00:00Z');
         expect(result.content, 'Test Content');
@@ -51,7 +50,6 @@ void main() {
         expect(result.authorDisplayName, isNull);
         expect(result.title, isNull);
         expect(result.description, isNull);
-        expect(result.url, isNull);
         expect(result.publishedAt, isNull);
         expect(result.content, isNull);
         expect(result.urlToImage, isNull);
@@ -78,7 +76,6 @@ void main() {
         expect(result.authorDisplayName, row.authorDisplayName);
         expect(result.title, row.title);
         expect(result.description, row.description);
-        expect(result.url, row.url);
         expect(result.urlToImage, row.urlToImage);
         expect(result.publishedAt, row.publishedAt);
         expect(result.content, row.content);
@@ -110,7 +107,6 @@ void main() {
           authorDisplayName: 'John Doe',
           title: 'Test Title',
           description: 'Test Description',
-          url: 'https://example.com',
           urlToImage: 'https://example.com/image.jpg',
           publishedAt: '2024-01-01T00:00:00Z',
           content: 'Test Content',
@@ -122,7 +118,6 @@ void main() {
         expect(result.authorDisplayName, entity.authorDisplayName);
         expect(result.title, entity.title);
         expect(result.description, entity.description);
-        expect(result.url, entity.url);
         expect(result.urlToImage, entity.urlToImage);
         expect(result.publishedAt, entity.publishedAt);
         expect(result.content, entity.content);
@@ -147,7 +142,6 @@ void main() {
           authorDisplayName: 'John Doe',
           title: 'Test Title',
           description: 'Test Description',
-          url: 'https://example.com',
           urlToImage: 'https://example.com/image.jpg',
           publishedAt: '2024-01-01T00:00:00Z',
           content: 'Test Content',
@@ -157,7 +151,6 @@ void main() {
           authorDisplayName: 'John Doe',
           title: 'Test Title',
           description: 'Test Description',
-          url: 'https://example.com',
           urlToImage: 'https://example.com/image.jpg',
           publishedAt: '2024-01-01T00:00:00Z',
           content: 'Test Content',

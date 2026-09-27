@@ -25,17 +25,13 @@ class UserArticleRepositoryImpl implements UserArticleRepository {
     File? imageFile,
   }) async {
     try {
-      // 1. Upload image (if any) and get the download URL.
       final thumbnailUrl = await _firebaseService.uploadThumbnail(imageFile);
       _log.info('createUserArticle → thumbnailUrl=$thumbnailUrl');
 
-      // 2. Build the model — override urlToImage with the Storage URL when
-      //    an image was uploaded.
       final model = ArticleModel.fromEntity(article).copyWith(
         urlToImage: thumbnailUrl ?? article.urlToImage,
       );
 
-      // 3. Save to Firestore.
       await _firebaseService.createUserArticle(model);
 
       return DataSuccess(null);
