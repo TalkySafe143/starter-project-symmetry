@@ -3,6 +3,13 @@ import 'package:injectable/injectable.dart';
 
 import 'features/auth/domain/repository/auth_repository.dart';
 import 'features/auth/domain/repository/user_profile_repository.dart';
+import 'features/comments/data/data_sources/remote/comment_firebase_service.dart';
+import 'features/comments/data/repository/comment_repository_impl.dart';
+import 'features/comments/domain/repository/comment_repository.dart';
+import 'features/comments/domain/usecases/delete_comment.dart';
+import 'features/comments/domain/usecases/get_article_comments.dart';
+import 'features/comments/domain/usecases/post_comment.dart';
+import 'features/comments/presentation/bloc/comments/comments_bloc.dart';
 import 'features/auth/domain/usecases/get_author_profile.dart';
 import 'features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'features/auth/domain/usecases/login_usecase.dart';
@@ -109,6 +116,35 @@ void _registerDomainUseCases() {
       () => UpdateUserProfile(
         sl<AuthRepository>(),
         sl<UserProfileRepository>(),
+      ),
+    );
+  }
+  if (!sl.isRegistered<CommentFirebaseService>()) {
+    sl.registerLazySingleton(() => CommentFirebaseService());
+  }
+  if (!sl.isRegistered<CommentRepository>()) {
+    sl.registerLazySingleton<CommentRepository>(
+      () => CommentRepositoryImpl(sl<CommentFirebaseService>()),
+    );
+  }
+  if (!sl.isRegistered<GetArticleComments>()) {
+    sl.registerLazySingleton(
+      () => GetArticleComments(sl<CommentRepository>()),
+    );
+  }
+  if (!sl.isRegistered<PostComment>()) {
+    sl.registerLazySingleton(() => PostComment(sl<CommentRepository>()));
+  }
+  if (!sl.isRegistered<DeleteComment>()) {
+    sl.registerLazySingleton(() => DeleteComment(sl<CommentRepository>()));
+  }
+  if (!sl.isRegistered<CommentsBloc>()) {
+    sl.registerFactory(
+      () => CommentsBloc(
+        sl<GetArticleComments>(),
+        sl<PostComment>(),
+        sl<DeleteComment>(),
+        sl<GetCurrentUserUseCase>(),
       ),
     );
   }

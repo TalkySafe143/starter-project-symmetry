@@ -20,6 +20,10 @@ import 'package:news_app_clean_architecture/features/news/domain/usecases/delete
 import 'package:news_app_clean_architecture/features/news/domain/usecases/get_user_articles.dart';
 import 'package:news_app_clean_architecture/features/news/domain/usecases/remove_article.dart';
 import 'package:news_app_clean_architecture/features/news/domain/usecases/save_article.dart';
+import 'package:news_app_clean_architecture/features/comments/domain/repository/comment_repository.dart';
+import 'package:news_app_clean_architecture/features/comments/domain/usecases/delete_comment.dart';
+import 'package:news_app_clean_architecture/features/comments/domain/usecases/get_article_comments.dart';
+import 'package:news_app_clean_architecture/features/comments/domain/usecases/post_comment.dart';
 import 'package:news_app_clean_architecture/features/news/domain/usecases/update_user_article.dart';
 
 @module
@@ -100,4 +104,14 @@ abstract class AppModule {
   @lazySingleton
   DeleteUserArticle deleteUserArticle(UserArticleRepository repo) =>
       DeleteUserArticle(repo);
+
+  @lazySingleton
+  GetArticleComments getArticleComments(CommentRepository repo) =>
+      GetArticleComments(repo);
+
+  @lazySingleton
+  PostComment postComment(CommentRepository repo) => PostComment(repo);
+
+  @lazySingleton
+  DeleteComment deleteComment(CommentRepository repo) => DeleteComment(repo);
 }

@@ -7,6 +7,7 @@ import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../injection_container.dart';
 import '../../../domain/entities/article.entity.dart';
+import 'package:news_app_clean_architecture/features/comments/presentation/widgets/comments_section.dart';
 import '../../bloc/article/avatar/author_avatar_cubit.dart';
 import '../../bloc/article/local/local_article_bloc.dart';
 import '../../bloc/article/local/local_article_event.dart';
@@ -99,9 +100,18 @@ class ArticleDetailsView extends HookWidget {
           _buildArticleAuthor(),
           _buildArticleImage(),
           _buildArticleDescription(),
+          _buildComments(),
         ],
       ),
     );
+  }
+
+  /// Comments attach only to persisted articles. Preview drafts carry no
+  /// id, so the section stays hidden until the article exists.
+  Widget _buildComments() {
+    final id = article?.id?.trim() ?? '';
+    if (id.isEmpty) return const SizedBox.shrink();
+    return CommentsSection(articleId: id);
   }
 
   Widget _buildArticleTitleAndDate() {

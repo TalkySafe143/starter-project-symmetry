@@ -42,6 +42,20 @@ import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth
     as _i730;
 import 'package:news_app_clean_architecture/features/auth/presentation/bloc/profile/profile_bloc.dart'
     as _i298;
+import 'package:news_app_clean_architecture/features/comments/data/data_sources/remote/comment_firebase_service.dart'
+    as _i967;
+import 'package:news_app_clean_architecture/features/comments/data/repository/comment_repository_impl.dart'
+    as _i11;
+import 'package:news_app_clean_architecture/features/comments/domain/repository/comment_repository.dart'
+    as _i641;
+import 'package:news_app_clean_architecture/features/comments/domain/usecases/delete_comment.dart'
+    as _i43;
+import 'package:news_app_clean_architecture/features/comments/domain/usecases/get_article_comments.dart'
+    as _i473;
+import 'package:news_app_clean_architecture/features/comments/domain/usecases/post_comment.dart'
+    as _i469;
+import 'package:news_app_clean_architecture/features/comments/presentation/bloc/comments/comments_bloc.dart'
+    as _i717;
 import 'package:news_app_clean_architecture/features/news/data/data_sources/local/app_database.dart'
     as _i924;
 import 'package:news_app_clean_architecture/features/news/data/data_sources/remote/news_api_service.dart'
@@ -104,6 +118,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i123.AuthFirebaseService>(() => _i123.AuthFirebaseService());
     gh.factory<_i1017.UserProfileFirebaseService>(
         () => _i1017.UserProfileFirebaseService());
+    gh.factory<_i967.CommentFirebaseService>(
+        () => _i967.CommentFirebaseService());
     gh.factory<_i1.UserArticlesFirebaseService>(
         () => _i1.UserArticlesFirebaseService());
     gh.singleton<_i361.Dio>(() => appModule.dio);
@@ -125,6 +141,14 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i37.UserArticleRepository>(() =>
         _i401.UserArticleRepositoryImpl(gh<_i1.UserArticlesFirebaseService>()));
+    gh.lazySingleton<_i641.CommentRepository>(
+        () => _i11.CommentRepositoryImpl(gh<_i967.CommentFirebaseService>()));
+    gh.lazySingleton<_i473.GetArticleComments>(
+        () => appModule.getArticleComments(gh<_i641.CommentRepository>()));
+    gh.lazySingleton<_i469.PostComment>(
+        () => appModule.postComment(gh<_i641.CommentRepository>()));
+    gh.lazySingleton<_i43.DeleteComment>(
+        () => appModule.deleteComment(gh<_i641.CommentRepository>()));
     gh.lazySingleton<_i557.GetAuthorProfile>(
         () => appModule.getAuthorProfile(gh<_i706.UserProfileRepository>()));
     gh.lazySingleton<_i862.ArticleRepository>(() => _i865.ArticleRepositoryImpl(
@@ -183,6 +207,12 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.factory<_i7.AuthorAvatarCubit>(
         () => _i7.AuthorAvatarCubit(gh<_i557.GetAuthorProfile>()));
+    gh.factory<_i717.CommentsBloc>(() => _i717.CommentsBloc(
+          gh<_i473.GetArticleComments>(),
+          gh<_i469.PostComment>(),
+          gh<_i43.DeleteComment>(),
+          gh<_i119.GetCurrentUserUseCase>(),
+        ));
     gh.factory<_i933.RemoteArticlesBloc>(
         () => _i933.RemoteArticlesBloc(gh<_i838.GetArticleUseCase>()));
     gh.factory<_i298.ProfileBloc>(() => _i298.ProfileBloc(
