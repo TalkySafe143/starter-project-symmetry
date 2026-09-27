@@ -14,6 +14,9 @@ dependencies:
 
   cupertino_icons: ^1.0.2
 
+  # Sidebar
+  awesome_drawer_bar: ^1.2.1
+
   # icon
   ionicons: ^0.2.3
 
