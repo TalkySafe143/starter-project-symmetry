@@ -6,7 +6,6 @@ import 'package:news_app_clean_architecture/features/news/domain/entities/articl
 
 void main() {
   group('ArticleModel', () {
-
     group('fromJson', () {
       test('should map all fields correctly from a full JSON map', () {
         final json = {
@@ -23,7 +22,6 @@ void main() {
 
         expect(result.authorDisplayName, 'John Doe');
         expect(result.title, 'Test Title');
-        expect(result.description, 'Test Description');
         expect(result.urlToImage, 'https://example.com/image.jpg');
         expect(result.publishedAt, '2024-01-01T00:00:00Z');
         expect(result.content, 'Test Content');
@@ -49,7 +47,6 @@ void main() {
 
         expect(result.authorDisplayName, isNull);
         expect(result.title, isNull);
-        expect(result.description, isNull);
         expect(result.publishedAt, isNull);
         expect(result.content, isNull);
         expect(result.urlToImage, isNull);
@@ -59,11 +56,9 @@ void main() {
     group('fromArticle (Drift row)', () {
       test('should map a Drift Article row to an ArticleModel', () {
         final row = ArticlesTableData(
-          id: 1,
+          id: "1",
           authorDisplayName: 'John Doe',
           title: 'Test Title',
-          description: 'Test Description',
-          url: 'https://example.com',
           urlToImage: 'https://example.com/image.jpg',
           publishedAt: '2024-01-01T00:00:00Z',
           content: 'Test Content',
@@ -75,7 +70,6 @@ void main() {
         expect(result.id, row.id);
         expect(result.authorDisplayName, row.authorDisplayName);
         expect(result.title, row.title);
-        expect(result.description, row.description);
         expect(result.urlToImage, row.urlToImage);
         expect(result.publishedAt, row.publishedAt);
         expect(result.content, row.content);
@@ -83,14 +77,12 @@ void main() {
 
       test('should use kDefaultImage when urlToImage is null in the row', () {
         final row = ArticlesTableData(
-          id: 1,
-          authorDisplayName: null,
-          title: null,
-          description: null,
-          url: null,
+          id: "1",
+          authorDisplayName: "unknown",
+          title: "test",
           urlToImage: null,
-          publishedAt: null,
-          content: null,
+          publishedAt: DateTime.now().toString(),
+          content: "",
           authorId: null,
         );
 
@@ -103,10 +95,9 @@ void main() {
     group('fromEntity', () {
       test('should copy all fields from an ArticleEntity', () {
         const entity = ArticleEntity(
-          id: 1,
+          id: "1",
           authorDisplayName: 'John Doe',
           title: 'Test Title',
-          description: 'Test Description',
           urlToImage: 'https://example.com/image.jpg',
           publishedAt: '2024-01-01T00:00:00Z',
           content: 'Test Content',
@@ -117,20 +108,18 @@ void main() {
         expect(result.id, entity.id);
         expect(result.authorDisplayName, entity.authorDisplayName);
         expect(result.title, entity.title);
-        expect(result.description, entity.description);
         expect(result.urlToImage, entity.urlToImage);
         expect(result.publishedAt, entity.publishedAt);
         expect(result.content, entity.content);
       });
 
       test('should preserve null fields from entity', () {
-        const entity = ArticleEntity();
+        const entity = ArticleEntity(
+            authorDisplayName: '', title: '', publishedAt: '', content: '');
 
         final result = ArticleModel.fromEntity(entity);
 
         expect(result.id, isNull);
-        expect(result.authorDisplayName, isNull);
-        expect(result.title, isNull);
         expect(result.urlToImage, isNull);
       });
     });
@@ -138,19 +127,17 @@ void main() {
     group('equality (Equatable)', () {
       test('two models with identical fields should be equal', () {
         const model1 = ArticleModel(
-          id: 1,
+          id: "1",
           authorDisplayName: 'John Doe',
           title: 'Test Title',
-          description: 'Test Description',
           urlToImage: 'https://example.com/image.jpg',
           publishedAt: '2024-01-01T00:00:00Z',
           content: 'Test Content',
         );
         const model2 = ArticleModel(
-          id: 1,
+          id: "1",
           authorDisplayName: 'John Doe',
           title: 'Test Title',
-          description: 'Test Description',
           urlToImage: 'https://example.com/image.jpg',
           publishedAt: '2024-01-01T00:00:00Z',
           content: 'Test Content',
@@ -160,8 +147,18 @@ void main() {
       });
 
       test('two models with different fields should not be equal', () {
-        const model1 = ArticleModel(id: 1, title: 'Title A');
-        const model2 = ArticleModel(id: 2, title: 'Title B');
+        const model1 = ArticleModel(
+            id: "1",
+            title: 'Title A',
+            authorDisplayName: '',
+            publishedAt: '',
+            content: '');
+        const model2 = ArticleModel(
+            id: "2",
+            title: 'Title B',
+            authorDisplayName: '',
+            publishedAt: '',
+            content: '');
 
         expect(model1, isNot(equals(model2)));
       });

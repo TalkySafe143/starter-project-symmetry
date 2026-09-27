@@ -39,6 +39,7 @@ class CreateArticleBloc
       title: event.title.trim(),
       content: event.content.trim(),
       publishedAt: DateTime.now().toIso8601String(),
+      authorDisplayName: "Anonymous"
     );
 
     final result = await _createUserArticle(

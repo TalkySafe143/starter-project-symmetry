@@ -27,11 +27,9 @@ void main() {
 
   // Drift-generated ArticlesTableData row fixture
   final tArticleRow = ArticlesTableData(
-    id: 1,
+    id: "1",
     authorDisplayName: 'John Doe',
     title: 'Test Title',
-    description: 'Test Description',
-    url: 'https://example.com',
     urlToImage: 'https://example.com/image.jpg',
     publishedAt: '2024-01-01T00:00:00Z',
     content: 'Test Content',
@@ -44,10 +42,9 @@ void main() {
   final tArticleModelList = [tArticleModel];
 
   const tArticleEntity = ArticleEntity(
-    id: 1,
+    id: "1",
     authorDisplayName: 'John Doe',
     title: 'Test Title',
-    description: 'Test Description',
     urlToImage: 'https://example.com/image.jpg',
     publishedAt: '2024-01-01T00:00:00Z',
     content: 'Test Content',

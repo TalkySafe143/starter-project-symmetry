@@ -20,10 +20,9 @@ void main() {
 
   // Shared fixtures
   const tArticle = ArticleEntity(
-    id: 1,
+    id: "1",
     authorDisplayName: 'John Doe',
     title: 'Test Title',
-    description: 'Test Description',
     urlToImage: 'https://example.com/image.jpg',
     publishedAt: '2024-01-01T00:00:00Z',
     content: 'Test Content',

@@ -1,9 +1,30 @@
 rules_version = '2';
 
 service cloud.firestore {
-  match /databases/(default)/documents {
-     match /{document=**} {
-      allow read, write: if true;
+  match /databases/{database}/documents {
+
+    match /articles/{articleId} {
+      allow read: if true; 
+      allow create, update: if isValidArticle(request.resource.data);
+      allow delete: if request.auth != null; 
     }
+  }
+
+  function isValidArticle(data) {
+    return data.keys().hasOnly([
+        'id', 'author', 'title',
+        'urlToImage', 'publishedAt', 'content', 'authorId'
+      ])
+      && isValidStringOrNull(data, 'id')
+      && isValidStringOrNull(data, 'author')
+      && isValidStringOrNull(data, 'title')
+      && isValidStringOrNull(data, 'urlToImage')
+      && isValidStringOrNull(data, 'publishedAt')
+      && isValidStringOrNull(data, 'content')
+      && isValidStringOrNull(data, 'authorId');
+  }
+
+  function isValidStringOrNull(data, field) {
+    return !(field in data) || data[field] == null || data[field] is string;
   }
 }

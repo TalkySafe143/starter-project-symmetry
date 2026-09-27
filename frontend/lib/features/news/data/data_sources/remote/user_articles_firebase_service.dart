@@ -37,8 +37,20 @@ class UserArticlesFirebaseService {
   Future<DocumentReference<Map<String, dynamic>>> createUserArticle(
       ArticleModel article) async {
     _log.info('createUserArticle → saving to Firestore');
-    final ref =
-        await _firestoreDb.collection(_articlesCollection).add(article.toJson());
+    final ref = await _firestoreDb
+        .collection(_articlesCollection)
+        .add(article.toJson());
+
+
+    // TODO(sgalindo) this maybe can be done before the actual element
+    // is created with set, but right now the entity is inmutable,
+    // thus we cannot change the ID of the field itself before is 
+    // inserted.
+    await _firestoreDb
+        .collection(_articlesCollection)
+        .doc(ref.id)
+        .set({"id": ref.id});
+
     _log.info('createUserArticle → saved with id=${ref.id}');
     return ref;
   }

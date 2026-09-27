@@ -16,12 +16,11 @@ class ArticleModel extends ArticleEntity {
     super.id,
     this.authorDisplayName,
     super.title,
-    super.description,
     super.urlToImage,
     super.publishedAt,
     super.content,
     super.authorId,
-  });
+  }) : super(authorDisplayName: authorDisplayName);
 
   factory ArticleModel.fromJson(Map<String, dynamic> json) =>
       _$ArticleModelFromJson(json);
@@ -34,7 +33,6 @@ class ArticleModel extends ArticleEntity {
       id: article.id,
       authorDisplayName: article.authorDisplayName,
       title: article.title,
-      description: article.description,
       urlToImage: article.urlToImage ?? kDefaultImage,
       publishedAt: article.publishedAt,
       content: article.content,
@@ -48,7 +46,6 @@ class ArticleModel extends ArticleEntity {
       id: id != null ? Value(id!) : const Value.absent(),
       authorDisplayName: Value(authorDisplayName),
       title: Value(title),
-      description: Value(description),
       urlToImage: Value(urlToImage),
       publishedAt: Value(publishedAt),
       content: Value(content),
@@ -61,7 +58,6 @@ class ArticleModel extends ArticleEntity {
       id: entity.id,
       authorDisplayName: entity.authorDisplayName,
       title: entity.title,
-      description: entity.description,
       urlToImage: entity.urlToImage,
       publishedAt: entity.publishedAt,
       content: entity.content,
@@ -70,7 +66,7 @@ class ArticleModel extends ArticleEntity {
   }
 
   ArticleModel copyWith({
-    int? id,
+    String? id,
     String? authorDisplayName,
     String? title,
     String? description,
@@ -84,7 +80,6 @@ class ArticleModel extends ArticleEntity {
       id: id ?? this.id,
       authorDisplayName: authorDisplayName ?? this.authorDisplayName,
       title: title ?? this.title,
-      description: description ?? this.description,
       urlToImage: urlToImage ?? this.urlToImage,
       publishedAt: publishedAt ?? this.publishedAt,
       content: content ?? this.content,
