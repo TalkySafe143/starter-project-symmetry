@@ -65,7 +65,12 @@ class AuthorAvatar extends StatelessWidget {
       return CircleAvatar(
         radius: radius,
         backgroundColor: Colors.black12,
-        backgroundImage: CachedNetworkImageProvider(state.photoUrl),
+        // Decode bound: avatars render at ≤48px radius; never decode the
+        // full upload for a thumbnail.
+        backgroundImage: ResizeImage(
+          CachedNetworkImageProvider(state.photoUrl),
+          width: 144,
+        ),
       );
     }
     return _silhouette();

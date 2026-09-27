@@ -30,6 +30,7 @@ class NewsHomePage extends StatelessWidget {
           ],
         ),
         floatingActionButton: FloatingActionButton(
+          heroTag: 'newsHomeCreate',
           onPressed: () => Navigator.pushNamed(context, '/CreateArticle'),
           child: const Icon(Icons.add),
         ),

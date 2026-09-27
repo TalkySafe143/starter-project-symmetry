@@ -1,0 +1,128 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:news_app_clean_architecture/core/resources/data_state.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/entities/user_profile.entity.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/get_author_profile.dart';
+import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/get_saved_article.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/remove_article.dart';
+import 'package:news_app_clean_architecture/features/news/domain/usecases/save_article.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/avatar/author_avatar_cubit.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_bloc.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/pages/article_detail/article_detail.dart';
+import 'package:news_app_clean_architecture/injection_container.dart';
+
+class _FakeGetSaved extends Fake implements GetSavedArticleUseCase {
+  List<ArticleEntity> saved = const [];
+
+  @override
+  Future<List<ArticleEntity>> call({void params}) async => saved;
+}
+
+class _FakeSave extends Fake implements SaveArticleUseCase {
+  final _FakeGetSaved getSaved;
+  bool called = false;
+
+  _FakeSave(this.getSaved);
+
+  @override
+  Future<void> call({ArticleEntity? params}) async {
+    called = true;
+    if (params != null) {
+      getSaved.saved = [...getSaved.saved, params];
+    }
+  }
+}
+
+class _FakeRemove extends Fake implements RemoveArticleUseCase {
+  @override
+  Future<void> call({ArticleEntity? params}) async {}
+}
+
+class _StubGetAuthorProfile extends Fake implements GetAuthorProfile {
+  @override
+  Future<DataState<UserProfileEntity?>> call(
+      {GetAuthorProfileParams? params}) async {
+    return const DataSuccess(null);
+  }
+}
+
+void main() {
+  const tArticle = ArticleEntity(
+    id: 'user-article-1',
+    authorDisplayName: 'Camilo',
+    title: 'Test de un articulo',
+    urlToImage: 'https://example.com/thumb.png',
+    publishedAt: '2026-09-27T12:11:50.732200',
+    content: 'offline copy',
+    authorId: 'author-123',
+  );
+
+  late _FakeGetSaved fakeGetSaved;
+  late _FakeSave fakeSave;
+
+  setUp(() {
+    fakeGetSaved = _FakeGetSaved();
+    fakeSave = _FakeSave(fakeGetSaved);
+    sl.registerFactory<LocalArticleBloc>(
+      () => LocalArticleBloc(fakeGetSaved, fakeSave, _FakeRemove()),
+    );
+    sl.registerFactory<AuthorAvatarCubit>(
+      () => AuthorAvatarCubit(_StubGetAuthorProfile()),
+    );
+  });
+
+  tearDown(() async {
+    await sl.reset();
+  });
+
+  testWidgets('save FAB carries a unique hero tag', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ArticleDetailsView(article: tArticle),
+      ),
+    );
+    await tester.pump();
+
+    final fab = tester.widget<FloatingActionButton>(
+      find.byType(FloatingActionButton),
+    );
+    // Must differ from NewsHomePage's 'newsHomeCreate' tag: duplicate hero
+    // tags throw during route transitions.
+    expect(fab.heroTag, 'articleDetailSave');
+  });
+
+  testWidgets('hero image bounds decode size for full-res uploads',
+      (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ArticleDetailsView(article: tArticle),
+      ),
+    );
+    await tester.pump();
+
+    final image = tester.widget<Image>(find.byType(Image));
+    // Image.network folds cacheWidth into a ResizeImage provider.
+    final provider = image.image as ResizeImage;
+    expect(provider.width, 1080);
+  });
+
+  testWidgets('tapping save reports success only after the write lands',
+      (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ArticleDetailsView(article: tArticle),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('Article saved successfully.'), findsNothing);
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pump();
+    await tester.pump();
+
+    expect(fakeSave.called, isTrue);
+    expect(find.text('Article saved successfully.'), findsOneWidget);
+  });
+}

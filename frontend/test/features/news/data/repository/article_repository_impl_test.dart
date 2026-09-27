@@ -109,6 +109,50 @@ void main() {
       expect(result.error?.type, DioExceptionType.badResponse);
     });
 
+    test('assigns local ids to API articles missing one', () async {
+      final requestOptions = RequestOptions(path: '/top-headlines');
+      const idLess = ArticleModel(
+        authorDisplayName: 'John Doe',
+        title: 'No ID Title',
+        publishedAt: '2024-01-01T00:00:00Z',
+        content: 'No ID Content',
+      );
+      const withId = ArticleModel(
+        id: 'keep-me',
+        authorDisplayName: 'Jane',
+        title: 'Has ID',
+        publishedAt: '2024-01-02T00:00:00Z',
+        content: 'Has ID Content',
+      );
+      final apiResponse = NewsApiResponse(
+        status: 'ok',
+        articles: const [idLess, withId],
+      );
+      final response = Response<NewsApiResponse>(
+        data: apiResponse,
+        statusCode: HttpStatus.ok,
+        requestOptions: requestOptions,
+      );
+      final httpResponse = HttpResponse(apiResponse, response);
+
+      when(mockApiService.getNewsArticles(
+        apiKey: newsAPIKey,
+        country: countryQuery,
+        category: categoryQuery,
+      )).thenAnswer((_) async => httpResponse);
+
+      final result = await repository.getNewsArticles();
+
+      expect(result, isA<DataSuccess<List<ArticleEntity>>>());
+      final ids = result.data!.map((e) => e.id).toList();
+      expect(ids.every((id) => id != null && id!.isNotEmpty), isTrue);
+      expect(ids.toSet().length, ids.length);
+      expect(
+        result.data!.firstWhere((e) => e.title == 'Has ID').id,
+        'keep-me',
+      );
+    });
+
     test('should return DataFailed when a DioException is thrown', () async {
       final dioException = DioException(
         requestOptions: RequestOptions(path: '/top-headlines'),
@@ -188,6 +232,37 @@ void main() {
         () => repository.removeArticle(tArticleEntity),
         throwsException,
       );
+    });
+
+    test(
+        'removes the null-id article matching title and date without '
+        'throwing (regression: daily delete crash)', () async {
+      final nullIdRow = ArticlesTableData(
+        authorDisplayName: 'John Doe',
+        title: 'Daily Null',
+        urlToImage: 'https://example.com/image.jpg',
+        publishedAt: '2024-01-01T00:00:00Z',
+        content: 'Daily Content',
+        authorId: null,
+      );
+      const nullIdEntity = ArticleEntity(
+        authorDisplayName: 'John Doe',
+        title: 'Daily Null',
+        urlToImage: 'https://example.com/image.jpg',
+        publishedAt: '2024-01-01T00:00:00Z',
+        content: 'Daily Content',
+      );
+      when(mockArticleDao.getArticles())
+          .thenAnswer((_) async => [nullIdRow, tArticleRow]);
+      when(mockArticleDao.deleteArticle(any)).thenAnswer((_) async {});
+
+      await repository.removeArticle(nullIdEntity);
+
+      final captured =
+          verify(mockArticleDao.deleteArticle(captureAny)).captured.single
+              as ArticlesTableData;
+      expect(captured.title, 'Daily Null');
+      expect(captured.id, isNull);
     });
   });
 }

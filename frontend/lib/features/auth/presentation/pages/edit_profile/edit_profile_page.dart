@@ -48,6 +48,9 @@ class _EditProfileViewState extends State<_EditProfileView> {
     final picker = ImagePicker();
     final picked = await picker.pickImage(
       source: ImageSource.gallery,
+      // Same cap as article thumbnails: avatars render at ≤48px radius.
+      maxWidth: 1024,
+      maxHeight: 1024,
       imageQuality: 85,
     );
     if (picked != null) {

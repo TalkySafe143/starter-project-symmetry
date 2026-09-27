@@ -47,6 +47,11 @@ class _CreateArticleViewState extends State<_CreateArticleView> {
     final picker = ImagePicker();
     final picked = await picker.pickImage(
       source: ImageSource.gallery,
+      // Cap pixel dimensions: imageQuality only shrinks JPEG bytes, so
+      // without this a 12MP camera photo (≈48MB decoded) is uploaded and
+      // later decoded at full resolution in ~130px list tiles.
+      maxWidth: 1024,
+      maxHeight: 1024,
       imageQuality: 85,
     );
     if (picked != null) {

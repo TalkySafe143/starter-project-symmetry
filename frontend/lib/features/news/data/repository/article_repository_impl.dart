@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
@@ -38,7 +39,9 @@ class ArticleRepositoryImpl implements ArticleRepository {
       if (statusCode == HttpStatus.ok) {
         final articles = httpResponse.data.articles ?? [];
         _log.info('getNewsArticles → success, ${articles.length} articles received');
-        return DataSuccess(articles.map((m) => m.toEntity()).toList());
+        return DataSuccess(
+          _withLocalIds(articles).map((m) => m.toEntity()).toList(),
+        );
       } else {
         _log.warning('getNewsArticles → non-200 response: '
             '$statusCode ${httpResponse.response.statusMessage}');
@@ -61,6 +64,20 @@ class ArticleRepositoryImpl implements ArticleRepository {
     }
   }
 
+  /// Public-API articles carry no id, which leaves offline rows
+  /// unidentifiable (delete matched the first NULL-id row, or crashed).
+  /// Assign a random local id to every model missing one.
+  List<ArticleModel> _withLocalIds(List<ArticleModel> models) {
+    var index = 0;
+    return models.map((m) {
+      if (m.id?.isNotEmpty == true) return m;
+      return m.copyWith(id: _newLocalId(index++));
+    }).toList();
+  }
+
+  String _newLocalId(int index) =>
+      'local-${DateTime.now().microsecondsSinceEpoch}-$index-${Random().nextInt(1 << 32)}';
+
   @override
   Future<List<ArticleEntity>> getSavedArticles() async {
     _log.fine('getSavedArticles → querying local DB');
@@ -76,10 +93,21 @@ class ArticleRepositoryImpl implements ArticleRepository {
     _log.fine('removeArticle → id=${article.id} title="${article.title}"');
     final rows = await _appDatabase.articleDao.getArticles();
     final match = rows.firstWhere(
-      (r) => r.id == article.id,
-      orElse: () => throw Exception('Article not found: id=${article.id}'),
+      (r) => _isSameArticle(r, article),
+      orElse: () => throw Exception(
+          'Article not found: id=${article.id} title="${article.title}"'),
     );
     return _appDatabase.articleDao.deleteArticle(match);
+  }
+
+  /// Identity for offline rows: the stable `id` when present, otherwise a
+  /// title+date fallback for legacy rows saved before API articles
+  /// received generated ids.
+  bool _isSameArticle(ArticlesTableData row, ArticleEntity article) {
+    if (article.id != null) return row.id == article.id;
+    return row.id == null &&
+        row.title == article.title &&
+        row.publishedAt == article.publishedAt;
   }
 
   @override

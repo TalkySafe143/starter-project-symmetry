@@ -7,6 +7,7 @@ import '../../../domain/entities/article.entity.dart';
 import '../../bloc/article/avatar/author_avatar_cubit.dart';
 import '../../bloc/article/local/local_article_bloc.dart';
 import '../../bloc/article/local/local_article_event.dart';
+import '../../bloc/article/local/local_article_state.dart';
 import '../../widgets/article_author_row.dart';
 
 class ArticleDetailsView extends HookWidget {
@@ -18,12 +19,33 @@ class ArticleDetailsView extends HookWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => sl<LocalArticleBloc>(),
-      child: Scaffold(
-        appBar: _buildAppBar(),
-        body: _buildBody(),
-        floatingActionButton: _buildFloatingActionButton(),
+      child: BlocListener<LocalArticleBloc, LocalArticlesState>(
+        listener: _onLocalStateChanged,
+        child: Scaffold(
+          appBar: _buildAppBar(),
+          body: _buildBody(),
+          floatingActionButton: _buildFloatingActionButton(),
+        ),
       ),
     );
+  }
+
+  void _onLocalStateChanged(BuildContext context, LocalArticlesState state) {
+    if (state is LocalArticlesDone) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.black,
+          content: Text('Article saved successfully.'),
+        ),
+      );
+    } else if (state is LocalArticlesError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text('Could not save the article: ${state.message}'),
+        ),
+      );
+    }
   }
 
   PreferredSizeWidget _buildAppBar() {
@@ -104,7 +126,13 @@ class ArticleDetailsView extends HookWidget {
       height: 250,
       margin: const EdgeInsets.only(top: 14),
       child: article?.urlToImage != null
-          ? Image.network(article!.urlToImage!, fit: BoxFit.cover)
+          ? Image.network(
+              article!.urlToImage!,
+              fit: BoxFit.cover,
+              // Decode bound: full-width 250px hero; existing full-res
+              // uploads must not decode at native resolution.
+              cacheWidth: 1080,
+            )
           : const SizedBox.shrink(),
     );
   }
@@ -122,6 +150,7 @@ class ArticleDetailsView extends HookWidget {
   Widget _buildFloatingActionButton() {
     return Builder(
       builder: (context) => FloatingActionButton(
+        heroTag: 'articleDetailSave',
         onPressed: () => _onFloatingActionButtonPressed(context),
         child: const Icon(Ionicons.bookmark, color: Colors.white),
       ),
@@ -134,11 +163,5 @@ class ArticleDetailsView extends HookWidget {
 
   void _onFloatingActionButtonPressed(BuildContext context) {
     BlocProvider.of<LocalArticleBloc>(context).add(SaveArticle(article!));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        backgroundColor: Colors.black,
-        content: Text('Article saved successfully.'),
-      ),
-    );
   }
 }

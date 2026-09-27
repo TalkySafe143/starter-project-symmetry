@@ -69,4 +69,19 @@ void main() {
     expect(find.byIcon(Icons.person), findsNothing);
     expect(find.byType(CircleAvatar), findsOneWidget);
   });
+
+  testWidgets(
+      'bounds photo decode size (regression: full-res uploads must not '
+      'decode at native resolution for a thumbnail)', (tester) async {
+    when(mockGetAuthorProfile.call(params: anyNamed('params')))
+        .thenAnswer((_) async => const DataSuccess(tProfile));
+
+    await tester.pumpWidget(buildAvatar('user-123'));
+    await tester.pump();
+    await tester.pump();
+
+    final avatar = tester.widget<CircleAvatar>(find.byType(CircleAvatar));
+    final image = avatar.backgroundImage! as ResizeImage;
+    expect(image.width, 144);
+  });
 }

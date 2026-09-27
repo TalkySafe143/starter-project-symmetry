@@ -53,6 +53,9 @@ class ArticleWidget extends StatelessWidget {
 
     return CachedNetworkImage(
       imageUrl: urlImage,
+      // Decode bound: the tile shows ~1/3 screen width, so a full camera
+      // photo must never be decoded at native resolution here.
+      memCacheWidth: 400,
       imageBuilder: (context, imageProvider) => Padding(
         padding: const EdgeInsetsDirectional.only(end: 14),
         child: ClipRRect(

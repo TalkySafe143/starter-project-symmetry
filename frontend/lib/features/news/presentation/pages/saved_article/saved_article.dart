@@ -45,9 +45,40 @@ class SavedArticles extends HookWidget {
           return const Center(child: CupertinoActivityIndicator());
         } else if (state is LocalArticlesDone) {
           return _buildArticlesList(context, state.articles ?? []);
+        } else if (state is LocalArticlesError) {
+          return _buildErrorBody(context);
         }
         return const SizedBox();
       },
+    );
+  }
+
+  /// Never render a blank page on failure: a blank list reads as
+  /// "everything was deleted". Explain and offer a retry instead.
+  Widget _buildErrorBody(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.black54, size: 40),
+            const SizedBox(height: 12),
+            const Text(
+              'Could not load your saved articles.',
+              style: TextStyle(color: Colors.black87, fontSize: 15),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => context
+                  .read<LocalArticleBloc>()
+                  .add(const GetSavedArticles()),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

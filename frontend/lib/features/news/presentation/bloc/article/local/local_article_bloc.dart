@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logging/logging.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_event.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_state.dart';
 
@@ -9,6 +10,8 @@ import '../../../../domain/usecases/save_article.dart';
 
 @injectable
 class LocalArticleBloc extends Bloc<LocalArticlesEvent,LocalArticlesState> {
+  static final _log = Logger('LocalArticleBloc');
+
   final GetSavedArticleUseCase _getSavedArticleUseCase;
   final SaveArticleUseCase _saveArticleUseCase;
   final RemoveArticleUseCase _removeArticleUseCase;
@@ -24,20 +27,35 @@ class LocalArticleBloc extends Bloc<LocalArticlesEvent,LocalArticlesState> {
   }
 
 
-  void onGetSavedArticles(GetSavedArticles event,Emitter<LocalArticlesState> emit) async {
-    final articles = await _getSavedArticleUseCase();
-    emit(LocalArticlesDone(articles));
-  }
-  
-  void onRemoveArticle(RemoveArticle removeArticle,Emitter<LocalArticlesState> emit) async {
-    await _removeArticleUseCase(params: removeArticle.article);
-    final articles = await _getSavedArticleUseCase();
-    emit(LocalArticlesDone(articles));
+  Future<void> onGetSavedArticles(GetSavedArticles event,Emitter<LocalArticlesState> emit) async {
+    try {
+      final articles = await _getSavedArticleUseCase();
+      emit(LocalArticlesDone(articles));
+    } catch (e, st) {
+      _log.severe('onGetSavedArticles → failed', e, st);
+      emit(LocalArticlesError(e.toString()));
+    }
   }
 
-  void onSaveArticle(SaveArticle saveArticle,Emitter<LocalArticlesState> emit) async {
-    await _saveArticleUseCase(params: saveArticle.article);
-    final articles = await _getSavedArticleUseCase();
-    emit(LocalArticlesDone(articles));
+  Future<void> onRemoveArticle(RemoveArticle removeArticle,Emitter<LocalArticlesState> emit) async {
+    try {
+      await _removeArticleUseCase(params: removeArticle.article);
+      final articles = await _getSavedArticleUseCase();
+      emit(LocalArticlesDone(articles));
+    } catch (e, st) {
+      _log.severe('onRemoveArticle → failed', e, st);
+      emit(LocalArticlesError(e.toString()));
+    }
+  }
+
+  Future<void> onSaveArticle(SaveArticle saveArticle,Emitter<LocalArticlesState> emit) async {
+    try {
+      await _saveArticleUseCase(params: saveArticle.article);
+      final articles = await _getSavedArticleUseCase();
+      emit(LocalArticlesDone(articles));
+    } catch (e, st) {
+      _log.severe('onSaveArticle → failed', e, st);
+      emit(LocalArticlesError(e.toString()));
+    }
   }
 }

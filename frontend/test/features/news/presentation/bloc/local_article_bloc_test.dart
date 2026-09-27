@@ -90,6 +90,35 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
+  group('failure paths (regression: offline save must surface errors, '
+      'never report success while the write failed)', () {
+    blocTest<LocalArticleBloc, LocalArticlesState>(
+      'emits [LocalArticlesError] when the save write throws',
+      build: () {
+        when(mockSaveArticleUseCase(params: tArticle))
+            .thenThrow(Exception('disk full'));
+        return buildBloc();
+      },
+      act: (bloc) => bloc.add(const SaveArticle(tArticle)),
+      expect: () => [isA<LocalArticlesError>()],
+      verify: (_) {
+        verify(mockSaveArticleUseCase(params: tArticle)).called(1);
+        verifyNever(mockGetSavedArticleUseCase());
+      },
+    );
+
+    blocTest<LocalArticleBloc, LocalArticlesState>(
+      'emits [LocalArticlesError] when reloading the saved list throws',
+      build: () {
+        when(mockGetSavedArticleUseCase()).thenThrow(Exception('db locked'));
+        return buildBloc();
+      },
+      act: (bloc) => bloc.add(const GetSavedArticles()),
+      expect: () => [isA<LocalArticlesError>()],
+    );
+  });
+
+  // ---------------------------------------------------------------------------
   group('RemoveArticle event', () {
     blocTest<LocalArticleBloc, LocalArticlesState>(
       'removes the article then emits [LocalArticlesDone] with updated list',
