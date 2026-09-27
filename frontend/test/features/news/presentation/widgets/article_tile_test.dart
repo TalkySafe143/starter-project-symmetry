@@ -28,4 +28,33 @@ void main() {
     );
     expect(image.memCacheWidth, 400);
   });
+
+  testWidgets(
+      'long ISO timestamp does not overflow the tile on narrow screens '
+      '(regression: user-created publishedAt overflowed the date row)',
+      (tester) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    // Short title/content isolate the date row: vertical fit of multi-line
+    // titles under test-font metrics is a separate concern.
+    const tLongDateArticle = ArticleEntity(
+      id: 'user-article-1',
+      authorDisplayName: 'Camilo',
+      title: 'Short title',
+      urlToImage: 'https://example.com/large-photo.jpg',
+      publishedAt: '2026-09-27T12:11:50.732200',
+      content: 'Short content',
+    );
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: ArticleWidget(article: tLongDateArticle)),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+  });
 }

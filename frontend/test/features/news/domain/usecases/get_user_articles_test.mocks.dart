@@ -105,4 +105,43 @@ class MockUserArticleRepository extends _i1.Mock
           ),
         )),
       ) as _i4.Future<_i2.DataState<void>>);
+
+  @override
+  _i4.Future<_i2.DataState<void>> updateUserArticle(
+    _i5.ArticleEntity? article, {
+    _i6.File? imageFile,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateUserArticle,
+          [article],
+          {#imageFile: imageFile},
+        ),
+        returnValue:
+            _i4.Future<_i2.DataState<void>>.value(_FakeDataState_0<void>(
+          this,
+          Invocation.method(
+            #updateUserArticle,
+            [article],
+            {#imageFile: imageFile},
+          ),
+        )),
+      ) as _i4.Future<_i2.DataState<void>>);
+
+  @override
+  _i4.Future<_i2.DataState<void>> deleteUserArticle(String? articleId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #deleteUserArticle,
+          [articleId],
+        ),
+        returnValue:
+            _i4.Future<_i2.DataState<void>>.value(_FakeDataState_0<void>(
+          this,
+          Invocation.method(
+            #deleteUserArticle,
+            [articleId],
+          ),
+        )),
+      ) as _i4.Future<_i2.DataState<void>>);
 }

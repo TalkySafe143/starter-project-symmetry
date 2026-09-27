@@ -203,4 +203,101 @@ void main() {
     });
   });
 
+  group('updateUserArticle', () {
+    test(
+        'should upload thumbnail and update article with uploaded url when imageFile is provided',
+        () async {
+      final tImageFile = File('dummy/path/image.jpg');
+      const uploadedUrl = 'https://firebasestorage.googleapis.com/updated.jpg';
+
+      when(mockFirebaseService.uploadThumbnail(tImageFile))
+          .thenAnswer((_) async => uploadedUrl);
+
+      final result = await repository.updateUserArticle(
+        tArticleEntity,
+        imageFile: tImageFile,
+      );
+
+      expect(result, isA<DataSuccess<void>>());
+      verify(mockFirebaseService.uploadThumbnail(tImageFile)).called(1);
+
+      final captured = verify(mockFirebaseService.updateUserArticle(captureAny))
+          .captured
+          .single as ArticleModel;
+      expect(captured.urlToImage, uploadedUrl);
+      expect(captured.id, tArticleEntity.id);
+      expect(captured.title, tArticleEntity.title);
+      expect(captured.content, tArticleEntity.content);
+    });
+
+    test(
+        'should keep existing urlToImage when imageFile is null and uploadThumbnail returns null',
+        () async {
+      when(mockFirebaseService.uploadThumbnail(null))
+          .thenAnswer((_) async => null);
+
+      final result = await repository.updateUserArticle(
+        tArticleEntity,
+        imageFile: null,
+      );
+
+      expect(result, isA<DataSuccess<void>>());
+
+      final captured = verify(mockFirebaseService.updateUserArticle(captureAny))
+          .captured
+          .single as ArticleModel;
+      expect(captured.urlToImage, tArticleEntity.urlToImage);
+    });
+
+    test('should return DataGenericFailed when uploadThumbnail throws',
+        () async {
+      final tImageFile = File('dummy/path/image.jpg');
+      when(mockFirebaseService.uploadThumbnail(tImageFile))
+          .thenThrow(Exception('Upload failed'));
+
+      final result = await repository.updateUserArticle(
+        tArticleEntity,
+        imageFile: tImageFile,
+      );
+
+      expect(result, isA<DataGenericFailed<void>>());
+      expect(result.errorMessage, contains('Upload failed'));
+      verifyNever(mockFirebaseService.updateUserArticle(any));
+    });
+
+    test('should return DataGenericFailed when updateUserArticle throws',
+        () async {
+      when(mockFirebaseService.uploadThumbnail(null))
+          .thenAnswer((_) async => null);
+      when(mockFirebaseService.updateUserArticle(any))
+          .thenThrow(Exception('Firestore update failed'));
+
+      final result = await repository.updateUserArticle(
+        tArticleEntity,
+        imageFile: null,
+      );
+
+      expect(result, isA<DataGenericFailed<void>>());
+      expect(result.errorMessage, contains('Firestore update failed'));
+    });
+  });
+
+  group('deleteUserArticle', () {
+    test('should delete the article and return DataSuccess', () async {
+      final result = await repository.deleteUserArticle('1');
+
+      expect(result, isA<DataSuccess<void>>());
+      verify(mockFirebaseService.deleteUserArticle('1')).called(1);
+    });
+
+    test('should return DataGenericFailed when the service throws', () async {
+      when(mockFirebaseService.deleteUserArticle('1'))
+          .thenThrow(Exception('Firestore delete failed'));
+
+      final result = await repository.deleteUserArticle('1');
+
+      expect(result, isA<DataGenericFailed<void>>());
+      expect(result.errorMessage, contains('Firestore delete failed'));
+    });
+  });
 }
