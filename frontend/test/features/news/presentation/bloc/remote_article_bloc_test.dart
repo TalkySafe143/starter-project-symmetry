@@ -78,6 +78,19 @@ void main() {
   );
 
   blocTest<RemoteArticlesBloc, RemoteArticlesState>(
+    'emits [RemoteArticlesError(message)] when GetArticles returns '
+    'DataGenericFailed (regression: must not cast to DioException)',
+    build: () {
+      when(mockGetArticleUseCase()).thenAnswer(
+        (_) async => const DataGenericFailed('offline'),
+      );
+      return RemoteArticlesBloc(mockGetArticleUseCase);
+    },
+    act: (bloc) => bloc.add(const GetArticles()),
+    expect: () => [const RemoteArticlesError('offline')],
+  );
+
+  blocTest<RemoteArticlesBloc, RemoteArticlesState>(
     'calls the usecase exactly once per GetArticles event',
     build: () {
       when(mockGetArticleUseCase())

@@ -49,4 +49,17 @@ class UserModel extends UserEntity {
       isAnonymous: entity.isAnonymous,
     );
   }
+
+  factory UserModel.fromRawData(Map<String, dynamic> raw) =>
+      UserModel.fromJson(raw);
+
+  UserEntity toEntity() {
+    return UserEntity(
+      id: id,
+      email: email,
+      displayName: displayName,
+      photoUrl: photoUrl,
+      isAnonymous: isAnonymous,
+    );
+  }
 }

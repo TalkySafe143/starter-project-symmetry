@@ -211,5 +211,43 @@ void main() {
         expect(updated.content, 'Test Content');
       });
     });
+
+    group('toEntity / fromRawData (1.3.2 / 1.3.3)', () {
+      test('toEntity should return a pure ArticleEntity with same fields',
+          () {
+        const model = ArticleModel(
+          id: '1',
+          authorDisplayName: 'John Doe',
+          title: 'Test Title',
+          urlToImage: 'https://example.com/image.jpg',
+          publishedAt: '2024-01-01T00:00:00Z',
+          content: 'Test Content',
+          authorId: 'author-123',
+        );
+
+        final entity = model.toEntity();
+
+        expect(entity, isA<ArticleEntity>());
+        expect(entity, isNot(isA<ArticleModel>()));
+        expect(entity.id, '1');
+        expect(entity.authorDisplayName, 'John Doe');
+        expect(entity.authorId, 'author-123');
+      });
+
+      test('fromRawData should parse external API data like fromJson', () {
+        final raw = {
+          'author': 'Jane',
+          'title': 'Raw Title',
+          'urlToImage': 'https://example.com/raw.jpg',
+          'publishedAt': '2024-02-02T00:00:00Z',
+          'content': 'Raw content',
+        };
+
+        final result = ArticleModel.fromRawData(raw);
+
+        expect(result.authorDisplayName, 'Jane');
+        expect(result.title, 'Raw Title');
+      });
+    });
   });
 }

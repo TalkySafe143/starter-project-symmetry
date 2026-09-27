@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../injection_container.dart';
 import '../../../domain/entities/article.entity.dart';
+import '../../bloc/article/avatar/author_avatar_cubit.dart';
 import '../../bloc/article/local/local_article_bloc.dart';
 import '../../bloc/article/local/local_article_event.dart';
 import '../../bloc/article/local/local_article_state.dart';
@@ -65,6 +66,7 @@ class SavedArticles extends HookWidget {
       itemBuilder: (context, index) {
         return ArticleWidget(
           article: articles[index],
+          avatarCubitFactory: () => sl<AuthorAvatarCubit>(),
           isRemovable: true,
           onRemove: (article) => _onRemoveArticle(context, article),
           onArticlePressed: (article) => _onArticlePressed(context, article),

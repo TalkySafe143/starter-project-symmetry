@@ -7,7 +7,6 @@ import 'package:news_app_clean_architecture/features/auth/domain/entities/user_p
 import 'package:news_app_clean_architecture/features/auth/domain/usecases/get_author_profile.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/avatar/author_avatar_cubit.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/widgets/author_avatar.dart';
-import 'package:news_app_clean_architecture/injection_container.dart';
 
 import 'author_avatar_test.mocks.dart';
 
@@ -23,18 +22,16 @@ void main() {
 
   setUp(() {
     mockGetAuthorProfile = MockGetAuthorProfile();
-    sl.registerFactory<AuthorAvatarCubit>(
-      () => AuthorAvatarCubit(mockGetAuthorProfile),
-    );
-  });
-
-  tearDown(() async {
-    await sl.reset();
   });
 
   Widget buildAvatar(String? authorId) {
     return MaterialApp(
-      home: Scaffold(body: AuthorAvatar(authorId: authorId)),
+      home: Scaffold(
+        body: AuthorAvatar(
+          authorId: authorId,
+          cubitFactory: () => AuthorAvatarCubit(mockGetAuthorProfile),
+        ),
+      ),
     );
   }
 

@@ -4,9 +4,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../injection_container.dart';
 import '../../../domain/entities/article.entity.dart';
+import '../../bloc/article/avatar/author_avatar_cubit.dart';
 import '../../bloc/article/local/local_article_bloc.dart';
 import '../../bloc/article/local/local_article_event.dart';
-import '../../widgets/author_avatar.dart';
+import '../../widgets/article_author_row.dart';
 
 class ArticleDetailsView extends HookWidget {
   final ArticleEntity? article;
@@ -81,29 +82,18 @@ class ArticleDetailsView extends HookWidget {
   }
 
   Widget _buildArticleAuthor() {
-    final hasName = article?.authorDisplayName?.isNotEmpty == true;
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(22, 12, 22, 0),
-      child: Row(
-        children: [
-          AuthorAvatar(
-            authorId: article?.authorId,
-            radius: 16,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              hasName ? article!.authorDisplayName! : 'Unknown author',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
+      child: ArticleAuthorRow(
+        authorId: article?.authorId,
+        authorDisplayName: article?.authorDisplayName,
+        avatarRadius: 16,
+        spacing: 10,
+        nameStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+        ),
+        avatarCubitFactory: () => sl<AuthorAvatarCubit>(),
       ),
     );
   }

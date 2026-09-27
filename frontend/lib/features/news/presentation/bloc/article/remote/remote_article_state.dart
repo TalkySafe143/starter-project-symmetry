@@ -1,17 +1,16 @@
 import 'package:equatable/equatable.dart';
-import 'package:dio/dio.dart';
 import '../../../../domain/entities/article.entity.dart';
 
 abstract class RemoteArticlesState extends Equatable {
   final List<ArticleEntity>? articles;
-  final DioException? error;
+  final String? errorMessage;
 
-  const RemoteArticlesState({this.articles, this.error});
+  const RemoteArticlesState({this.articles, this.errorMessage});
 
   @override
   List<Object> get props => [
         if (articles != null) articles!,
-        if (error != null) error!,
+        if (errorMessage != null) errorMessage!,
       ];
 }
 
@@ -24,5 +23,6 @@ class RemoteArticlesDone extends RemoteArticlesState {
 }
 
 class RemoteArticlesError extends RemoteArticlesState {
-  const RemoteArticlesError(DioException error) : super(error: error);
+  const RemoteArticlesError(String errorMessage)
+      : super(errorMessage: errorMessage);
 }

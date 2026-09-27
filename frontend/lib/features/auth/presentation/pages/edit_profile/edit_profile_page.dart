@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/avatar/author_avatar_cubit.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/widgets/author_avatar.dart';
 import 'package:news_app_clean_architecture/injection_container.dart';
 
@@ -153,6 +154,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
               : AuthorAvatar(
                   authorId: _userId,
                   radius: 48,
+                  cubitFactory: () => sl<AuthorAvatarCubit>(),
                 ),
           Positioned(
             bottom: 0,

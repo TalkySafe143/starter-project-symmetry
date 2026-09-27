@@ -1,10 +1,10 @@
 import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/entities/user.entity.dart';
 import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:news_app_clean_architecture/features/auth/presentation/widgets/user_avatar.dart';
 
 import 'community_feed_tab.dart';
 import 'daily_news_tab.dart';
@@ -109,34 +109,11 @@ class NewsHomePage extends StatelessWidget {
   }
 
   Widget _buildAvatar(bool isLoggedIn, UserEntity? user) {
-    if (isLoggedIn && user?.photoUrl?.isNotEmpty == true) {
-      return CircleAvatar(
-        radius: 15,
-        backgroundColor: Colors.black87,
-        backgroundImage: CachedNetworkImageProvider(user!.photoUrl!),
-      );
-    }
-    return CircleAvatar(
+    return UserAvatar(
+      user: user,
+      isLoggedIn: isLoggedIn,
       radius: 15,
-      backgroundColor: isLoggedIn ? Colors.black87 : Colors.black12,
-      child: Text(
-        _avatarLetter(isLoggedIn, user),
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          color: isLoggedIn ? Colors.white : Colors.black54,
-        ),
-      ),
     );
-  }
-
-  String _avatarLetter(bool isLoggedIn, UserEntity? user) {
-    if (!isLoggedIn || user == null) return '?';
-    if (user.displayName?.isNotEmpty == true) {
-      return user.displayName![0].toUpperCase();
-    }
-    if (user.email.isNotEmpty) return user.email[0].toUpperCase();
-    return 'U';
   }
 
   void _openMenu(BuildContext context) {

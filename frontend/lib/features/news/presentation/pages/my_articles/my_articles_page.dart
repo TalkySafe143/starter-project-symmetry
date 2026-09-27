@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../injection_container.dart';
+import '../../bloc/article/avatar/author_avatar_cubit.dart';
 import '../../bloc/article/user/user_articles_bloc.dart';
 import '../../widgets/article_tile.dart';
 
@@ -53,6 +54,7 @@ class MyArticlesPage extends StatelessWidget {
               final article = state.articles[index];
               return ArticleWidget(
                 article: article,
+                avatarCubitFactory: () => sl<AuthorAvatarCubit>(),
                 onArticlePressed: (pressed) => Navigator.pushNamed(
                   context,
                   '/ArticleDetails',

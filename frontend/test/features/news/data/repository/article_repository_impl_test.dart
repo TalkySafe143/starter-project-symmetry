@@ -81,8 +81,9 @@ void main() {
 
       final result = await repository.getNewsArticles();
 
-      expect(result, isA<DataSuccess<List<ArticleModel>>>());
-      expect(result.data, tArticleModelList);
+      expect(result, isA<DataSuccess<List<ArticleEntity>>>());
+      expect(result.data!.length, tArticleModelList.length);
+      expect(result.data!.first.title, tArticleModelList.first.title);
     });
 
     test('should return DataFailed on non-200 HTTP status', () async {
@@ -104,7 +105,7 @@ void main() {
 
       final result = await repository.getNewsArticles();
 
-      expect(result, isA<DataDioFailed<List<ArticleModel>>>());
+      expect(result, isA<DataDioFailed<List<ArticleEntity>>>());
       expect(result.error?.type, DioExceptionType.badResponse);
     });
 
@@ -122,14 +123,14 @@ void main() {
 
       final result = await repository.getNewsArticles();
 
-      expect(result, isA<DataDioFailed<List<ArticleModel>>>());
+      expect(result, isA<DataDioFailed<List<ArticleEntity>>>());
       expect(result.error, dioException);
     });
   });
 
   // ---------------------------------------------------------------------------
   group('getSavedArticles', () {
-    test('should return mapped ArticleModels from the local database', () async {
+    test('should return mapped articles from the local database', () async {
       when(mockArticleDao.getArticles()).thenAnswer((_) async => tArticleRows);
 
       final result = await repository.getSavedArticles();

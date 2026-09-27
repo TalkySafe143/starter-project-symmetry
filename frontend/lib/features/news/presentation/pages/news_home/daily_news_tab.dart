@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/avatar/author_avatar_cubit.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_bloc.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_state.dart';
+import 'package:news_app_clean_architecture/injection_container.dart';
 
 import '../../../domain/entities/article.entity.dart';
 import '../../widgets/article_tile.dart';
@@ -34,6 +36,7 @@ class DailyNewsTab extends StatelessWidget {
       children: articles
           .map((article) => ArticleWidget(
                 article: article,
+                avatarCubitFactory: () => sl<AuthorAvatarCubit>(),
                 onArticlePressed: (pressed) => Navigator.pushNamed(
                   context,
                   '/ArticleDetails',

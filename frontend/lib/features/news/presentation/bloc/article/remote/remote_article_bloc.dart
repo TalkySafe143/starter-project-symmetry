@@ -38,18 +38,24 @@ class RemoteArticlesBloc
         'status=${dataState.error?.response?.statusCode}]',
         dataState.error,
       );
-      emit(RemoteArticlesError(dataState.error!));
+      emit(
+        RemoteArticlesError(
+          dataState.error?.message ??
+              dataState.error?.toString() ??
+              'Could not load articles.',
+        ),
+      );
       return;
     }
 
     if (dataState is DataGenericFailed) {
       _log.severe(
           'onGetArticles → DataGenericFailed: ${dataState.errorMessage}');
-      // Emit an error state using a synthetic DioException so the UI can react
-      emit(RemoteArticlesError(
-        dataState.error ??
-            Exception(dataState.errorMessage) as dynamic,
-      ));
+      emit(
+        RemoteArticlesError(
+          dataState.errorMessage ?? 'Could not load articles.',
+        ),
+      );
     }
   }
 }

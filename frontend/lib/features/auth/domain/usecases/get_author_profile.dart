@@ -1,4 +1,3 @@
-import 'package:injectable/injectable.dart';
 import 'package:news_app_clean_architecture/core/resources/data_state.dart';
 import 'package:news_app_clean_architecture/core/usecase/usecase.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/entities/user_profile.entity.dart';
@@ -10,7 +9,6 @@ class GetAuthorProfileParams {
   const GetAuthorProfileParams({required this.authorId});
 }
 
-@lazySingleton
 class GetAuthorProfile
     implements UseCase<DataState<UserProfileEntity?>, GetAuthorProfileParams> {
   final UserProfileRepository _userProfileRepository;

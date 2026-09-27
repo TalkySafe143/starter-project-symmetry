@@ -45,7 +45,7 @@ class UserArticleRepositoryImpl implements UserArticleRepository {
   Future<DataState<List<ArticleEntity>>> getAllUserArticles() async {
     try {
       final articles = await _firebaseService.getAllUserArticles();
-      return DataSuccess(articles);
+      return DataSuccess(articles.map((m) => m.toEntity()).toList());
     } catch (e, st) {
       _log.severe('getAllUserArticles → failed', e, st);
       return DataGenericFailed(e.toString());
@@ -56,7 +56,7 @@ class UserArticleRepositoryImpl implements UserArticleRepository {
   Future<DataState<List<ArticleEntity>>> getUserArticles(String userId) async {
     try {
       final articles = await _firebaseService.getUserArticles(userId);
-      return DataSuccess(articles);
+      return DataSuccess(articles.map((m) => m.toEntity()).toList());
     } catch (e, st) {
       _log.severe('getUserArticles → failed', e, st);
       return DataGenericFailed(e.toString());

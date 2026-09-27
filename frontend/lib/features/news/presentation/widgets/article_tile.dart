@@ -2,22 +2,25 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import '../bloc/article/avatar/author_avatar_cubit.dart';
 import '../../domain/entities/article.entity.dart';
-import 'author_avatar.dart';
+import 'article_author_row.dart';
 
 class ArticleWidget extends StatelessWidget {
   final ArticleEntity? article;
   final bool? isRemovable;
-  final Logger log = Logger("ArticleWidget");
+  static final Logger log = Logger("ArticleWidget");
   final void Function(ArticleEntity article)? onRemove;
   final void Function(ArticleEntity article)? onArticlePressed;
+  final AuthorAvatarCubit Function()? avatarCubitFactory;
 
-  ArticleWidget({
+  const ArticleWidget({
     super.key,
     this.article,
     this.onArticlePressed,
     this.isRemovable = false,
     this.onRemove,
+    this.avatarCubitFactory,
   });
 
   @override
@@ -147,30 +150,12 @@ class ArticleWidget extends StatelessWidget {
   }
 
   Widget _buildAuthorRow() {
-    final hasName = article?.authorDisplayName?.isNotEmpty == true;
-
     return Padding(
       padding: const EdgeInsets.only(top: 4),
-      child: Row(
-        children: [
-          AuthorAvatar(
-            authorId: article?.authorId,
-            radius: 10,
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              hasName ? article!.authorDisplayName! : 'Unknown author',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Colors.black54,
-              ),
-            ),
-          ),
-        ],
+      child: ArticleAuthorRow(
+        authorId: article?.authorId,
+        authorDisplayName: article?.authorDisplayName,
+        avatarCubitFactory: avatarCubitFactory,
       ),
     );
   }

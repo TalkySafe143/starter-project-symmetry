@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app_clean_architecture/injection_container.dart';
 
+import '../../bloc/article/avatar/author_avatar_cubit.dart';
 import '../../bloc/article/community/community_articles_bloc.dart';
 import '../../widgets/article_tile.dart';
 
@@ -44,6 +45,7 @@ class CommunityFeedTab extends StatelessWidget {
         final article = state.articles[index];
         return ArticleWidget(
           article: article,
+          avatarCubitFactory: () => sl<AuthorAvatarCubit>(),
           onArticlePressed: (pressed) => Navigator.pushNamed(
             context,
             '/ArticleDetails',

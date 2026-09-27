@@ -30,4 +30,15 @@ class UserProfileModel extends UserProfileEntity {
       photoUrl: entity.photoUrl,
     );
   }
+
+  factory UserProfileModel.fromRawData(Map<String, dynamic> raw) =>
+      UserProfileModel.fromJson(raw);
+
+  UserProfileEntity toEntity() {
+    return UserProfileEntity(
+      id: id,
+      displayName: displayName,
+      photoUrl: photoUrl,
+    );
+  }
 }

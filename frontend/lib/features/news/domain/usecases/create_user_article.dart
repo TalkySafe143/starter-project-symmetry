@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:injectable/injectable.dart';
 import 'package:news_app_clean_architecture/core/resources/data_state.dart';
 import 'package:news_app_clean_architecture/core/usecase/usecase.dart';
 import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
@@ -16,7 +15,6 @@ class CreateUserArticleParams {
   });
 }
 
-@lazySingleton
 class CreateUserArticle
     implements UseCase<DataState<void>, CreateUserArticleParams> {
   final UserArticleRepository _userArticleRepository;

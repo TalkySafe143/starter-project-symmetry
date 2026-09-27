@@ -22,7 +22,7 @@ class ArticleRepositoryImpl implements ArticleRepository {
   ArticleRepositoryImpl(this._newsApiService, this._appDatabase);
 
   @override
-  Future<DataState<List<ArticleModel>>> getNewsArticles() async {
+  Future<DataState<List<ArticleEntity>>> getNewsArticles() async {
     _log.info('getNewsArticles → calling API '
         '[key=${newsAPIKey.substring(0, 6)}… country=$countryQuery category=$categoryQuery]');
     try {
@@ -38,7 +38,7 @@ class ArticleRepositoryImpl implements ArticleRepository {
       if (statusCode == HttpStatus.ok) {
         final articles = httpResponse.data.articles ?? [];
         _log.info('getNewsArticles → success, ${articles.length} articles received');
-        return DataSuccess(articles);
+        return DataSuccess(articles.map((m) => m.toEntity()).toList());
       } else {
         _log.warning('getNewsArticles → non-200 response: '
             '$statusCode ${httpResponse.response.statusMessage}');
@@ -62,11 +62,13 @@ class ArticleRepositoryImpl implements ArticleRepository {
   }
 
   @override
-  Future<List<ArticleModel>> getSavedArticles() async {
+  Future<List<ArticleEntity>> getSavedArticles() async {
     _log.fine('getSavedArticles → querying local DB');
     final rows = await _appDatabase.articleDao.getArticles();
     _log.fine('getSavedArticles → ${rows.length} rows returned');
-    return rows.map((row) => ArticleModel.fromArticle(row)).toList();
+    return rows
+        .map((row) => ArticleModel.fromArticle(row).toEntity())
+        .toList();
   }
 
   @override

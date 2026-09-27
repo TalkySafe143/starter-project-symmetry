@@ -1,10 +1,10 @@
 import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/entities/user.entity.dart';
 import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:news_app_clean_architecture/features/auth/presentation/widgets/user_avatar.dart';
 
 class SidebarMenu extends StatelessWidget {
   final VoidCallback? onItemSelected;
@@ -195,34 +195,19 @@ class SidebarMenu extends StatelessWidget {
   }
 
   Widget _buildAvatar(bool isLoggedIn, UserEntity? user) {
-    if (isLoggedIn && user?.photoUrl?.isNotEmpty == true) {
-      return CircleAvatar(
-        radius: 26,
-        backgroundColor: Colors.white12,
-        backgroundImage: CachedNetworkImageProvider(user!.photoUrl!),
-      );
-    }
-    return CircleAvatar(
+    return UserAvatar(
+      user: user,
+      isLoggedIn: isLoggedIn,
       radius: 26,
-      backgroundColor: Colors.white12,
-      child: Text(
-        _avatarLetter(isLoggedIn, user),
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-        ),
+      loggedOutLetter: 'G',
+      photoBackground: Colors.white12,
+      fallbackBackground: Colors.white12,
+      fallbackTextStyle: const TextStyle(
+        color: Colors.white,
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
       ),
     );
-  }
-
-  String _avatarLetter(bool isLoggedIn, UserEntity? user) {
-    if (!isLoggedIn || user == null) return 'G';
-    if (user.displayName?.isNotEmpty == true) {
-      return user.displayName![0].toUpperCase();
-    }
-    if (user.email.isNotEmpty) return user.email[0].toUpperCase();
-    return 'U';
   }
 
   Widget _buildMenuItem(
