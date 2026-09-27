@@ -3,8 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:mockito/mockito.dart';
 import 'package:news_app_clean_architecture/core/resources/data_state.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/entities/user.entity.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/entities/user_profile.entity.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/usecases/get_author_profile.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/usecases/get_current_user_usecase.dart';
+import 'package:news_app_clean_architecture/features/comments/domain/entities/comment.entity.dart';
+import 'package:news_app_clean_architecture/features/comments/domain/usecases/delete_comment.dart';
+import 'package:news_app_clean_architecture/features/comments/domain/usecases/get_article_comments.dart';
+import 'package:news_app_clean_architecture/features/comments/domain/usecases/post_comment.dart';
+import 'package:news_app_clean_architecture/features/comments/presentation/bloc/comments/comments_bloc.dart';
 import 'package:news_app_clean_architecture/features/news/domain/entities/article.entity.dart';
 import 'package:news_app_clean_architecture/features/news/domain/usecases/get_saved_article.dart';
 import 'package:news_app_clean_architecture/features/news/domain/usecases/remove_article.dart';
@@ -61,6 +68,36 @@ class _StubGetAuthorProfile extends Fake implements GetAuthorProfile {
   }
 }
 
+class _StubGetArticleComments extends Fake implements GetArticleComments {
+  @override
+  Future<DataState<List<CommentEntity>>> call({
+    GetArticleCommentsParams? params,
+  }) async {
+    return const DataSuccess([]);
+  }
+}
+
+class _StubPostComment extends Fake implements PostComment {
+  @override
+  Future<DataState<void>> call({PostCommentParams? params}) async {
+    return DataSuccess(null);
+  }
+}
+
+class _StubDeleteComment extends Fake implements DeleteComment {
+  @override
+  Future<DataState<void>> call({DeleteCommentParams? params}) async {
+    return DataSuccess(null);
+  }
+}
+
+class _StubGetCurrentUser extends Fake implements GetCurrentUserUseCase {
+  @override
+  Future<DataState<UserEntity?>> call({void params}) async {
+    return const DataSuccess(null);
+  }
+}
+
 void main() {
   const tArticle = ArticleEntity(
     id: 'user-article-1',
@@ -92,6 +129,14 @@ void main() {
     );
     sl.registerFactory<AuthorAvatarCubit>(
       () => AuthorAvatarCubit(_StubGetAuthorProfile()),
+    );
+    sl.registerFactory<CommentsBloc>(
+      () => CommentsBloc(
+        _StubGetArticleComments(),
+        _StubPostComment(),
+        _StubDeleteComment(),
+        _StubGetCurrentUser(),
+      ),
     );
   });
 
@@ -243,5 +288,22 @@ void main() {
     expect(fakeSave.called, isFalse);
     expect(_bookmarkIcon(tester).color, Colors.white);
     expect(find.text('Article removed.'), findsOneWidget);
+  });
+
+  testWidgets('shows the comments section with a login prompt for guests',
+      (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ArticleDetailsView(article: tArticle),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Comments (0)'), findsOneWidget);
+    expect(find.text('Log in to join the discussion.'), findsOneWidget);
+    // The floating bookmark button must not cover the login row: the
+    // section reserves FAB clearance at its end.
+    expect(find.byKey(const ValueKey('commentsFabClearance')), findsOneWidget);
   });
 }
