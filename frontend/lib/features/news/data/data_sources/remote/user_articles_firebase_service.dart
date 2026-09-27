@@ -66,6 +66,33 @@ class UserArticlesFirebaseService {
     return articles;
   }
 
+  /// Overwrites the Firestore document for [article]. The [article.id]
+  /// must match an existing document id. Throws [StateError] when the id
+  /// is missing or blank.
+  Future<void> updateUserArticle(ArticleModel article) async {
+    final articleId = article.id?.trim() ?? '';
+    if (articleId.isEmpty) {
+      throw StateError('Cannot update an article without an id.');
+    }
+    _log.info('updateUserArticle → updating article $articleId');
+    await _firestoreDb
+        .collection(_articlesCollection)
+        .doc(articleId)
+        .update(article.toJson());
+    _log.info('updateUserArticle → updated article $articleId');
+  }
+
+  /// Deletes the Firestore document with [articleId].
+  /// Throws [StateError] when [articleId] is blank.
+  Future<void> deleteUserArticle(String articleId) async {
+    if (articleId.trim().isEmpty) {
+      throw StateError('Cannot delete an article without an id.');
+    }
+    _log.info('deleteUserArticle → deleting article $articleId');
+    await _firestoreDb.collection(_articlesCollection).doc(articleId).delete();
+    _log.info('deleteUserArticle → deleted article $articleId');
+  }
+
   /// Saves [article] to Firestore. The [article.urlToImage] should already
   /// contain the Storage download URL before calling this.
   Future<DocumentReference<Map<String, dynamic>>> createUserArticle(

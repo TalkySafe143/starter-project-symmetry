@@ -41,6 +41,41 @@ class UserArticleRepositoryImpl implements UserArticleRepository {
     }
   }
 
+  /// [imageFile] replaces the thumbnail only when provided; otherwise
+  /// the [article.urlToImage] is kept untouched.
+  @override
+  Future<DataState<void>> updateUserArticle(
+    ArticleEntity article, {
+    File? imageFile,
+  }) async {
+    try {
+      final thumbnailUrl = await _firebaseService.uploadThumbnail(imageFile);
+      _log.info('updateUserArticle → thumbnailUrl=$thumbnailUrl');
+
+      final model = ArticleModel.fromEntity(article).copyWith(
+        urlToImage: thumbnailUrl ?? article.urlToImage,
+      );
+
+      await _firebaseService.updateUserArticle(model);
+
+      return DataSuccess(null);
+    } catch (e, st) {
+      _log.severe('updateUserArticle → failed', e, st);
+      return DataGenericFailed(e.toString());
+    }
+  }
+
+  @override
+  Future<DataState<void>> deleteUserArticle(String articleId) async {
+    try {
+      await _firebaseService.deleteUserArticle(articleId);
+      return DataSuccess(null);
+    } catch (e, st) {
+      _log.severe('deleteUserArticle → failed', e, st);
+      return DataGenericFailed(e.toString());
+    }
+  }
+
   @override
   Future<DataState<List<ArticleEntity>>> getAllUserArticles() async {
     try {
