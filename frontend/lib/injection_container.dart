@@ -28,10 +28,10 @@ Future<void> configureDependencies() async {
   _registerDomainUseCases();
 }
 
-/// Domain stays pure Dart (no injectable annotations per 2.1.1), so use-cases
-/// are registered manually here. Guards keep this idempotent across the
-/// codegen transition: before `build_runner` reruns, the generated config
-/// still registers them; after, only these manual registrations remain.
+/// Domain stays annotation-free per 2.1.1, so codegen learns the use-cases
+/// from the providers in `core/di/app_module.dart`. These manual
+/// registrations stay as idempotent guards: whichever registration runs
+/// first wins, the other is skipped.
 void _registerDomainUseCases() {
   if (!sl.isRegistered<GetArticleUseCase>()) {
     sl.registerLazySingleton(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:mockito/mockito.dart';
 import 'package:news_app_clean_architecture/core/resources/data_state.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/entities/user_profile.entity.dart';
@@ -164,6 +165,59 @@ void main() {
     await tester.pump();
 
     expect(_bookmarkIcon(tester).color, Colors.black);
+  });
+
+  testWidgets('renders markdown content as formatted text', (tester) async {
+    const mdArticle = ArticleEntity(
+      id: 'md-1',
+      authorDisplayName: 'Camilo',
+      title: 'Markdown test',
+      urlToImage: null,
+      publishedAt: '2026-09-27',
+      content: '# Hello\n\n**bold** plain',
+      authorId: null,
+    );
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ArticleDetailsView(article: mdArticle),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(GptMarkdown), findsOneWidget);
+    // Formatted output must not leak raw markdown markers.
+    expect(find.textContaining('**', findRichText: true), findsNothing);
+    expect(find.textContaining('#', findRichText: true), findsNothing);
+    expect(find.textContaining('Hello', findRichText: true), findsWidgets);
+    expect(find.textContaining('bold', findRichText: true), findsWidgets);
+  });
+
+  testWidgets('plain-text content still renders', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ArticleDetailsView(article: tArticle),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(GptMarkdown), findsOneWidget);
+    expect(
+      find.textContaining('offline copy', findRichText: true),
+      findsWidgets,
+    );
+  });
+
+  testWidgets('preview mode hides the save button', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ArticleDetailsView(article: tArticle, hideSaveButton: true),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(FloatingActionButton), findsNothing);
+    expect(find.text('Test de un articulo'), findsOneWidget);
   });
 
   testWidgets('bookmark starts black for a saved article and tap removes it',

@@ -8,6 +8,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:news_app_clean_architecture/injection_container.dart';
 
 import '../../bloc/article/create/create_article_bloc.dart';
+import '../../../domain/entities/article.entity.dart';
+import '../article_detail/article_detail.dart';
 
 class CreateArticlePage extends StatelessWidget {
   const CreateArticlePage({super.key});
@@ -74,6 +76,31 @@ class _CreateArticleViewState extends State<_CreateArticleView> {
         );
   }
 
+  // ── Preview ───────────────────────────────────────────────────────────────
+
+  /// Opens a read-only preview of the draft. No validation: an unfinished
+  /// draft must still be previewable. The raw markdown passes through
+  /// untouched, exactly as it will be stored on publish.
+  void _onPreview(BuildContext context) {
+    final preview = ArticleEntity(
+      authorDisplayName: 'You',
+      title: _titleController.text,
+      urlToImage: null,
+      publishedAt: 'Preview',
+      content: _contentController.text,
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ArticleDetailsView(
+          article: preview,
+          previewImageFile: _pickedImage,
+          hideSaveButton: true,
+        ),
+      ),
+    );
+  }
+
   // ── Build ─────────────────────────────────────────────────────────────────
 
   @override
@@ -137,6 +164,8 @@ class _CreateArticleViewState extends State<_CreateArticleView> {
             _buildImagePicker(),
             const SizedBox(height: 24),
             _buildContentField(),
+            const SizedBox(height: 16),
+            _buildPreviewButton(context),
             const SizedBox(height: 32),
           ],
         ),
@@ -311,7 +340,25 @@ class _CreateArticleViewState extends State<_CreateArticleView> {
               (v == null || v.trim().isEmpty) ? 'Content is required.' : null,
         ),
         const Divider(thickness: 1, color: Color(0xFFE0E0E0)),
+        const SizedBox(height: 4),
+        const Text(
+          'Styling with markdown is supported.',
+          style: TextStyle(fontSize: 12, color: Color(0xFF9E9E9E)),
+        ),
       ],
+    );
+  }
+
+  // ── Preview button ────────────────────────────────────────────────────────
+
+  Widget _buildPreviewButton(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: () => _onPreview(context),
+        icon: const Icon(Ionicons.eyeOutline, size: 18),
+        label: const Text('Preview'),
+      ),
     );
   }
 

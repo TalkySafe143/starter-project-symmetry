@@ -5,8 +5,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/create/create_article_bloc.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_bloc.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_event.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_state.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/pages/article_detail/article_detail.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/pages/create_article/create_article_page.dart';
 
 class MockCreateArticleBloc
@@ -20,6 +25,10 @@ class MockCreateArticleBloc
     super.add(event);
   }
 }
+
+class MockLocalArticleBloc
+    extends MockBloc<LocalArticlesEvent, LocalArticlesState>
+    implements LocalArticleBloc {}
 
 void main() {
   late MockCreateArticleBloc mockCreateArticleBloc;
@@ -63,6 +72,57 @@ void main() {
     expect(find.text('Write your headline...'), findsOneWidget);
     expect(find.text('Tell your story...'), findsOneWidget);
     expect(find.text('Tap to add a thumbnail'), findsOneWidget);
+    expect(find.text('Preview'), findsOneWidget);
+    expect(
+      find.text('Styling with markdown is supported.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('tapping Preview opens the article preview', (tester) async {
+    whenListen(
+      mockCreateArticleBloc,
+      const Stream<CreateArticleState>.empty(),
+      initialState: const CreateArticleIdle(),
+    );
+    final mockLocalArticleBloc = MockLocalArticleBloc();
+    whenListen(
+      mockLocalArticleBloc,
+      const Stream<LocalArticlesState>.empty(),
+      initialState: const LocalArticlesLoading(),
+    );
+    GetIt.instance
+        .registerFactory<LocalArticleBloc>(() => mockLocalArticleBloc);
+    addTearDown(() {
+      if (GetIt.instance.isRegistered<LocalArticleBloc>()) {
+        GetIt.instance.unregister<LocalArticleBloc>();
+      }
+    });
+
+    await tester.pumpWidget(buildTestableWidget());
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Write your headline...'),
+      'Draft title',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Tell your story...'),
+      '# Hello preview',
+    );
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Preview'));
+    await tester.tap(find.text('Preview'));
+    await tester.pumpAndSettle();
+
+    // Preview reuses the detail view in read-only mode: markdown is
+    // rendered and the save bookmark is hidden.
+    expect(find.byType(ArticleDetailsView), findsOneWidget);
+    expect(find.text('Draft title'), findsOneWidget);
+    expect(find.byType(GptMarkdown), findsOneWidget);
+    expect(find.textContaining('Hello', findRichText: true), findsWidgets);
+    expect(find.byType(FloatingActionButton), findsNothing);
   });
 
   testWidgets('shows validation errors when publishing with empty fields',

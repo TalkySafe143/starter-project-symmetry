@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../injection_container.dart';
 import '../../../domain/entities/article.entity.dart';
@@ -13,7 +16,19 @@ import '../../widgets/article_author_row.dart';
 class ArticleDetailsView extends HookWidget {
   final ArticleEntity? article;
 
-  const ArticleDetailsView({super.key, this.article});
+  /// Local thumbnail picked in the editor. Shown instead of the network
+  /// image so the create-article preview mirrors the published layout.
+  final File? previewImageFile;
+
+  /// Hides the save bookmark: a preview is not a persisted article yet.
+  final bool hideSaveButton;
+
+  const ArticleDetailsView({
+    super.key,
+    this.article,
+    this.previewImageFile,
+    this.hideSaveButton = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +44,8 @@ class ArticleDetailsView extends HookWidget {
         child: Scaffold(
           appBar: _buildAppBar(),
           body: _buildBody(),
-          floatingActionButton: _buildFloatingActionButton(),
+          floatingActionButton:
+              hideSaveButton ? null : _buildFloatingActionButton(),
         ),
       ),
     );
@@ -136,6 +152,19 @@ class ArticleDetailsView extends HookWidget {
   }
 
   Widget _buildArticleImage() {
+    final previewFile = previewImageFile;
+    if (previewFile != null) {
+      return Container(
+        width: double.maxFinite,
+        height: 250,
+        margin: const EdgeInsets.only(top: 14),
+        child: Image.file(
+          previewFile,
+          fit: BoxFit.cover,
+          cacheWidth: 1080,
+        ),
+      );
+    }
     return Container(
       width: double.maxFinite,
       height: 250,
@@ -155,9 +184,17 @@ class ArticleDetailsView extends HookWidget {
   Widget _buildArticleDescription() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
-      child: Text(
-        '\n${article!.content ?? ''}',
-        style: const TextStyle(fontSize: 16),
+      child: DefaultTextStyle(
+        style: const TextStyle(
+          fontSize: 16,
+          height: 1.6,
+          color: Colors.black87,
+        ),
+        child: GptMarkdown(
+          article?.content ?? '',
+          // The package renders links but never launches them.
+          onLinkTap: (url, _) => debugPrint('open $url'),
+        ),
       ),
     );
   }

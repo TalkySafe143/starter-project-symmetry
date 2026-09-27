@@ -102,33 +102,61 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i1.UserArticlesFirebaseService());
     gh.singleton<_i361.Dio>(() => appModule.dio);
     gh.singleton<_i924.AppDatabase>(() => appModule.appDatabase);
-    gh.factory<_i933.RemoteArticlesBloc>(
-        () => _i933.RemoteArticlesBloc(gh<_i838.GetArticleUseCase>()));
-    gh.factory<_i298.ProfileBloc>(() => _i298.ProfileBloc(
-          gh<_i119.GetCurrentUserUseCase>(),
-          gh<_i269.UpdateUserProfile>(),
-        ));
     gh.lazySingleton<_i544.AuthRepository>(
         () => _i884.AuthRepositoryImpl(gh<_i123.AuthFirebaseService>()));
     gh.singleton<_i893.NewsApiService>(
         () => appModule.newsApiService(gh<_i361.Dio>()));
+    gh.lazySingleton<_i706.UserProfileRepository>(() =>
+        _i679.UserProfileRepositoryImpl(
+            gh<_i1017.UserProfileFirebaseService>()));
+    gh.lazySingleton<_i836.RegisterUseCase>(() => appModule.registerUseCase(
+          gh<_i544.AuthRepository>(),
+          gh<_i706.UserProfileRepository>(),
+        ));
+    gh.lazySingleton<_i269.UpdateUserProfile>(() => appModule.updateUserProfile(
+          gh<_i544.AuthRepository>(),
+          gh<_i706.UserProfileRepository>(),
+        ));
+    gh.lazySingleton<_i37.UserArticleRepository>(() =>
+        _i401.UserArticleRepositoryImpl(gh<_i1.UserArticlesFirebaseService>()));
+    gh.lazySingleton<_i557.GetAuthorProfile>(
+        () => appModule.getAuthorProfile(gh<_i706.UserProfileRepository>()));
+    gh.lazySingleton<_i862.ArticleRepository>(() => _i865.ArticleRepositoryImpl(
+          gh<_i893.NewsApiService>(),
+          gh<_i924.AppDatabase>(),
+        ));
+    gh.lazySingleton<_i616.LoginUseCase>(
+        () => appModule.loginUseCase(gh<_i544.AuthRepository>()));
+    gh.lazySingleton<_i537.LogoutUseCase>(
+        () => appModule.logoutUseCase(gh<_i544.AuthRepository>()));
+    gh.lazySingleton<_i119.GetCurrentUserUseCase>(
+        () => appModule.getCurrentUserUseCase(gh<_i544.AuthRepository>()));
+    gh.lazySingleton<_i629.GetAllUserArticles>(
+        () => appModule.getAllUserArticles(gh<_i37.UserArticleRepository>()));
+    gh.lazySingleton<_i946.GetUserArticles>(
+        () => appModule.getUserArticles(gh<_i37.UserArticleRepository>()));
+    gh.lazySingleton<_i508.CreateUserArticle>(
+        () => appModule.createUserArticle(gh<_i37.UserArticleRepository>()));
     gh.factory<_i413.UserArticlesBloc>(() => _i413.UserArticlesBloc(
           gh<_i946.GetUserArticles>(),
           gh<_i119.GetCurrentUserUseCase>(),
         ));
     gh.factory<_i785.CommunityArticlesBloc>(
         () => _i785.CommunityArticlesBloc(gh<_i629.GetAllUserArticles>()));
-    gh.lazySingleton<_i706.UserProfileRepository>(() =>
-        _i679.UserProfileRepositoryImpl(
-            gh<_i1017.UserProfileFirebaseService>()));
-    gh.lazySingleton<_i37.UserArticleRepository>(() =>
-        _i401.UserArticleRepositoryImpl(gh<_i1.UserArticlesFirebaseService>()));
     gh.factory<_i730.AuthBloc>(() => _i730.AuthBloc(
           loginUseCase: gh<_i616.LoginUseCase>(),
           registerUseCase: gh<_i836.RegisterUseCase>(),
           logoutUseCase: gh<_i537.LogoutUseCase>(),
           getCurrentUserUseCase: gh<_i119.GetCurrentUserUseCase>(),
         ));
+    gh.lazySingleton<_i838.GetArticleUseCase>(
+        () => appModule.getArticleUseCase(gh<_i862.ArticleRepository>()));
+    gh.lazySingleton<_i572.GetSavedArticleUseCase>(
+        () => appModule.getSavedArticleUseCase(gh<_i862.ArticleRepository>()));
+    gh.lazySingleton<_i150.SaveArticleUseCase>(
+        () => appModule.saveArticleUseCase(gh<_i862.ArticleRepository>()));
+    gh.lazySingleton<_i1042.RemoveArticleUseCase>(
+        () => appModule.removeArticleUseCase(gh<_i862.ArticleRepository>()));
     gh.factory<_i505.CreateArticleBloc>(() => _i505.CreateArticleBloc(
           gh<_i508.CreateUserArticle>(),
           gh<_i119.GetCurrentUserUseCase>(),
@@ -140,9 +168,11 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.factory<_i7.AuthorAvatarCubit>(
         () => _i7.AuthorAvatarCubit(gh<_i557.GetAuthorProfile>()));
-    gh.lazySingleton<_i862.ArticleRepository>(() => _i865.ArticleRepositoryImpl(
-          gh<_i893.NewsApiService>(),
-          gh<_i924.AppDatabase>(),
+    gh.factory<_i933.RemoteArticlesBloc>(
+        () => _i933.RemoteArticlesBloc(gh<_i838.GetArticleUseCase>()));
+    gh.factory<_i298.ProfileBloc>(() => _i298.ProfileBloc(
+          gh<_i119.GetCurrentUserUseCase>(),
+          gh<_i269.UpdateUserProfile>(),
         ));
     return this;
   }
