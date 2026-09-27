@@ -9,7 +9,7 @@ import 'dart:async' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:news_app_clean_architecture/core/resources/data_state.dart'
     as _i2;
-import 'package:news_app_clean_architecture/features/daily_news/domain/entities/article.dart'
+import 'package:news_app_clean_architecture/features/daily_news/domain/entities/article.entity.dart'
     as _i5;
 import 'package:news_app_clean_architecture/features/daily_news/domain/repository/article_repository.dart'
     as _i3;

@@ -7,7 +7,7 @@
 import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:news_app_clean_architecture/features/daily_news/domain/entities/article.dart'
+import 'package:news_app_clean_architecture/features/daily_news/domain/entities/article.entity.dart'
     as _i4;
 import 'package:news_app_clean_architecture/features/daily_news/domain/usecases/get_saved_article.dart'
     as _i2;
