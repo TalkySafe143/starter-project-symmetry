@@ -198,6 +198,7 @@ void main() {
   group('saveArticle', () {
     test('should call insertArticle on the DAO with an ArticlesCompanion',
         () async {
+      when(mockArticleDao.getArticles()).thenAnswer((_) async => []);
       when(mockArticleDao.insertArticle(any)).thenAnswer((_) async {});
 
       await repository.saveArticle(tArticleEntity);
@@ -207,6 +208,45 @@ void main() {
               as ArticlesTableCompanion;
       expect(captured.id, const Value('1'));
       expect(captured.title, const Value('Test Title'));
+    });
+
+    test('should skip insert when the same article is already saved',
+        () async {
+      when(mockArticleDao.getArticles())
+          .thenAnswer((_) async => tArticleRows);
+
+      await repository.saveArticle(tArticleEntity);
+
+      verifyNever(mockArticleDao.insertArticle(any));
+    });
+
+    test(
+        'should skip insert for a re-fetched API article with a fresh '
+        'local id but the same title and date', () async {
+      final savedRow = ArticlesTableData(
+        id: 'local-111',
+        authorDisplayName: 'John Doe',
+        title: 'Daily Title',
+        urlToImage: 'https://example.com/image.jpg',
+        publishedAt: '2024-01-01T00:00:00Z',
+        content: 'Daily Content',
+        authorId: null,
+      );
+      const refetched = ArticleEntity(
+        id: 'local-222',
+        authorDisplayName: 'John Doe',
+        title: 'Daily Title',
+        urlToImage: 'https://example.com/image.jpg',
+        publishedAt: '2024-01-01T00:00:00Z',
+        content: 'Daily Content',
+      );
+      when(mockArticleDao.getArticles())
+          .thenAnswer((_) async => [savedRow]);
+      when(mockArticleDao.insertArticle(any)).thenAnswer((_) async {});
+
+      await repository.saveArticle(refetched);
+
+      verifyNever(mockArticleDao.insertArticle(any));
     });
   });
 

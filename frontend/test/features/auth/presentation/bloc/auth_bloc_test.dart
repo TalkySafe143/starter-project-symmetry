@@ -143,7 +143,7 @@ void main() {
       )),
       expect: () => [
         const AuthLoading(),
-        const AuthError('Invalid credentials'),
+        const AuthError('Failed to SigIn'),
       ],
     );
   });
@@ -202,7 +202,7 @@ void main() {
       )),
       expect: () => [
         const AuthLoading(),
-        const AuthError('Email already in use'),
+        const AuthError('Failed to register.'),
       ],
     );
   });

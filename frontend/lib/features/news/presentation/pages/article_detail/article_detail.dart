@@ -18,8 +18,13 @@ class ArticleDetailsView extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<LocalArticleBloc>(),
+      create: (_) => sl<LocalArticleBloc>()..add(const GetSavedArticles()),
       child: BlocListener<LocalArticleBloc, LocalArticlesState>(
+        // Skip the initial load: it only reveals the current bookmark
+        // state and must not toast. Later Done states follow a user
+        // save/remove tap.
+        listenWhen: (previous, current) =>
+            previous is LocalArticlesDone || current is LocalArticlesError,
         listener: _onLocalStateChanged,
         child: Scaffold(
           appBar: _buildAppBar(),
@@ -30,12 +35,22 @@ class ArticleDetailsView extends HookWidget {
     );
   }
 
+  bool _isArticleSaved(LocalArticlesState state) {
+    final current = article;
+    final saved = state.articles;
+    if (current == null || saved == null) return false;
+    return saved.any((entry) => entry.isSameArticle(current));
+  }
+
   void _onLocalStateChanged(BuildContext context, LocalArticlesState state) {
     if (state is LocalArticlesDone) {
+      final saved = _isArticleSaved(state);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           backgroundColor: Colors.black,
-          content: Text('Article saved successfully.'),
+          content: Text(
+            saved ? 'Article saved successfully.' : 'Article removed.',
+          ),
         ),
       );
     } else if (state is LocalArticlesError) {
@@ -148,12 +163,18 @@ class ArticleDetailsView extends HookWidget {
   }
 
   Widget _buildFloatingActionButton() {
-    return Builder(
-      builder: (context) => FloatingActionButton(
-        heroTag: 'articleDetailSave',
-        onPressed: () => _onFloatingActionButtonPressed(context),
-        child: const Icon(Ionicons.bookmark, color: Colors.white),
-      ),
+    return BlocBuilder<LocalArticleBloc, LocalArticlesState>(
+      builder: (context, state) {
+        final saved = _isArticleSaved(state);
+        return FloatingActionButton(
+          heroTag: 'articleDetailSave',
+          onPressed: () => _onFloatingActionButtonPressed(context, saved),
+          child: Icon(
+            saved ? Ionicons.bookmark : Ionicons.bookmarkOutline,
+            color: saved ? Colors.black : Colors.white,
+          ),
+        );
+      },
     );
   }
 
@@ -161,7 +182,10 @@ class ArticleDetailsView extends HookWidget {
     Navigator.pop(context);
   }
 
-  void _onFloatingActionButtonPressed(BuildContext context) {
-    BlocProvider.of<LocalArticleBloc>(context).add(SaveArticle(article!));
+  void _onFloatingActionButtonPressed(BuildContext context, bool saved) {
+    final current = article!;
+    BlocProvider.of<LocalArticleBloc>(context).add(
+      saved ? RemoveArticle(current) : SaveArticle(current),
+    );
   }
 }

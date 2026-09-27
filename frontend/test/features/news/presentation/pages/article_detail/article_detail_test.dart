@@ -36,8 +36,20 @@ class _FakeSave extends Fake implements SaveArticleUseCase {
 }
 
 class _FakeRemove extends Fake implements RemoveArticleUseCase {
+  final _FakeGetSaved getSaved;
+  bool called = false;
+
+  _FakeRemove(this.getSaved);
+
   @override
-  Future<void> call({ArticleEntity? params}) async {}
+  Future<void> call({ArticleEntity? params}) async {
+    called = true;
+    if (params != null) {
+      getSaved.saved = getSaved.saved
+          .where((entry) => !entry.isSameArticle(params))
+          .toList();
+    }
+  }
 }
 
 class _StubGetAuthorProfile extends Fake implements GetAuthorProfile {
@@ -61,12 +73,21 @@ void main() {
 
   late _FakeGetSaved fakeGetSaved;
   late _FakeSave fakeSave;
+  late _FakeRemove fakeRemove;
+
+  Icon _bookmarkIcon(WidgetTester tester) {
+    final fab = find.byType(FloatingActionButton);
+    return tester.widget<Icon>(
+      find.descendant(of: fab, matching: find.byType(Icon)),
+    );
+  }
 
   setUp(() {
     fakeGetSaved = _FakeGetSaved();
     fakeSave = _FakeSave(fakeGetSaved);
+    fakeRemove = _FakeRemove(fakeGetSaved);
     sl.registerFactory<LocalArticleBloc>(
-      () => LocalArticleBloc(fakeGetSaved, fakeSave, _FakeRemove()),
+      () => LocalArticleBloc(fakeGetSaved, fakeSave, fakeRemove),
     );
     sl.registerFactory<AuthorAvatarCubit>(
       () => AuthorAvatarCubit(_StubGetAuthorProfile()),
@@ -124,5 +145,49 @@ void main() {
 
     expect(fakeSave.called, isTrue);
     expect(find.text('Article saved successfully.'), findsOneWidget);
+  });
+
+  testWidgets('bookmark is white when unsaved and black once saved',
+      (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ArticleDetailsView(article: tArticle),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(_bookmarkIcon(tester).color, Colors.white);
+
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pump();
+    await tester.pump();
+
+    expect(_bookmarkIcon(tester).color, Colors.black);
+  });
+
+  testWidgets('bookmark starts black for a saved article and tap removes it',
+      (tester) async {
+    fakeGetSaved.saved = const [tArticle];
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ArticleDetailsView(article: tArticle),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(_bookmarkIcon(tester).color, Colors.black);
+    expect(find.text('Article saved successfully.'), findsNothing);
+
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pump();
+    await tester.pump();
+
+    expect(fakeRemove.called, isTrue);
+    expect(fakeSave.called, isFalse);
+    expect(_bookmarkIcon(tester).color, Colors.white);
+    expect(find.text('Article removed.'), findsOneWidget);
   });
 }

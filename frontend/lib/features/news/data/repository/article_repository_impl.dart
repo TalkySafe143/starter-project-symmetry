@@ -100,19 +100,22 @@ class ArticleRepositoryImpl implements ArticleRepository {
     return _appDatabase.articleDao.deleteArticle(match);
   }
 
-  /// Identity for offline rows: the stable `id` when present, otherwise a
-  /// title+date fallback for legacy rows saved before API articles
-  /// received generated ids.
+  /// Identity for offline rows, shared with [ArticleEntity.isSameArticle]:
+  /// stable `id` match, otherwise the title+date natural key (covers
+  /// legacy NULL-id rows and re-fetched API articles with fresh `local-`
+  /// ids).
   bool _isSameArticle(ArticlesTableData row, ArticleEntity article) {
-    if (article.id != null) return row.id == article.id;
-    return row.id == null &&
-        row.title == article.title &&
-        row.publishedAt == article.publishedAt;
+    return ArticleModel.fromArticle(row).toEntity().isSameArticle(article);
   }
 
   @override
-  Future<void> saveArticle(ArticleEntity article) {
+  Future<void> saveArticle(ArticleEntity article) async {
     _log.fine('saveArticle → id=${article.id} title="${article.title}"');
+    final rows = await _appDatabase.articleDao.getArticles();
+    if (rows.any((row) => _isSameArticle(row, article))) {
+      _log.fine('saveArticle → duplicate, skipping insert');
+      return;
+    }
     return _appDatabase.articleDao
         .insertArticle(ArticleModel.fromEntity(article).toCompanion());
   }
