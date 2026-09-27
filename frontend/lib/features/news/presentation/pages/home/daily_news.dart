@@ -69,9 +69,7 @@ class DailyNews extends StatelessWidget {
       appBar: _buildAppbar(context),
       body: ListView(children: articleWidgets),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: REPLACE ROUTE WITH YOUR "ADD ARTICLE" PAGE
-        },
+        onPressed: () => Navigator.pushNamed(context, '/CreateArticle'),
         child: const Icon(Icons.add),
       ),
     );

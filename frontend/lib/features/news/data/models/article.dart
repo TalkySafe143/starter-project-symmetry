@@ -72,4 +72,28 @@ class ArticleModel extends ArticleEntity {
       authorId: entity.authorId,
     );
   }
+
+  ArticleModel copyWith({
+    int? id,
+    String? authorDisplayName,
+    String? title,
+    String? description,
+    String? url,
+    String? urlToImage,
+    String? publishedAt,
+    String? content,
+    String? authorId,
+  }) {
+    return ArticleModel(
+      id: id ?? this.id,
+      authorDisplayName: authorDisplayName ?? this.authorDisplayName,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      url: url ?? this.url,
+      urlToImage: urlToImage ?? this.urlToImage,
+      publishedAt: publishedAt ?? this.publishedAt,
+      content: content ?? this.content,
+      authorId: authorId ?? this.authorId,
+    );
+  }
 }

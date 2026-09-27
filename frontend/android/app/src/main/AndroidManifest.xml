@@ -5,6 +5,7 @@
         android:name="androidx.multidex.MultiDexApplication"
         
         android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true"
         >
         <activity
             android:name=".MainActivity"

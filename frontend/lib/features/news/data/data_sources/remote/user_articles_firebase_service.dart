@@ -1,14 +1,45 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logging/logging.dart';
 import 'package:news_app_clean_architecture/features/news/data/models/article.dart';
 
 @injectable
 class UserArticlesFirebaseService {
-  final FirebaseFirestore? firestoreDb = FirebaseFirestore.instance;
-  final String collectionName = "articles";
+  static final _log = Logger('UserArticlesFirebaseService');
 
-  Future<DocumentReference<Map<String, dynamic>>?> createUserArticle(
+  final FirebaseFirestore _firestoreDb = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+
+  static const String _articlesCollection = 'articles';
+  static const String _thumbnailsFolder = 'media/articles';
+
+  /// Uploads [imageFile] to Firebase Cloud Storage under [_thumbnailsFolder]
+  /// and returns its download URL. Returns null if [imageFile] is null.
+  Future<String?> uploadThumbnail(File? imageFile) async {
+    if (imageFile == null) return null;
+
+    final fileName =
+        '${DateTime.now().millisecondsSinceEpoch}_${imageFile.uri.pathSegments.last}';
+    final ref = _storage.ref().child('$_thumbnailsFolder/$fileName');
+
+    _log.info('uploadThumbnail → uploading to $_thumbnailsFolder/$fileName');
+    final task = await ref.putFile(imageFile);
+    final url = await task.ref.getDownloadURL();
+    _log.info('uploadThumbnail → uploaded, url=$url');
+    return url;
+  }
+
+  /// Saves [article] to Firestore. The [article.urlToImage] should already
+  /// contain the Storage download URL before calling this.
+  Future<DocumentReference<Map<String, dynamic>>> createUserArticle(
       ArticleModel article) async {
-    return await firestoreDb?.collection(collectionName).add(article.toJson());
+    _log.info('createUserArticle → saving to Firestore');
+    final ref =
+        await _firestoreDb.collection(_articlesCollection).add(article.toJson());
+    _log.info('createUserArticle → saved with id=${ref.id}');
+    return ref;
   }
 }

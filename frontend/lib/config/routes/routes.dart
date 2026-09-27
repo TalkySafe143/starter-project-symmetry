@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../features/news/domain/entities/article.entity.dart';
 import '../../features/news/presentation/pages/article_detail/article_detail.dart';
+import '../../features/news/presentation/pages/create_article/create_article_page.dart';
 import '../../features/news/presentation/pages/home/daily_news.dart';
 import '../../features/news/presentation/pages/saved_article/saved_article.dart';
 
@@ -17,7 +18,10 @@ class AppRoutes {
 
       case '/SavedArticles':
         return _materialRoute(const SavedArticles());
-        
+
+      case '/CreateArticle':
+        return _materialRoute(const CreateArticlePage());
+
       default:
         return _materialRoute(const DailyNews());
     }

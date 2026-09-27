@@ -38,6 +38,8 @@ import 'package:news_app_clean_architecture/features/news/domain/usecases/remove
     as _i1042;
 import 'package:news_app_clean_architecture/features/news/domain/usecases/save_article.dart'
     as _i150;
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/create/create_article_bloc.dart'
+    as _i505;
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_bloc.dart'
     as _i8;
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_bloc.dart'
@@ -69,6 +71,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i893.NewsApiService>(),
           gh<_i924.AppDatabase>(),
         ));
+    gh.factory<_i505.CreateArticleBloc>(
+        () => _i505.CreateArticleBloc(gh<_i508.CreateUserArticle>()));
     gh.lazySingleton<_i838.GetArticleUseCase>(
         () => _i838.GetArticleUseCase(gh<_i862.ArticleRepository>()));
     gh.lazySingleton<_i572.GetSavedArticleUseCase>(
