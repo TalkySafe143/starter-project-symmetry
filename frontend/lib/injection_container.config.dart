@@ -46,6 +46,8 @@ import 'package:news_app_clean_architecture/features/news/domain/repository/user
     as _i37;
 import 'package:news_app_clean_architecture/features/news/domain/usecases/create_user_article.dart'
     as _i508;
+import 'package:news_app_clean_architecture/features/news/domain/usecases/get_all_user_articles.dart'
+    as _i629;
 import 'package:news_app_clean_architecture/features/news/domain/usecases/get_article.dart'
     as _i838;
 import 'package:news_app_clean_architecture/features/news/domain/usecases/get_saved_article.dart'
@@ -56,6 +58,10 @@ import 'package:news_app_clean_architecture/features/news/domain/usecases/remove
     as _i1042;
 import 'package:news_app_clean_architecture/features/news/domain/usecases/save_article.dart'
     as _i150;
+import 'package:news_app_clean_architecture/features/news/domain/usecases/update_author_photo_url.dart'
+    as _i454;
+import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/community/community_articles_bloc.dart'
+    as _i785;
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/create/create_article_bloc.dart'
     as _i505;
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/local/local_article_bloc.dart'
@@ -98,8 +104,12 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i836.RegisterUseCase(gh<_i544.AuthRepository>()));
     gh.lazySingleton<_i508.CreateUserArticle>(
         () => _i508.CreateUserArticle(gh<_i37.UserArticleRepository>()));
+    gh.lazySingleton<_i629.GetAllUserArticles>(
+        () => _i629.GetAllUserArticles(gh<_i37.UserArticleRepository>()));
     gh.lazySingleton<_i946.GetUserArticles>(
         () => _i946.GetUserArticles(gh<_i37.UserArticleRepository>()));
+    gh.lazySingleton<_i454.UpdateAuthorPhotoUrl>(
+        () => _i454.UpdateAuthorPhotoUrl(gh<_i37.UserArticleRepository>()));
     gh.lazySingleton<_i862.ArticleRepository>(() => _i865.ArticleRepositoryImpl(
           gh<_i893.NewsApiService>(),
           gh<_i924.AppDatabase>(),
@@ -108,6 +118,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i946.GetUserArticles>(),
           gh<_i119.GetCurrentUserUseCase>(),
         ));
+    gh.factory<_i785.CommunityArticlesBloc>(
+        () => _i785.CommunityArticlesBloc(gh<_i629.GetAllUserArticles>()));
     gh.lazySingleton<_i838.GetArticleUseCase>(
         () => _i838.GetArticleUseCase(gh<_i862.ArticleRepository>()));
     gh.lazySingleton<_i572.GetSavedArticleUseCase>(

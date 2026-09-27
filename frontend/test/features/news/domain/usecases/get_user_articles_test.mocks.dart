@@ -50,6 +50,23 @@ class MockUserArticleRepository extends _i1.Mock
   }
 
   @override
+  _i4.Future<_i2.DataState<List<_i5.ArticleEntity>>> getAllUserArticles() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAllUserArticles,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.DataState<List<_i5.ArticleEntity>>>.value(
+            _FakeDataState_0<List<_i5.ArticleEntity>>(
+          this,
+          Invocation.method(
+            #getAllUserArticles,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.DataState<List<_i5.ArticleEntity>>>);
+
+  @override
   _i4.Future<_i2.DataState<List<_i5.ArticleEntity>>> getUserArticles(
           String? userId) =>
       (super.noSuchMethod(
@@ -66,6 +83,31 @@ class MockUserArticleRepository extends _i1.Mock
           ),
         )),
       ) as _i4.Future<_i2.DataState<List<_i5.ArticleEntity>>>);
+
+  @override
+  _i4.Future<_i2.DataState<int>> updateAuthorPhotoUrl(
+    String? userId,
+    String? photoUrl,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateAuthorPhotoUrl,
+          [
+            userId,
+            photoUrl,
+          ],
+        ),
+        returnValue: _i4.Future<_i2.DataState<int>>.value(_FakeDataState_0<int>(
+          this,
+          Invocation.method(
+            #updateAuthorPhotoUrl,
+            [
+              userId,
+              photoUrl,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i2.DataState<int>>);
 
   @override
   _i4.Future<_i2.DataState<void>> createUserArticle(

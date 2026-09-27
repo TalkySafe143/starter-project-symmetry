@@ -19,6 +19,7 @@ class ArticlesTable extends Table {
   TextColumn get publishedAt => text().nullable()();
   TextColumn get content => text().nullable()();
   TextColumn get authorId => text().nullable()();
+  TextColumn get authorPhotoUrl => text().nullable()();
 }
 
 @DriftDatabase(tables: [ArticlesTable], daos: [ArticleDao])
@@ -29,7 +30,21 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onUpgrade: (migrator, from, to) async {
+        if (from < 2) {
+          await migrator.addColumn(
+            articlesTable,
+            articlesTable.authorPhotoUrl,
+          );
+        }
+      },
+    );
+  }
 }
 
 LazyDatabase _openConnection() {

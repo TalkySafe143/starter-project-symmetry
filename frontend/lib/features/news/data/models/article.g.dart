@@ -14,6 +14,7 @@ ArticleModel _$ArticleModelFromJson(Map<String, dynamic> json) => ArticleModel(
       publishedAt: json['publishedAt'] as String?,
       content: json['content'] as String?,
       authorId: json['authorId'] as String?,
+      authorPhotoUrl: json['authorPhotoUrl'] as String?,
     );
 
 Map<String, dynamic> _$ArticleModelToJson(ArticleModel instance) =>
@@ -24,5 +25,6 @@ Map<String, dynamic> _$ArticleModelToJson(ArticleModel instance) =>
       'publishedAt': instance.publishedAt,
       'content': instance.content,
       'authorId': instance.authorId,
+      'authorPhotoUrl': instance.authorPhotoUrl,
       'author': instance.authorDisplayName,
     };

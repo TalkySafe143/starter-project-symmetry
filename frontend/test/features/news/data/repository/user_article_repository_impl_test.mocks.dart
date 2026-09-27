@@ -57,6 +57,19 @@ class MockUserArticlesFirebaseService extends _i1.Mock
       ) as _i4.Future<String?>);
 
   @override
+  _i4.Future<List<_i6.ArticleModel>> getAllUserArticles() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAllUserArticles,
+          [],
+        ),
+        returnValue:
+            _i4.Future<List<_i6.ArticleModel>>.value(<_i6.ArticleModel>[]),
+        returnValueForMissingStub:
+            _i4.Future<List<_i6.ArticleModel>>.value(<_i6.ArticleModel>[]),
+      ) as _i4.Future<List<_i6.ArticleModel>>);
+
+  @override
   _i4.Future<List<_i6.ArticleModel>> getUserArticles(String? userId) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -68,6 +81,23 @@ class MockUserArticlesFirebaseService extends _i1.Mock
         returnValueForMissingStub:
             _i4.Future<List<_i6.ArticleModel>>.value(<_i6.ArticleModel>[]),
       ) as _i4.Future<List<_i6.ArticleModel>>);
+
+  @override
+  _i4.Future<int> updateAuthorPhotoUrl(
+    String? userId,
+    String? photoUrl,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateAuthorPhotoUrl,
+          [
+            userId,
+            photoUrl,
+          ],
+        ),
+        returnValue: _i4.Future<int>.value(0),
+        returnValueForMissingStub: _i4.Future<int>.value(0),
+      ) as _i4.Future<int>);
 
   @override
   _i4.Future<_i2.DocumentReference<Map<String, dynamic>>> createUserArticle(

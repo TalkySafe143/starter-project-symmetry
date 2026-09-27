@@ -6,6 +6,7 @@ import '../../../../../injection_container.dart';
 import '../../../domain/entities/article.entity.dart';
 import '../../bloc/article/local/local_article_bloc.dart';
 import '../../bloc/article/local/local_article_event.dart';
+import '../../widgets/author_avatar.dart';
 
 class ArticleDetailsView extends HookWidget {
   final ArticleEntity? article;
@@ -41,6 +42,7 @@ class ArticleDetailsView extends HookWidget {
       child: Column(
         children: [
           _buildArticleTitleAndDate(),
+          _buildArticleAuthor(),
           _buildArticleImage(),
           _buildArticleDescription(),
         ],
@@ -72,6 +74,34 @@ class ArticleDetailsView extends HookWidget {
                 style: const TextStyle(fontSize: 12),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildArticleAuthor() {
+    final hasName = article?.authorDisplayName?.isNotEmpty == true;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(22, 12, 22, 0),
+      child: Row(
+        children: [
+          AuthorAvatar(
+            photoUrl: article?.authorPhotoUrl,
+            radius: 16,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              hasName ? article!.authorDisplayName! : 'Unknown author',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),

@@ -163,6 +163,39 @@ void main() {
         expect(model1, isNot(equals(model2)));
       });
     });
+    group('authorPhotoUrl', () {
+      test('should map authorPhotoUrl from JSON', () {
+        final json = {
+          'author': 'Jane Doe',
+          'title': 'Test Title',
+          'authorPhotoUrl': 'https://example.com/avatar.jpg',
+        };
+
+        final result = ArticleModel.fromJson(json);
+
+        expect(result.authorPhotoUrl, 'https://example.com/avatar.jpg');
+      });
+
+      test('should stay null when authorPhotoUrl is absent from JSON', () {
+        final result = ArticleModel.fromJson({'author': 'Jane Doe'});
+
+        expect(result.authorPhotoUrl, isNull);
+      });
+
+      test('should serialize authorPhotoUrl back to JSON', () {
+        const model = ArticleModel(
+          authorDisplayName: 'Jane Doe',
+          title: 'Test Title',
+          publishedAt: '2024-01-01T00:00:00Z',
+          content: 'Test Content',
+          authorPhotoUrl: 'https://example.com/avatar.jpg',
+        );
+
+        expect(model.toJson()['authorPhotoUrl'],
+            'https://example.com/avatar.jpg');
+      });
+    });
+
     group('toJson', () {
       test('should serialize ArticleModel into a Map with author key mapped', () {
         const model = ArticleModel(

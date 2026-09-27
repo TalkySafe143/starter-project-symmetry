@@ -1,7 +1,7 @@
 import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app_clean_architecture/features/home/presentation/widgets/sidebar_menu.dart';
-import 'package:news_app_clean_architecture/features/news/presentation/pages/home/daily_news.dart';
+import 'package:news_app_clean_architecture/features/news/presentation/pages/news_home/news_home_page.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -24,7 +24,7 @@ class _MainLayoutState extends State<MainLayout> {
       menuScreen: SidebarMenu(
         onItemSelected: () => _drawerController.close?.call(),
       ),
-      mainScreen: DailyNews(
+      mainScreen: NewsHomePage(
         onMenuPressed: () => _drawerController.toggle?.call(),
       ),
       borderRadius: 20.0,

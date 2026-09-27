@@ -157,4 +157,81 @@ void main() {
       expect(result.errorMessage, contains('Firestore read failed'));
     });
   });
+
+  group('getAllUserArticles', () {
+    final tModels = [
+      const ArticleModel(
+        id: '2',
+        authorDisplayName: 'Jane Doe',
+        title: 'Newer',
+        urlToImage: 'https://example.com/newer.jpg',
+        publishedAt: '2026-09-27T10:00:00Z',
+        content: 'Newer content',
+        authorId: 'user-456',
+      ),
+      const ArticleModel(
+        id: '1',
+        authorDisplayName: 'John Doe',
+        title: 'Older',
+        urlToImage: 'https://example.com/older.jpg',
+        publishedAt: '2026-09-26T10:00:00Z',
+        content: 'Older content',
+        authorId: 'user-123',
+      ),
+    ];
+
+    test('should return every article from the firebase service', () async {
+      when(mockFirebaseService.getAllUserArticles())
+          .thenAnswer((_) async => tModels);
+
+      final result = await repository.getAllUserArticles();
+
+      expect(result, isA<DataSuccess<List<ArticleEntity>>>());
+      expect(result.data, hasLength(2));
+      expect(result.data!.first.title, 'Newer');
+      verify(mockFirebaseService.getAllUserArticles()).called(1);
+    });
+
+    test('should return DataGenericFailed when the service throws', () async {
+      when(mockFirebaseService.getAllUserArticles())
+          .thenThrow(Exception('Firestore read failed'));
+
+      final result = await repository.getAllUserArticles();
+
+      expect(result, isA<DataGenericFailed<List<ArticleEntity>>>());
+      expect(result.errorMessage, contains('Firestore read failed'));
+    });
+  });
+
+  group('updateAuthorPhotoUrl', () {
+    test('should return how many articles the service refreshed', () async {
+      when(mockFirebaseService.updateAuthorPhotoUrl(
+        'user-123',
+        'https://example.com/new-avatar.jpg',
+      )).thenAnswer((_) async => 2);
+
+      final result = await repository.updateAuthorPhotoUrl(
+        'user-123',
+        'https://example.com/new-avatar.jpg',
+      );
+
+      expect(result, isA<DataSuccess<int>>());
+      expect(result.data, 2);
+      verify(mockFirebaseService.updateAuthorPhotoUrl(
+        'user-123',
+        'https://example.com/new-avatar.jpg',
+      )).called(1);
+    });
+
+    test('should return DataGenericFailed when the service throws', () async {
+      when(mockFirebaseService.updateAuthorPhotoUrl('user-123', null))
+          .thenThrow(Exception('Firestore write failed'));
+
+      final result =
+          await repository.updateAuthorPhotoUrl('user-123', null);
+
+      expect(result, isA<DataGenericFailed<int>>());
+      expect(result.errorMessage, contains('Firestore write failed'));
+    });
+  });
 }

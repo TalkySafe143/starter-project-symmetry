@@ -42,10 +42,13 @@ class CreateArticleBloc extends Bloc<CreateArticleEvent, CreateArticleState> {
     final user = await _getCurrentUserUseCase();
     var authorDisplayname = DEFAULT_USER_DISPLAY_NAME;
     var authorId = "";
+    String? authorPhotoUrl;
 
     if (user is DataSuccess && user.data != null) {
-      authorDisplayname = user.data!.displayName!;
+      authorDisplayname =
+          user.data!.displayName ?? DEFAULT_USER_DISPLAY_NAME;
       authorId = user.data!.id;
+      authorPhotoUrl = user.data!.photoUrl;
     }
 
     final article = ArticleEntity(
@@ -53,7 +56,8 @@ class CreateArticleBloc extends Bloc<CreateArticleEvent, CreateArticleState> {
         content: event.content.trim(),
         publishedAt: DateTime.now().toIso8601String(),
         authorDisplayName: authorDisplayname,
-        authorId: authorId
+        authorId: authorId,
+        authorPhotoUrl: authorPhotoUrl
         );
 
     final result = await _createUserArticle(

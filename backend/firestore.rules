@@ -14,7 +14,8 @@ service cloud.firestore {
   function isValidArticle(data) {
     return data.keys().hasOnly([
         'id', 'author', 'title',
-        'urlToImage', 'publishedAt', 'content', 'authorId'
+        'urlToImage', 'publishedAt', 'content', 'authorId',
+        'authorPhotoUrl'
       ])
       && isValidStringOrNull(data, 'id')
       && isValidStringOrNull(data, 'author')
@@ -22,7 +23,8 @@ service cloud.firestore {
       && isValidStringOrNull(data, 'urlToImage')
       && isValidStringOrNull(data, 'publishedAt')
       && isValidStringOrNull(data, 'content')
-      && isValidStringOrNull(data, 'authorId');
+      && isValidStringOrNull(data, 'authorId')
+      && isValidStringOrNull(data, 'authorPhotoUrl');
   }
 
   function isValidStringOrNull(data, field) {

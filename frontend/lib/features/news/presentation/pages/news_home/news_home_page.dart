@@ -1,42 +1,49 @@
 import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/entities/user.entity.dart';
 import 'package:news_app_clean_architecture/features/auth/presentation/bloc/auth/auth_bloc.dart';
-import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_bloc.dart';
-import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/remote/remote_article_state.dart';
 
-import '../../../domain/entities/article.entity.dart';
-import '../../widgets/article_tile.dart';
+import 'community_feed_tab.dart';
+import 'daily_news_tab.dart';
 
-class DailyNews extends StatelessWidget {
+class NewsHomePage extends StatelessWidget {
   final VoidCallback? onMenuPressed;
 
-  const DailyNews({
+  const NewsHomePage({
     super.key,
     this.onMenuPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    return _buildPage();
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: _buildAppbar(context),
+        body: const TabBarView(
+          children: [
+            DailyNewsTab(),
+            CommunityFeedTab(),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => Navigator.pushNamed(context, '/CreateArticle'),
+          child: const Icon(Icons.add),
+        ),
+      ),
+    );
   }
 
   PreferredSizeWidget _buildAppbar(BuildContext context) {
     return AppBar(
       leading: IconButton(
         icon: const Icon(Ionicons.menuOutline, color: Colors.black, size: 26),
-        onPressed: () {
-          if (onMenuPressed != null) {
-            onMenuPressed!();
-          } else {
-            AwesomeDrawerBar.of(context)?.toggle();
-          }
-        },
+        onPressed: () => _openMenu(context),
       ),
       title: const Text(
-        'Daily News',
+        'News',
         style: TextStyle(color: Colors.black),
       ),
       actions: [
@@ -49,6 +56,12 @@ class DailyNews extends StatelessWidget {
         ),
         _buildAuthIndicator(context),
       ],
+      bottom: const TabBar(
+        tabs: [
+          Tab(text: 'Daily News'),
+          Tab(text: 'News from Users'),
+        ],
+      ),
     );
   }
 
@@ -61,11 +74,7 @@ class DailyNews extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             if (isLoggedIn) {
-              if (onMenuPressed != null) {
-                onMenuPressed!();
-              } else {
-                AwesomeDrawerBar.of(context)?.toggle();
-              }
+              _openMenu(context);
             } else {
               Navigator.pushNamed(context, '/Login');
             }
@@ -77,15 +86,10 @@ class DailyNews extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 15,
-                    backgroundColor: isLoggedIn ? Colors.black87 : Colors.black12,
+                    backgroundColor:
+                        isLoggedIn ? Colors.black87 : Colors.black12,
                     child: Text(
-                      isLoggedIn
-                          ? (user!.displayName?.isNotEmpty == true
-                              ? user.displayName![0].toUpperCase()
-                              : user.email.isNotEmpty
-                                  ? user.email[0].toUpperCase()
-                                  : 'U')
-                          : '?',
+                      _avatarLetter(isLoggedIn, user),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -115,50 +119,21 @@ class DailyNews extends StatelessWidget {
     );
   }
 
-  Widget _buildPage() {
-    return BlocBuilder<RemoteArticlesBloc, RemoteArticlesState>(
-      builder: (context, state) {
-        if (state is RemoteArticlesLoading) {
-          return Scaffold(
-            appBar: _buildAppbar(context),
-            body: const Center(child: CupertinoActivityIndicator()),
-          );
-        }
-        if (state is RemoteArticlesError) {
-          return Scaffold(
-            appBar: _buildAppbar(context),
-            body: const Center(child: Icon(Icons.refresh)),
-          );
-        }
-        if (state is RemoteArticlesDone) {
-          return _buildArticlesPage(context, state.articles!);
-        }
-        return const SizedBox();
-      },
-    );
+  String _avatarLetter(bool isLoggedIn, UserEntity? user) {
+    if (!isLoggedIn || user == null) return '?';
+    if (user.displayName?.isNotEmpty == true) {
+      return user.displayName![0].toUpperCase();
+    }
+    if (user.email.isNotEmpty) return user.email[0].toUpperCase();
+    return 'U';
   }
 
-  Widget _buildArticlesPage(
-      BuildContext context, List<ArticleEntity> articles) {
-    final articleWidgets = articles
-        .map((article) => ArticleWidget(
-              article: article,
-              onArticlePressed: (article) => _onArticlePressed(context, article),
-            ))
-        .toList();
-
-    return Scaffold(
-      appBar: _buildAppbar(context),
-      body: ListView(children: articleWidgets),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.pushNamed(context, '/CreateArticle'),
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-
-  void _onArticlePressed(BuildContext context, ArticleEntity article) {
-    Navigator.pushNamed(context, '/ArticleDetails', arguments: article);
+  void _openMenu(BuildContext context) {
+    if (onMenuPressed != null) {
+      onMenuPressed!();
+    } else {
+      AwesomeDrawerBar.of(context)?.toggle();
+    }
   }
 
   void _onShowSavedArticlesViewTapped(BuildContext context) {

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import '../../domain/entities/article.entity.dart';
+import 'author_avatar.dart';
 
 class ArticleWidget extends StatelessWidget {
   final ArticleEntity? article;
@@ -125,6 +126,9 @@ class ArticleWidget extends StatelessWidget {
               ),
             ),
 
+            // Author
+            _buildAuthorRow(),
+
             // Datetime
             Row(
               children: [
@@ -138,6 +142,35 @@ class ArticleWidget extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildAuthorRow() {
+    final hasName = article?.authorDisplayName?.isNotEmpty == true;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(
+        children: [
+          AuthorAvatar(
+            photoUrl: article?.authorPhotoUrl,
+            radius: 10,
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              hasName ? article!.authorDisplayName! : 'Unknown author',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.black54,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

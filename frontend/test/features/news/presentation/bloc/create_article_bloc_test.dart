@@ -6,6 +6,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dio/dio.dart';
 import 'package:news_app_clean_architecture/core/resources/data_state.dart';
+import 'package:news_app_clean_architecture/features/auth/domain/entities/user.entity.dart';
 import 'package:news_app_clean_architecture/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:news_app_clean_architecture/features/news/domain/usecases/create_user_article.dart';
 import 'package:news_app_clean_architecture/features/news/presentation/bloc/article/create/create_article_bloc.dart';
@@ -128,6 +129,77 @@ void main() {
         expect(captured.article.authorDisplayName, 'Anonymous');
         expect(captured.article.publishedAt, isNotEmpty);
         expect(captured.imageFile?.path, 'path/to/img.png');
+      },
+    );
+
+    blocTest<CreateArticleBloc, CreateArticleState>(
+      'stores the author photo snapshot when the user is logged in',
+      build: () {
+        when(mockGetCurrentUserUseCase.call()).thenAnswer(
+          (_) async => const DataSuccess(
+            UserEntity(
+              id: 'user-123',
+              email: 'jane@example.com',
+              displayName: 'Jane Doe',
+              photoUrl: 'https://example.com/avatar.jpg',
+            ),
+          ),
+        );
+        when(mockCreateUserArticle(params: anyNamed('params')))
+            .thenAnswer((_) async => const DataSuccess(null));
+        return CreateArticleBloc(
+            mockCreateUserArticle, mockGetCurrentUserUseCase);
+      },
+      act: (bloc) => bloc.add(const PublishArticle(
+        title: 'My Title',
+        content: 'My Content',
+      )),
+      expect: () => [
+        const CreateArticleLoading(),
+        const CreateArticleSuccess(),
+      ],
+      verify: (_) {
+        final captured = verify(mockCreateUserArticle(
+          params: captureAnyNamed('params'),
+        )).captured.single as CreateUserArticleParams;
+
+        expect(captured.article.authorDisplayName, 'Jane Doe');
+        expect(captured.article.authorId, 'user-123');
+        expect(captured.article.authorPhotoUrl,
+            'https://example.com/avatar.jpg');
+      },
+    );
+
+    blocTest<CreateArticleBloc, CreateArticleState>(
+      'falls back to Anonymous when the user has no display name',
+      build: () {
+        when(mockGetCurrentUserUseCase.call()).thenAnswer(
+          (_) async => const DataSuccess(
+            UserEntity(
+              id: 'user-123',
+              email: 'jane@example.com',
+            ),
+          ),
+        );
+        when(mockCreateUserArticle(params: anyNamed('params')))
+            .thenAnswer((_) async => const DataSuccess(null));
+        return CreateArticleBloc(
+            mockCreateUserArticle, mockGetCurrentUserUseCase);
+      },
+      act: (bloc) => bloc.add(const PublishArticle(
+        title: 'My Title',
+        content: 'My Content',
+      )),
+      expect: () => [
+        const CreateArticleLoading(),
+        const CreateArticleSuccess(),
+      ],
+      verify: (_) {
+        final captured = verify(mockCreateUserArticle(
+          params: captureAnyNamed('params'),
+        )).captured.single as CreateUserArticleParams;
+
+        expect(captured.article.authorDisplayName, 'Anonymous');
       },
     );
 

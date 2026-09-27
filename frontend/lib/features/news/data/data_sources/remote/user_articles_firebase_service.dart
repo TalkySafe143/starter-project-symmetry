@@ -32,6 +32,22 @@ class UserArticlesFirebaseService {
     return url;
   }
 
+  /// Returns every user-created article, newest first by `publishedAt`.
+  /// Reads are public, so no login is required to call this.
+  Future<List<ArticleModel>> getAllUserArticles() async {
+    _log.info('getAllUserArticles → querying all user articles');
+
+    final snapshot = await _firestoreDb
+        .collection(_articlesCollection)
+        .orderBy('publishedAt', descending: true)
+        .get();
+
+    final articles =
+        snapshot.docs.map((doc) => ArticleModel.fromJson(doc.data())).toList();
+    _log.info('getAllUserArticles → found ${articles.length} articles');
+    return articles;
+  }
+
   /// Returns the articles created by [userId], newest first by `publishedAt`.
   /// Returns an empty list when [userId] is blank instead of querying.
   Future<List<ArticleModel>> getUserArticles(String userId) async {
@@ -48,6 +64,30 @@ class UserArticlesFirebaseService {
         snapshot.docs.map((doc) => ArticleModel.fromJson(doc.data())).toList();
     _log.info('getUserArticles → found ${articles.length} articles');
     return articles;
+  }
+
+  /// Overwrites `authorPhotoUrl` on every article by [userId] with [photoUrl].
+  /// Call this after the user changes their profile photo so the snapshots
+  /// stored on their articles stop being stale. Returns the number of
+  /// articles updated, or 0 when [userId] is blank.
+  Future<int> updateAuthorPhotoUrl(String userId, String? photoUrl) async {
+    if (userId.trim().isEmpty) return 0;
+
+    _log.info('updateAuthorPhotoUrl → refreshing articles for user $userId');
+    final snapshot = await _firestoreDb
+        .collection(_articlesCollection)
+        .where('authorId', isEqualTo: userId)
+        .get();
+
+    final batch = _firestoreDb.batch();
+    for (final doc in snapshot.docs) {
+      batch.update(doc.reference, {'authorPhotoUrl': photoUrl});
+    }
+    await batch.commit();
+
+    _log.info(
+        'updateAuthorPhotoUrl → updated ${snapshot.docs.length} articles');
+    return snapshot.docs.length;
   }
 
   /// Saves [article] to Firestore. The [article.urlToImage] should already
