@@ -1,49 +1,91 @@
 # Applicant Showcase App — Report
 
-> Status: Draft (grill interview in progress — sections marked TODO(you) are unresolved)
+I want this report to be a little bit more personal in the parts where I have to give my opinion or personal experience, I hope that my writing skills don't mess up the report, but maybe is an indicator of human effort.
 
 ## 1. Introduction
 
-I built the Symmetry Applicant Showcase task: a Flutter news app where a journalist can upload their own articles (Firebase backend + Clean Architecture frontend).
+I've used Flutter in one course work and actually, the project for that course was in Kotlin [RouteIQ gh](https://github.com/Intro-CompuMovil/RouteIQ) and later, I built an MVP for other course in Flutter [FipApp gh](https://github.com/FIP-app/FIP).
 
-I got pretty intimidated by the source code, since I had a lot of problems with the versioning and the Dart concepts themselves — I took the Mobile development course a long time ago, and a lot has changed since then.
+I was scared about programming in Flutter again, because in those years the AI wasn't good enough to manage such complex projects (at least for the free tools). There were no such AI agents in CLI to support the workload and to mantain the project without breaking everything, but, because of that (the fact that I was programming in Flutter without huge AI help) I saw this project as a big challenge to improve my integration with the tools that we have nowadays. 
+
+A lot changed since the moment that I wrote FIP App (the MVP mentioned before), Dart has become different and has a lot new keywords and features itself.
 
 ## 2. Learning Journey
 
-Technologies I had to (re)learn, roughly in README order:
+The learning journey for me starts in the first day, looking at the resources and re-visiting the projects that I wrote long time ago, looking at Dart documentation was pretty useful and I had to read a lot in that case.
 
-- **Flutter + Dart refresh.** Dart changed since 2024; relearned null-safety, `flutter pub get`, routes, hooks (`flutter_hooks`), and codegen (`build_runner`, `injectable_generator`, `drift_dev`, `retrofit_generator`).
-- **Flutter ↔ Firebase.** Followed the Flutter+Firebase playlist; learned `firebase_core`, `cloud_firestore`, `firebase_storage`, `firebase_auth`, plus `firebase emulators:start` for local work (I had used Firebase before, but never the emulator suite).
-- **BLoC / Cubits.** New: `flutter_bloc` blocs vs cubits, events/states with `equatable`, `bloc_test` + `mockito` suites. blocs are the only place that touches use cases.
-- **Clean Architecture.** Watched the Clean Architecture tutorial the repo is based on; applied the strict 3-layer `data / domain / presentation` split from `docs/APP_ARCHITECTURE.md`, avoiding the bans in `docs/ARCHITECTURE_VIOLATIONS.md`.
-- **Data utilities.** New: `dio` + `retrofit` for NewsAPI, `drift` (migrated from `floor`) + `sqlite3_flutter_libs` for offline saved articles, `image_picker` + `cached_network_image`, `gpt_markdown` for article rendering, `get_it` + `injectable` for DI, `logging`, `awesome_drawer_bar` sidebar.
-- **Firestore rules + indexes.** New: writing `firestore.rules` / `storage.rules` validators and composite indexes in `firestore.indexes.json`.
+For RouteIQ I used also Firebase as the primary backend, but I don't remember to be using the rules and the indexes, since for the course work was completely fine to have those in the development mode. Learning about the rules sintax was important to me and took me a big chunk of time.
 
-What I actually used most: I watched the MongoDB and Clean Architecture videos in full — they helped me a lot — plus the BLoC, Firebase, and related documentation. I learned new concepts such as the mocking libraries, the code-generation style, device management in my OS and how devices talk to localhost for local testing with the Firebase emulator suite, which was new for me. Overall, it was an exciting learning process.
+Other technology that I first used was BLoC state management, in this case, the documentation help me a lot to understand the full architecture of the library and the concepts itself, the BLoCs and Cubits seems to be a clever way to manage the state, and It do it differently from other frameworks for other front-end technologies (such as React Query o Zustand, those libraries are for different languages, but, the concept of BLoC caught my attention).
+
+I saw the videos about TDD and Clean Architecture completely, since I knew them, but I had never applied it to a project before, maybe the TDD development process but in sort of different way and applied to a different technologies. Getting the idea of the Clean Architecture was also a big chunk of my time, since the multiple folders and multiple responsabilities are pretty important each of them, so you have to be clear in the process.
+
+I also saw for the first time the pattern to generate the boilerplate code for example, related to the HTTP client, Dio and retrofit were new to me and the documentation help me a lot to understand that actually, the '.g.dart' files aren't mine, those are generated, along with the floor library, for the SQL database for the cache (later changed to Drift)
+
+The video about the schema design by Mongo DB Youtube channel was pretty good and it was the inspiration to make the Comments feature, since is one of the cases when the one to 'squillions' relationship apply, so, I wanted to test the design in practice.
+
+Other thing that actually caught my attention was the device manager in the OS that I'm using (linux distribution), the Android Studio suite is very good, but in this case, I saw this project as an opportunity to learn how to manage the snapshots and emulators in the terminal. As an example, the Android Debug Bridge (adb) was an important part in this project that I had to learn along with the Firebase emulator suite.
+
+- Because of funny reasons, I had an Android device connected with USB and I notice that actually firebase took off from the free tier the Storage database, so I had to use (and learn) the emulator suite itself. Until I investigated the communication with the localhost from the device, trying to redirect ports using the Android Debug Bridge and trying a lot of things, I figure it out that the easiest way was just use an emulator in the system.
+    - That was also fun, because I learned how to pass files using the Android Debug Bridge, use KVM for the emulators and how to clean up the device filesystem in order to see the changes in the SQL database DDL.
+
+It was pretty fun in overall, I learned a lot (I will keep my comments for the reflection section).
 
 ## 3. Challenges Faced
 
-Real issues hit in this repo (see `docs/notes.md` and git history):
+### Versions and SDK
 
-1. **Java OOM + APK path.** Gradle `Xmx1536M` too low for Jetifier; fixed to `Xmx4096M` with `enableJetifier=false`. `rootProject.layout.buildDirectory` pointed at `android/build/app` until explicitly reset to `../build`.
-2. **`Equatable.props` null crashes.** `RemoteArticlesState` / `LocalArticlesState` / `LocalArticlesEvent` force-unwrapped nullable fields (`articles!`, `error!`, `article!`); `bloc_test` diagnostic `toString()` crashed on states like `RemoteArticlesLoading`. Fixed by null-safe `props`.
-3. **Floor → Drift migration.** Reworked local saved-articles DB (`app_database.dart`, `article_dao.dart`) to Drift.
-4. **Saved-article duplicates + privacy.** Added duplicate guard for saved articles; replaced a leaking error message with a generic one.
-5. **Owner-only writes.** Iterated `firestore.rules` so updates/deletes require `request.auth.uid == resource.data.authorId`, plus strict `hasOnly([...])` field validation.
+The big first challenge I'd say was the versions of the SDK and the target Android application, because it seems that Flutter is migrating to some built-in kotlin installation for the [Android devices](https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers) and I really care about using the latest versions of the SDK: Dart, Flutter, Android and so on. But the existing dependencies were dragging me to downgrade the versions (or update the packages used). That's the case with Floor, as the project use Dio and retrofit to generate the code for the HTTP client (and later mockito for the test mocks), then, after a lot of hours I managed to make the application work, migrating from Floor to Drift for the SQL, but I was in a loop of getting the dependencies missmatch and looking for alternatives to do not down grade the Dart version.
 
-What cost me the most time: one UI overflow bug that kept crashing the simulator — I spent a lot of time figuring that out. Also the Floor-to-Drift migration, since I decided to enforce the modern Dart stack, plus getting localhost communication working with my Android device, which wasn't working at all. Lesson learned: check layout constraints and the emulator/device networking setup early instead of assuming the code is at fault.
+Also I spent some time in the gradle configuration thanks to the Android target version and some issues with the built-in kotlin. This comes also with Gradle version, the config files change a lot the sintax between versions.
+
+I'd that actually it's something that is unnecessary, and consumes a lot of time (maybe in this case was a mistake from me?) but I think that in a real project, mantaining the SDK updated is a privilege that a lot of long-term projects want to achieve, since in a long term project you care about production and stability, but you loose the newest features in your tech stack. 
+
+So, I see this piece of work necessary to learn how to manage this kind of dependencies and upgrading the packages in the Flutter environment, since it envoles also the Android toolchain and dependencies. In that case, in the future, I have a lot of more experience upgrading this toolchain and looking for alternatives in the packages used by old SDKs versions.
+
+I'm not saying that sticking to one stable version is bad (because actually for production I saw this as a good practice) but when you have the opportunity to use the latest versions of the SDK that you're using, you have to take it and exploit the new performance or features that the SDK comes with.
+
+### The Java OOM
+
+I spent a big chunk of time debugging why the application was crashing without even start, I was suspecting about something related with the Gradle version since before I was fixing the sintax of the config files, but It was just the heap allocation: I had to give more resources to the Java compilation process to be success.
+
+Gradle `Xmx1536M` too low for Jetifier; fixed to `Xmx4096M` with `enableJetifier=false`
+
+### Floor and Drift
+
+When the floor package was giving a lot of troubles in the dependency resolution, I took the decision to look at some alternatives, I found Drift that I consider the best as the project describes itself as the direct replacement of Floor. But understanding the migration and reading the documentation of Drift was some big part of this challenge, since the AI can migrate everything (yes) but you have to understand it to judge the changes later.
+
+
+### The overflow crash
+
+What cost me the most time: one UI overflow bug that kept crashing the emulator (????).
+
+- Actually, I'm still investigating this thing, I was using a Small Phone emulator since the RAM was a problem for me, but it was actually annoying that Flutter shows an overflow mark when exist one in debug mode, well, it seems that the overflow mark was heavier than the entire application and trigger a segmentation fault in the emulator.
+
+- I fixed that with lucky I guess, was literally the last thing that I considered to fix that.
 
 ## 4. Reflection and Future Directions
 
-Technically I leveled up in BLoC state management, Firestore rules/indexes, Drift offline caching, and DI codegen. Professionally the project drilled the Symmetry values: Truth is King (question defaults), Total Accountability (own the bugs), Maximally Overdeliver (extras below).
+Beyond the opportunity to take this technical test for a company, this was a real learning experience. I'm going to be honest, I'm comming from the side of algorithmic programming contests, where you have 3-5 hours to solve problems using algorithms and computer science relate stuff, a couple of years ago, I participated in some Hackathons and I lost the interest in hackathons, but making this tech test, I realized that you learn A LOT doing hackathons (I looking this test as a hackathon). It depends in the area or the product that you're working on, you gain a lot of practical experience from developing a product from scratch and facing all the technical and design challenges that may present to you.
 
-This project helped me a lot to integrate AI tools into my workflow, and to learn how to do TDD in a proper way — it's amazing how much you can learn in 3 days. Next I would improve the UI design, since I focused on functionality and left the design and beautiful animations a bit aside; I would also add collaboration on articles using the Firebase Realtime Database.
+But besides the learning statement, I'm also shocked by the things that we can build nowadays with AI.
+
+The speed of development (at least for an MVP) is lightning fast compared to two years ago, looking at my colleagues submissions, it's amazing the things that we can do for the software industry in such short time. How we can imporve a simple project and a simple product and how the design is taking more importance nowadays.
+
+But still, you have to code by yourself to really understand and actually to notice what is happening behind, with the tools that we have, this is the moment that we can improve the underlying infrastructure to make a product or software better, because we have the responsability to deliver a good product to the world, and keep practicing about design and people, because is what matters now and in the future.
+
+This project has contributed to my growth as a developer, thanks!
+
+---
+
+As future directions for this projects, I'd to implement the real time collaboration when you create an article, that could be awesome and make use of the Real Time Database that Firebase has.
 
 ## 5. Proof of the project
 
-Screenshots: [Google Drive folder](https://drive.google.com/drive/folders/1MlfU-OI3MWOTP9R54L8hO1hFRFOs4vsE?usp=sharing) (no demo video).
+Screenshots: [Google Drive folder](https://drive.google.com/drive/folders/1MlfU-OI3MWOTP9R54L8hO1hFRFOs4vsE?usp=sharing).
 
-Coverage in that folder (as captured): news home with Daily News + Community tabs (`news_home_page.dart`), create article with image picker + markdown hint (`create_article_page.dart`), article detail with markdown + comments (`article_detail.dart`), my articles (`my_articles_page.dart`), and edit profile (`edit_profile_page.dart`).
+Demo video: [Tella video](https://www.tella.tv/video/symmetry-test-demo-video-cbvz)
+Backup if Tella don't [work](https://drive.google.com/file/d/1TW4-Q8Mxfsc6w1DxgyvsZBRna0aj7iB4/view?usp=sharing)
 
 Routes covered: `/`, `/ArticleDetails`, `/SavedArticles`, `/MyArticles`, `/CreateArticle`, `/EditArticle`, `/Login`, `/Register`, `/EditProfile` (see `frontend/lib/config/routes/routes.dart`).
 
@@ -71,9 +113,7 @@ Base requirement was: journalist uploads own articles (Firestore schema + `media
 - **Firestore schema prototype (implemented):** `articles`, `comments`, `users` collections + `firestore.indexes.json` + `firestore.rules` + `storage.rules`. Written up in `backend/docs/DB_SCHEMA.md` and diagrammed in §7.
 - **No separate UML/Figma prototype** was added — Figma prototype from the assignment was converted directly into `news_home_page.dart`, `article_detail.dart`, `create_article_page.dart`, etc.
 
-How to run/test: code generation via the script in `frontend/tool/generate.dart` (per `AGENTS.md`, ask a maintainer to run codegen since the sandbox can't execute Dart), backend via `firebase emulators:start` from `backend/`, and tests with `flutter test`.
-
-Version caution (this bit me): pin the toolchain before running — Dart SDK `>=3.0.0 <4.0.0` (`frontend/pubspec.yaml`), Java 17 (`sourceCompatibility`/`targetCompatibility` and Kotlin `jvmTarget` in `frontend/android/app/build.gradle`), Android Gradle Plugin `9.0.1` with Gradle wrapper `9.1.0`, and the `gradle.properties` memory/Jetifier flags (`-Xmx`, `enableJetifier=false`). Mismatched Java/Gradle/Dart versions break the Android build before any app code runs.
+How to run/test: code generation via the script in `frontend/tool/generate.dart`, backend via `firebase emulators:start` from `backend/`, and tests with `flutter test`.
 
 ### 6.3 How can you improve this
 
@@ -94,10 +134,7 @@ flowchart TB
   UI -->|renders| ENT[entities only]
   style UC fill:#e8f5e9,stroke:#2e7d32
 ```
-
-Rules enforced: domain imports no project code; data is the only layer touching providers; only blocs touch use cases.
-
-### 7.2 Firestore schema (as enforced today)
+### 7.2 Firestore schema 
 
 ```mermaid
 erDiagram
@@ -143,23 +180,13 @@ flowchart LR
   B --> G[Saved articles offline]
   B --> H[Edit profile + avatar]
 ```
+### 7.4 Test coverage 
 
-### 7.4 Working notes (from `docs/notes.md`)
+Counted from source on this branch (generated `*.g.dart`/`*.mocks.dart` excluded from `lib/`): **45 test files** (+24 mock files), **135 unit cases** (`test()`), **68 widget cases** (`testWidgets()`), 10 files using `blocTest` — **203 cases total.**
 
-Build fixes that made Flutter work at all:
-
-- **Java OOM** — `gradle.properties` had `-Xmx1536M`, too low for Jetifier. Fixed by raising to `-Xmx4096M` and setting `enableJetifier=false`.
-- **APK not found** — `build.gradle` had migrated from deprecated `rootProject.buildDir = '../build'` to `rootProject.layout.buildDirectory`, but the root project's directory was never set, so the subprojects redirect pointed at `android/build/app/` instead of `frontend/build/app/`. Fixed by explicitly setting `rootProject.layout.buildDirectory.set(new File(rootProject.projectDir, "../build"))` before the subprojects redirect.
-
-Test-suite bugs found and fixed in production code:
-
-- `RemoteArticlesState.props` force-unwrapped `articles!` and `error!`, crashing whenever either was null (e.g. `RemoteArticlesLoading` has both as null); same for `LocalArticlesState.props` (`articles!`) and `LocalArticlesEvent.props` (`article!`, crashing on `GetSavedArticles` which carries no article).
-- Root cause was subtle: after each test, `bloc_test` prints a diagnostic that calls `toString()` on the state, which `Equatable` implements by iterating `props` — so the crash happened during the diagnostic print, not the assertion (e.g. `RemoteArticlesDone` leaves `error` null and `error!` threw `Null check operator used on a null value`).
-
-DI annotation cheat-sheet used in this project:
-
-- `@singleton` → shared, created immediately.
-- `@lazySingleton` → shared, created on first use.
-- `@injectable` → new instance every time (factory).
-- `@module` → for things you don't own (third-party).
-- `@preResolve` → for async constructors.
+| Feature | data | domain | presentation |
+|---|---|---|---|
+| news | 5 files | 6 files | 16 files |
+| auth | 3 files | 2 files | 6 files |
+| comments | 2 files | 2 files | 2 files |
+| home | — | — | 1 file |
